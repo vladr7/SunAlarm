@@ -21,6 +21,10 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         println("vladlog: AlarmReceiver Alarm Triggered!")
         Toast.makeText(context, "Alarm Triggered!", Toast.LENGTH_LONG).show()
+
+        val mainActivityIntent = Intent(context, MainActivity::class.java)
+        mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context?.startActivity(mainActivityIntent)
     }
 }
 
@@ -29,6 +33,9 @@ class AlarmReceiver : BroadcastReceiver() {
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.setTurnScreenOn(true)
+        this.setShowWhenLocked(true)
+
         setContent {
             SunAlarmTheme {
                 // A surface container using the 'background' color from the theme

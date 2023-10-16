@@ -47,8 +47,8 @@ fun HomeScreen(
 ) {
     val timePickerState = remember {
         TimePickerState(
-            initialMinute = 0,
-            initialHour = 0,
+            initialHour = 16,
+            initialMinute = 10,
             is24Hour = true
         )
     }
