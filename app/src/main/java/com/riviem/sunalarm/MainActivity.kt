@@ -44,7 +44,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     askPermissionDisplayOverOtherApps(this)
-                    HomeRoute()
+                    HomeRoute(
+                        activity = this
+                    )
                 }
             }
         }

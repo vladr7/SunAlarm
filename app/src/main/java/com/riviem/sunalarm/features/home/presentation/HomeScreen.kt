@@ -25,16 +25,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.riviem.sunalarm.AlarmReceiver
+import com.riviem.sunalarm.MainActivity
 import java.util.Calendar
 
 
 @Composable
 fun HomeRoute(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    activity: MainActivity
 ) {
     val context = LocalContext.current
     HomeScreen(
-        context = context
+        context = context,
+        activity = activity
     )
 }
 
@@ -43,7 +46,8 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    context: Context
+    context: Context,
+    activity: MainActivity
 ) {
     val timePickerState = remember {
         TimePickerState(
@@ -68,6 +72,11 @@ fun HomeScreen(
             TimeInput(
                 state = timePickerState
             )
+            Button(onClick = {
+                activity.finishAffinity()
+            }) {
+                Text("Cancel Alarm")
+            }
         }
     }
 }
