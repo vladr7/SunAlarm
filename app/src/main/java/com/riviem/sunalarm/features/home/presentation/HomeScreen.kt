@@ -12,24 +12,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.riviem.sunalarm.AlarmReceiver
 import java.util.Calendar
-
 
 
 @Composable
@@ -42,44 +38,35 @@ fun HomeRoute(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("ScheduleExactAlarm")
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     context: Context
 ) {
-
-    var hour by remember { mutableIntStateOf(16) }
-    var minute by remember { mutableIntStateOf(0) }
+    val timePickerState = remember {
+        TimePickerState(
+            initialMinute = 0,
+            initialHour = 0,
+            is24Hour = true
+        )
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
     ) {
         Column(
-            modifier = modifier,
-            verticalArrangement = Arrangement.Center,
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SetAlarmButton(hour, minute, context)
             Spacer(modifier = Modifier.padding(16.dp))
-            TextField(
-                value = hour.toString(),
-                onValueChange = { hour = if (it.isNotEmpty()) it.toInt() else 0 },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
-                ),
-                modifier = Modifier
-                    .padding(16.dp)
-            )
-            TextField(
-                value = minute.toString(),
-                onValueChange = { minute = if (it.isNotEmpty()) it.toInt() else 0 },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
-                ),
-                modifier = Modifier
-                    .padding(16.dp)
+            SetAlarmButton(hour = timePickerState.hour, minute = timePickerState.minute, context)
+            Spacer(modifier = Modifier.padding(16.dp))
+            TimeInput(
+                state = timePickerState
             )
         }
     }
@@ -94,19 +81,21 @@ private fun SetAlarmButton(hour: Int, minute: Int, context: Context) {
 
         // Create a Calendar object for the alarm time
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 11)
-        calendar.set(Calendar.MINUTE, 21)
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minute)
         calendar.set(Calendar.SECOND, 0)
 
         // Create a PendingIntent object for the alarm receiver
         val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
-            PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
 
         // Set the alarm
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
 
-        println("vladlog: Alarm set!")
+        println("vladlog: Alarm set! $hour:$minute")
         Toast.makeText(context, "Alarm set!", Toast.LENGTH_SHORT).show()
     }) {
         Text("Set Alarm")
