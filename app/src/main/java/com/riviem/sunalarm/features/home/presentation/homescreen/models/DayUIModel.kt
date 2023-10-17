@@ -1,4 +1,4 @@
-package com.riviem.sunalarm.features.home.presentation.models
+package com.riviem.sunalarm.features.home.presentation.homescreen.models
 
 data class DayUIModel(
     val day: String,

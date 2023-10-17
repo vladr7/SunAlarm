@@ -1,4 +1,4 @@
-package com.riviem.sunalarm.features.home.presentation
+package com.riviem.sunalarm.features.home.presentation.homescreen
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -18,13 +18,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -34,20 +35,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
-import com.riviem.sunalarm.features.home.presentation.models.AlarmUIModel
-import com.riviem.sunalarm.features.home.presentation.models.DayUIModel
-import com.riviem.sunalarm.features.home.presentation.models.allDoorsSelected
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.DayUIModel
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePickerScreen
 
 
 @Composable
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    HomeScreen(
-        context = context,
-    )
+
+    if (!state.showTimePickerScreen) {
+        HomeScreen(
+            context = context,
+            onAlarmClick = { alarm ->
+                viewModel.onAlarmClick(alarm)
+            }
+        )
+    } else {
+        TimePickerScreen()
+    }
+
 }
 
 @SuppressLint("ScheduleExactAlarm")
@@ -55,6 +68,7 @@ fun HomeRoute(
 fun HomeScreen(
     modifier: Modifier = Modifier,
     context: Context,
+    onAlarmClick: (AlarmUIModel) -> Unit
 ) {
     val activity = context as MainActivity
 
@@ -79,9 +93,7 @@ fun HomeScreen(
                 }
             )
             AlarmsList(
-                onAlarmClick = {
-
-                },
+                onAlarmClick = onAlarmClick,
                 onCheckedChange = { checked, alarm ->
 
                 }
@@ -302,7 +314,7 @@ fun DayWithOrWithoutDot(
     Column(
         modifier = modifier,
     ) {
-        if(isSelected) {
+        if (isSelected) {
             Icon(
                 imageVector = Icons.Filled.Circle, contentDescription = null,
                 modifier = modifier
