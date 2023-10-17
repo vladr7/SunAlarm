@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.riviem.sunalarm.features.home.presentation.HomeRoute
+import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -44,9 +44,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     askPermissionDisplayOverOtherApps(this)
-                    HomeRoute(
-                        activity = this
-                    )
+                    MainNavigation()
                 }
             }
         }

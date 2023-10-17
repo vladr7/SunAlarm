@@ -18,7 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,12 +35,10 @@ import java.util.Calendar
 @Composable
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
-    activity: MainActivity
 ) {
     val context = LocalContext.current
     HomeScreen(
         context = context,
-        activity = activity
     )
 }
 
@@ -47,8 +48,12 @@ fun HomeRoute(
 fun HomeScreen(
     modifier: Modifier = Modifier,
     context: Context,
-    activity: MainActivity
 ) {
+    val activity = context as MainActivity
+
+    var paginaDePornire: String by remember {
+        mutableStateOf("PaginaDePornire")
+    }
     val timePickerState = remember {
         TimePickerState(
             initialHour = 16,
