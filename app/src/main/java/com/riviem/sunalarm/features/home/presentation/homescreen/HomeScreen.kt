@@ -58,7 +58,11 @@ fun HomeRoute(
             }
         )
     } else {
-        TimePickerScreen()
+        TimePickerScreen(
+            alarm = state.selectedAlarm ?: AlarmUIModel(
+                id = 0, time = "07:00", name = "Alarm 1", isOn = false, days = listOf()
+            ),
+        )
     }
 
 }

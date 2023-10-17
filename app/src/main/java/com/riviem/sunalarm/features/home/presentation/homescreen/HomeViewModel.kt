@@ -17,7 +17,8 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     fun onAlarmClick(alarm: AlarmUIModel) {
         _state.update {
             it.copy(
-                showTimePickerScreen = true
+                showTimePickerScreen = true,
+                selectedAlarm = alarm
             )
         }
     }
@@ -25,5 +26,6 @@ class HomeViewModel @Inject constructor() : ViewModel() {
 
 data class HomeState(
     val showTimePickerScreen: Boolean = false,
+    val selectedAlarm: AlarmUIModel? = null
 )
 
