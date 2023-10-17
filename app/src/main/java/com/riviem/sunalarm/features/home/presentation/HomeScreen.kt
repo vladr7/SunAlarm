@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Circle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -227,7 +228,7 @@ fun AlarmItem(
                 color = Color.DarkGray,
                 shape = RoundedCornerShape(10.dp)
             )
-            .height(140.dp)
+            .height(120.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -283,7 +284,7 @@ fun AlarmSelectedDays(
             days.forEach { day ->
                 DayWithOrWithoutDot(
                     modifier = modifier
-                        .padding(start = 2.dp, end = 2.dp),
+                        .padding(end = 3.dp),
                     day = day.day,
                     isSelected = day.isSelected
                 )
@@ -313,6 +314,7 @@ fun DayWithOrWithoutDot(
             text = day, fontSize = 14.sp, color = Color.White,
             modifier = modifier
                 .padding(top = 2.dp)
+                .alpha(if (isSelected) 1f else 0.5f)
         )
     }
 }
