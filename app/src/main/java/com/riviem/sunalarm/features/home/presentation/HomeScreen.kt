@@ -274,11 +274,16 @@ fun AlarmSelectedDays(
     if (days.allDoorsSelected()) {
         Text(text = "Every day", fontSize = 16.sp, color = Color.White)
     } else {
-        Row {
+        Row(
+            modifier = modifier
+                .padding(end = 10.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
             days.forEach { day ->
                 DayWithOrWithoutDot(
                     modifier = modifier
-                        .padding(start = 10.dp, end = 10.dp),
+                        .padding(start = 2.dp, end = 2.dp),
                     day = day.day,
                     isSelected = day.isSelected
                 )
@@ -293,18 +298,22 @@ fun DayWithOrWithoutDot(
     day: String,
     isSelected: Boolean,
 ) {
-    if (isSelected) {
-        Column {
+    Column(
+        modifier = modifier,
+    ) {
+        if(isSelected) {
             Icon(
                 imageVector = Icons.Filled.Circle, contentDescription = null,
                 modifier = modifier
-                    .size(5.dp),
+                    .size(6.dp),
                 tint = Color.White
             )
-            Text(text = day, fontSize = 12.sp, color = Color.White)
         }
-    } else {
-        Text(text = day, fontSize = 12.sp, color = Color.White)
+        Text(
+            text = day, fontSize = 14.sp, color = Color.White,
+            modifier = modifier
+                .padding(top = 2.dp)
+        )
     }
 }
 
