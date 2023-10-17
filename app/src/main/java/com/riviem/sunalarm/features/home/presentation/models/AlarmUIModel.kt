@@ -3,6 +3,8 @@ package com.riviem.sunalarm.features.home.presentation.models
 data class AlarmUIModel(
     val id: Int,
     val time: String,
+    val name: String,
+    val isOn: Boolean,
     val days: List<DayUIModel> = listOf(
         DayUIModel(
             day = "M",
@@ -33,5 +35,4 @@ data class AlarmUIModel(
             isSelected = false
         ),
     ),
-    val isOn: Boolean
 )

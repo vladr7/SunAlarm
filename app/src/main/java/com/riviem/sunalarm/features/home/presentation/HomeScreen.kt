@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -148,32 +149,41 @@ fun AlarmsList(
         AlarmUIModel(
             id = 0,
             time = "07:00",
-            isOn = false
+            isOn = false,
+            name = "Alarm 1",
         ),
         AlarmUIModel(
             id = 1,
             time = "07:10",
-            isOn = true
+            isOn = true,
+            name = "Alarm 1",
         ),
         AlarmUIModel(
             id = 2,
             time = "07:20",
-            isOn = true
-        ),
+            isOn = true,
+            name = "Alarm 1",
+
+            ),
         AlarmUIModel(
             id = 3,
             time = "07:30",
-            isOn = true
-        ),
+            isOn = true,
+            name = "Alarm 1",
+
+            ),
         AlarmUIModel(
             id = 4,
             time = "07:40",
-            isOn = false
-        ),
+            isOn = false,
+            name = "Alarm 1",
+
+            ),
         AlarmUIModel(
             id = 5,
             time = "07:50",
-            isOn = false
+            isOn = false,
+            name = "Alarm 1",
         ),
     )
 ) {
@@ -189,7 +199,8 @@ fun AlarmsList(
                     },
                     days = item.days,
                     time = item.time,
-                    isOn = item.isOn
+                    isOn = item.isOn,
+                    name = item.name
                 )
             }
         }
@@ -200,6 +211,7 @@ fun AlarmsList(
 fun AlarmItem(
     modifier: Modifier = Modifier,
     time: String,
+    name: String,
     isOn: Boolean,
     onAlarmClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
@@ -210,7 +222,7 @@ fun AlarmItem(
             .clickable {
                 onAlarmClick()
             }
-            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+            .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
             .background(
                 color = Color.DarkGray,
                 shape = RoundedCornerShape(10.dp)
@@ -219,20 +231,37 @@ fun AlarmItem(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = time,
-            fontSize = 30.sp,
-            color = Color.White,
-            modifier = Modifier.padding(start = 10.dp)
-        )
+        AlarmNameAndTime(name, time)
         Spacer(modifier = Modifier.weight(1f))
         AlarmSelectedDays(
             modifier = modifier,
             days = days
         )
         AlarmSwitch(
+            modifier = modifier
+                .padding(end = 10.dp),
             checked = isOn,
             onCheckedChange = onCheckedChange
+        )
+    }
+}
+
+@Composable
+private fun AlarmNameAndTime(name: String, time: String) {
+    Column {
+        Text(
+            text = name,
+            fontSize = 17.sp,
+            color = Color.White,
+            modifier = Modifier
+                .padding(start = 15.dp)
+                .offset(y = (-10).dp)
+        )
+        Text(
+            text = time,
+            fontSize = 30.sp,
+            color = Color.White,
+            modifier = Modifier.padding(start = 18.dp, top = 10.dp)
         )
     }
 }
@@ -286,6 +315,7 @@ fun AlarmSwitch(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Switch(
+        modifier = modifier,
         checked = checked,
         onCheckedChange = {
             onCheckedChange(it)
