@@ -5,34 +5,57 @@ data class AlarmUIModel(
     val time: String,
     val name: String,
     val isOn: Boolean,
-    val days: List<DayUIModel> = listOf(
-        DayUIModel(
-            day = "M",
-            isSelected = true
+    val days: List<DayUIModel> = weekDays
+)
+
+val weekDays = listOf(
+    DayUIModel(
+        day = Day(
+            dayLetter = "M",
+            dayFullName = "Monday"
         ),
-        DayUIModel(
-            day = "T",
-            isSelected = true
-        ),
-        DayUIModel(
-            day = "W",
-            isSelected = false
-        ),
-        DayUIModel(
-            day = "T",
-            isSelected = false
-        ),
-        DayUIModel(
-            day = "F",
-            isSelected = true
-        ),
-        DayUIModel(
-            day = "S",
-            isSelected = true
-        ),
-        DayUIModel(
-            day = "S",
-            isSelected = false
-        ),
+        isSelected = false
     ),
+       DayUIModel(
+            day = Day(
+                dayLetter = "T",
+                dayFullName = "Tuesday"
+            ),
+            isSelected = false
+        ),
+        DayUIModel(
+            day = Day(
+                dayLetter = "W",
+                dayFullName = "Wednesday"
+            ),
+            isSelected = false
+        ),
+        DayUIModel(
+            day = Day(
+                dayLetter = "T",
+                dayFullName = "Thursday"
+            ),
+            isSelected = false
+        ),
+        DayUIModel(
+            day = Day(
+                dayLetter = "F",
+                dayFullName = "Friday"
+            ),
+            isSelected = false
+        ),
+        DayUIModel(
+            day = Day(
+                dayLetter = "S",
+                dayFullName = "Saturday"
+            ),
+            isSelected = false
+        ),
+        DayUIModel(
+            day = Day(
+                dayLetter = "S",
+                dayFullName = "Sunday"
+            ),
+            isSelected = false
+        ),
 )

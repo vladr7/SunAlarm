@@ -3,18 +3,25 @@ package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import kotlinx.coroutines.delay
 
 @Composable
@@ -33,7 +41,7 @@ fun TimePickerScreen(
     alarm: AlarmUIModel,
     onSaveClick: (AlarmUIModel) -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
         ScrollableTimePicker(
             onHourSelected = {
                 println("vladlog: onHourSelected: $it")
@@ -41,17 +49,130 @@ fun TimePickerScreen(
             onMinuteSelected = {
                 println("vladlog: onMinuteSelected: $it")
             },
-        )
-        Button(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            onClick = {
-                onSaveClick(alarm)
+                .weight(1f)
+                .fillMaxHeight()
+        )
+        LightAlarmConfiguration(
+            modifier = Modifier
+                .padding(top = 32.dp)
+                .weight(1f)
+                .fillMaxHeight(),
+            alarm = alarm,
+            onDayClicked = {
+                println("vladlog: onDayClicked: $it")
             }
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Text(text = "Save")
+            Spacer(modifier = Modifier.weight(1f))
+            SaveButton(
+                modifier = Modifier,
+                onSaveClick = onSaveClick,
+                alarm = alarm
+            )
         }
+    }
+}
+
+@Composable
+fun LightAlarmConfiguration(
+    modifier: Modifier = Modifier,
+    alarm: AlarmUIModel,
+    onDayClicked: (Day) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        SelectDays(
+            alarm = alarm,
+            onDayClicked = {
+                onDayClicked(it)
+            }
+        )
+
+    }
+}
+
+@Composable
+fun SelectDays(
+    modifier: Modifier = Modifier,
+    alarm: AlarmUIModel,
+    onDayClicked: (Day) -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        alarm.days.forEach { dayUIModel ->
+            CheckboxDay(
+                day = dayUIModel.day,
+                isSelected = dayUIModel.isSelected,
+                onDayClicked = onDayClicked
+            )
+        }
+    }
+}
+
+@Composable
+fun CheckboxDay(
+    modifier: Modifier = Modifier,
+    day: Day,
+    isSelected: Boolean,
+    onDayClicked: (Day) -> Unit
+) {
+    val circleSize = 35.dp
+    val newModifier = if (isSelected) {
+        modifier
+            .size(circleSize)
+            .clickable {
+                onDayClicked(day)
+            }
+            .border(
+                width = 1.dp,
+                color = Color.White.copy(alpha = 0.7f),
+                shape = CircleShape
+            )
+    } else {
+        modifier
+            .size(circleSize)
+            .clickable {
+                onDayClicked(day)
+            }
+    }
+
+    Box(
+        modifier = newModifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = day.dayLetter,
+            fontSize = 14.sp,
+            color = if (isSelected) Color.Blue else Color.White
+        )
+    }
+}
+
+
+@Composable
+fun SaveButton(
+    modifier: Modifier = Modifier,
+    onSaveClick: (AlarmUIModel) -> Unit,
+    alarm: AlarmUIModel
+) {
+    Button(
+        modifier = modifier
+            .padding(16.dp),
+        onClick = {
+            onSaveClick(alarm)
+        }
+    ) {
+        Text(text = "Save")
     }
 }
 
