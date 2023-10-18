@@ -1,6 +1,7 @@
 package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,51 +68,70 @@ fun ScrollableTimePicker(
         minutesState.animateScrollToItem(index = 600 + selectedMinute - 1)
     }
 
-    Row(
+    Box(
         modifier = modifier
+            .fillMaxWidth()
             .height(300.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f),
-            content = {
-                items(hours) { hour ->
-                    TimeScrollItem(
-                        time = hour,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp)
-                    )
-                }
-            },
-            state = hoursState,
-            flingBehavior = rememberSnapFlingBehavior(lazyListState = hoursState)
-        )
-        Text(
-            text = ":",
-            color = Color.White,
-            fontSize = 50.sp,
-            modifier = Modifier.padding(5.dp)
-        )
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f),
-            content = {
-                items(minutes) { minute ->
-                    TimeScrollItem(
-                        time = minute,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-
+        Row(
+            modifier = modifier
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f),
+                content = {
+                    items(hours) { hour ->
+                        TimeScrollItem(
+                            time = hour,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp)
                         )
-                }
-            },
-            state = minutesState,
-            flingBehavior = rememberSnapFlingBehavior(lazyListState = minutesState)
+                    }
+                },
+                state = hoursState,
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = hoursState)
+            )
+            Text(
+                text = ":",
+                color = Color.White,
+                fontSize = 50.sp,
+                modifier = Modifier.padding(5.dp)
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f),
+                content = {
+                    items(minutes) { minute ->
+                        TimeScrollItem(
+                            time = minute,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp),
+
+                            )
+                    }
+                },
+                state = minutesState,
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = minutesState)
+            )
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .height(100.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f)),
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .height(100.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f)),
         )
     }
 }
