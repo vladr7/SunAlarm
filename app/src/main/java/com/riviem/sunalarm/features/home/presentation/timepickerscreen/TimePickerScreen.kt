@@ -1,5 +1,6 @@
 package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -33,7 +34,14 @@ fun TimePickerScreen(
     onSaveClick: (AlarmUIModel) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        ScrollableTimePicker()
+        ScrollableTimePicker(
+            onHourSelected = {
+                println("vladlog: onHourSelected: $it")
+            },
+            onMinuteSelected = {
+                println("vladlog: onMinuteSelected: $it")
+            },
+        )
         Button(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -47,12 +55,15 @@ fun TimePickerScreen(
     }
 }
 
+@SuppressLint("FrequentlyChangedStateReadInComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScrollableTimePicker(
     modifier: Modifier = Modifier,
     selectedHour: Int = 15,
     selectedMinute: Int = 39,
+    onHourSelected: (Int) -> Unit,
+    onMinuteSelected: (Int) -> Unit,
 ) {
     val hoursState = rememberLazyListState()
     val minutesState = rememberLazyListState()
@@ -66,6 +77,18 @@ fun ScrollableTimePicker(
         delay(50L)
         hoursState.animateScrollToItem(index = 240 + selectedHour - 2)
         minutesState.animateScrollToItem(index = 600 + selectedMinute - 1)
+    }
+
+    LaunchedEffect(key1 = hoursState.firstVisibleItemIndex) {
+        val index = hoursState.firstVisibleItemIndex
+        val hour = hours[index]
+        onHourSelected((hour.toInt() + 1) % 24)
+    }
+
+    LaunchedEffect(key1 = minutesState.firstVisibleItemIndex) {
+        val index = minutesState.firstVisibleItemIndex
+        val minute = minutes[index]
+        onMinuteSelected((minute.toInt() + 1) % 60)
     }
 
     Box(
