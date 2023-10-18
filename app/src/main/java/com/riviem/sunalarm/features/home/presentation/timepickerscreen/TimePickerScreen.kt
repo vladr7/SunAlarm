@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun TimePickerScreen(
@@ -29,6 +30,8 @@ fun TimePickerScreen(
 @Composable
 fun ScrollableTimePicker(
     modifier: Modifier = Modifier,
+    selectedHour: Int = 15,
+    selectedMinute: Int = 39,
 ) {
     val hoursState = rememberLazyListState()
     val minutesState = rememberLazyListState()
@@ -37,13 +40,16 @@ fun ScrollableTimePicker(
     val minutes = infiniteMinutes.take(1200).map { if (it < 10) "0$it" else it.toString() }.toList()
 
     LaunchedEffect(key1 = Unit) {
-        hoursState.scrollToItem(240)
-        minutesState.scrollToItem(600)
+        hoursState.scrollToItem(index = 240 + selectedHour)
+        minutesState.scrollToItem(index = 600 + selectedMinute)
+        delay(50L)
+        hoursState.animateScrollToItem(index = 240 + selectedHour - 2)
+        minutesState.animateScrollToItem(index = 600 + selectedMinute - 1)
     }
 
     Row(
         modifier = modifier
-            .height(300.dp)
+            .height(240.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
