@@ -22,6 +22,15 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             )
         }
     }
+
+    fun onSaveAlarmClick(alarm: AlarmUIModel) {
+        _state.update {
+            it.copy(
+                showTimePickerScreen = false,
+                selectedAlarm = alarm
+            )
+        }
+    }
 }
 
 data class HomeState(

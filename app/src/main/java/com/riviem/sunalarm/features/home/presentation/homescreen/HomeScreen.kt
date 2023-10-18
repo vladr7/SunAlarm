@@ -62,6 +62,9 @@ fun HomeRoute(
             alarm = state.selectedAlarm ?: AlarmUIModel(
                 id = 0, time = "07:00", name = "Alarm 1", isOn = false, days = listOf()
             ),
+            onSaveClick = { alarm ->
+                viewModel.onSaveAlarmClick(alarm)
+            }
         )
     }
 
