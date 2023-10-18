@@ -91,6 +91,13 @@ fun LightAlarmConfiguration(
             )
             .fillMaxWidth()
     ) {
+        Text(
+            text = alarm.name,
+            fontSize = 18.sp,
+            color = Color.White,
+            modifier = Modifier
+                .padding(start = 32.dp, top = 25.dp)
+        )
         SelectDays(
             alarm = alarm,
             onDayClicked = {
