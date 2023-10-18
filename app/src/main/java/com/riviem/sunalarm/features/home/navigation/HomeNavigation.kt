@@ -11,10 +11,14 @@ fun NavController.navigateToHome(navOptions: NavOptions? = null) {
     this.navigate(MainBottomDestination.Home.route, navOptions)
 }
 
-fun NavGraphBuilder.homeScreen() {
+fun NavGraphBuilder.homeScreen(
+    onAlarmClick: () -> Unit,
+    onSaveOrDiscardClick: () -> Unit
+) {
     composable(route = MainBottomDestination.Home.route) {
         HomeRoute(
-
+            onAlarmClick = onAlarmClick,
+            onSaveOrDiscardClick = onSaveOrDiscardClick
         )
     }
 }

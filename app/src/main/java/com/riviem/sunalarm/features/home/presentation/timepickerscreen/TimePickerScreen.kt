@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +31,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,7 +51,11 @@ fun TimePickerScreen(
     alarm: AlarmUIModel,
     onSaveClick: (AlarmUIModel) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         ScrollableTimePicker(
             onHourSelected = {
                 println("vladlog: onHourSelected: $it")
@@ -67,17 +77,11 @@ fun TimePickerScreen(
                 println("vladlog: onDayClicked: $it")
             }
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
-            SaveButton(
-                modifier = Modifier,
-                onSaveClick = onSaveClick,
-                alarm = alarm
-            )
-        }
+        SaveButton(
+            modifier = Modifier,
+            onSaveClick = onSaveClick,
+            alarm = alarm
+        )
     }
 }
 
@@ -87,8 +91,11 @@ fun LightAlarmConfiguration(
     alarm: AlarmUIModel,
     onDayClicked: (Day) -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
+            .verticalScroll(scrollState)
             .background(
                 color = Color.DarkGray.copy(alpha = 0.2f),
                 shape = MaterialTheme.shapes.extraLarge
@@ -197,7 +204,7 @@ fun CheckboxDay(
         Text(
             text = day.dayLetter,
             fontSize = 14.sp,
-            color = if (isSelected) Color.Blue else Color.White
+            color = Color.White
         )
     }
 }
@@ -209,14 +216,20 @@ fun SaveButton(
     onSaveClick: (AlarmUIModel) -> Unit,
     alarm: AlarmUIModel
 ) {
-    Button(
-        modifier = modifier
-            .padding(16.dp),
-        onClick = {
-            onSaveClick(alarm)
-        }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
-        Text(text = "Save")
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            modifier = modifier
+                .padding(16.dp),
+            onClick = {
+                onSaveClick(alarm)
+            }
+        ) {
+            Text(text = "Save")
+        }
     }
 }
 
@@ -287,7 +300,7 @@ fun ScrollableTimePicker(
                 text = ":",
                 color = Color.White,
                 fontSize = 50.sp,
-                modifier = Modifier.padding(5.dp)
+                modifier = Modifier.padding(start = 5.dp, end = 5.dp)
             )
             LazyColumn(
                 modifier = Modifier
@@ -299,29 +312,32 @@ fun ScrollableTimePicker(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp),
-
-                            )
+                        )
                     }
                 },
                 state = minutesState,
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = minutesState)
             )
         }
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .height(100.dp)
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f)),
+        TransparentRectangle(
+            modifier = Modifier.align(Alignment.TopCenter)
         )
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .height(100.dp)
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f)),
+        TransparentRectangle(
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
+}
+
+@Composable
+private fun TransparentRectangle(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(120.dp)
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f)),
+    )
 }
 
 @Composable

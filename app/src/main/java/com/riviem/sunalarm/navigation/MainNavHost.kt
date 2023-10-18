@@ -12,13 +12,18 @@ fun MainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String = MainBottomDestination.Home.route,
+    onAlarmClick: () -> Unit,
+    onSaveOrDiscardClick: () -> Unit
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        homeScreen()
+        homeScreen(
+            onAlarmClick = onAlarmClick,
+            onSaveOrDiscardClick = onSaveOrDiscardClick
+        )
         settingsScreen()
     }
 }

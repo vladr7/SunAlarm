@@ -46,6 +46,8 @@ import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePicke
 @Composable
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
+    onAlarmClick: () -> Unit,
+    onSaveOrDiscardClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -55,6 +57,7 @@ fun HomeRoute(
             context = context,
             onAlarmClick = { alarm ->
                 viewModel.onAlarmClick(alarm)
+                onAlarmClick()
             }
         )
     } else {
@@ -64,6 +67,7 @@ fun HomeRoute(
             ),
             onSaveClick = { alarm ->
                 viewModel.onSaveAlarmClick(alarm)
+                onSaveOrDiscardClick()
             }
         )
     }

@@ -8,6 +8,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
@@ -24,52 +28,55 @@ fun MainNavigation(
 ) {
     val items = getBottomNavItems()
     val navController = mainAppState.navController
+    var showBottomBar by rememberSaveable { mutableStateOf(true) }
 
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                modifier = Modifier
-                    .height(106.dp),
-                containerColor = BackgroundBottomColor,
-                contentColor = Color.White,
-            ) {
-                items.forEach { destination ->
-                    val selected =
-                        mainAppState.currentDestination?.isTopLevelDestinationInHierarchy(
-                            destination
-                        ) ?: false
-                    BottomNavigationItem(
-                        icon = {
-                            if (selected) {
-                                Icon(
-                                    imageVector = destination.selectedIcon,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = destination.unselectedIcon,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .alpha(0.5f)
-                                        .blur(radius = 0.5.dp)
-                                        .size(24.dp)
-                                )
-                            }
-                        },
-                        selected = selected,
-                        onClick = {
-                            navController.navigate(destination.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+            if (showBottomBar) {
+                NavigationBar(
+                    modifier = Modifier
+                        .height(70.dp),
+                    containerColor = BackgroundBottomColor,
+                    contentColor = Color.White,
+                ) {
+                    items.forEach { destination ->
+                        val selected =
+                            mainAppState.currentDestination?.isTopLevelDestinationInHierarchy(
+                                destination
+                            ) ?: false
+                        BottomNavigationItem(
+                            icon = {
+                                if (selected) {
+                                    Icon(
+                                        imageVector = destination.selectedIcon,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = destination.unselectedIcon,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .alpha(0.5f)
+                                            .blur(radius = 0.5.dp)
+                                            .size(24.dp)
+                                    )
                                 }
-                                launchSingleTop = true
-                                restoreState = true
+                            },
+                            selected = selected,
+                            onClick = {
+                                navController.navigate(destination.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         },
@@ -77,7 +84,13 @@ fun MainNavigation(
         MainNavHost(
             navController = navController,
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(innerPadding),
+            onAlarmClick = {
+                showBottomBar = false
+            },
+            onSaveOrDiscardClick = {
+                showBottomBar = true
+            }
         )
     }
 }
