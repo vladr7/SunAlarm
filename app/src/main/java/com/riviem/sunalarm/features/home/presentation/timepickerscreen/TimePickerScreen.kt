@@ -25,11 +25,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
@@ -104,8 +108,37 @@ fun LightAlarmConfiguration(
                 onDayClicked(it)
             }
         )
-
+        AlarmTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 25.dp, start = 15.dp, end = 15.dp),
+            alarmName = alarm.name,
+            onAlarmNameChange = {
+                println("vladlog: onValueChange: $it")
+            }
+        )
     }
+}
+
+@Composable
+fun AlarmTextField(
+    modifier: Modifier = Modifier,
+    alarmName: String,
+    onAlarmNameChange: (String) -> Unit
+) {
+    TextField(
+        value = alarmName,
+        onValueChange = onAlarmNameChange,
+        modifier = modifier,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+        ),
+        textStyle = TextStyle(
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+        ),
+    )
 }
 
 @Composable
