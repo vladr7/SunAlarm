@@ -1,7 +1,6 @@
 package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -79,16 +78,12 @@ fun ScrollableTimePicker(
                 .weight(1f),
             content = {
                 items(hours) { hour ->
-                    Box(
+                    TimeScrollItem(
+                        time = hour,
                         modifier = Modifier
-                            .height(100.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TimeScrollItem(
-                            time = hour,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+                            .fillMaxWidth()
+                            .height(100.dp)
+                    )
                 }
             },
             state = hoursState,
@@ -105,16 +100,13 @@ fun ScrollableTimePicker(
                 .weight(1f),
             content = {
                 items(minutes) { minute ->
-                    Box(
+                    TimeScrollItem(
+                        time = minute,
                         modifier = Modifier
+                            .fillMaxWidth()
                             .height(100.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TimeScrollItem(
-                            time = minute,
-                            modifier = Modifier.fillMaxWidth()
+
                         )
-                    }
                 }
             },
             state = minutesState,
