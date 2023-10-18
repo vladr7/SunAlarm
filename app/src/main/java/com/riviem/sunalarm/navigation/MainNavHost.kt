@@ -22,7 +22,7 @@ fun MainNavHost(
     ) {
         homeScreen(
             onAlarmClick = onAlarmClick,
-            onSaveOrDiscardClick = onSaveOrDiscardClick
+            onSaveOrDiscardClick = onSaveOrDiscardClick,
         )
         settingsScreen()
     }

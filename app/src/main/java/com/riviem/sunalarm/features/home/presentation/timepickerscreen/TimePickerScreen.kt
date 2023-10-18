@@ -31,10 +31,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,12 +60,11 @@ fun TimePickerScreen(
                 println("vladlog: onMinuteSelected: $it")
             },
             modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
+                .height(300.dp)
         )
         LightAlarmConfiguration(
             modifier = Modifier
-                .padding(top = 32.dp)
+                .padding(top = 20.dp)
                 .weight(1f)
                 .fillMaxHeight(),
             alarm = alarm,
@@ -78,7 +73,8 @@ fun TimePickerScreen(
             }
         )
         SaveButton(
-            modifier = Modifier,
+            modifier = Modifier
+                .weight(1f),
             onSaveClick = onSaveClick,
             alarm = alarm
         )
@@ -118,7 +114,7 @@ fun LightAlarmConfiguration(
         AlarmTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 25.dp, start = 15.dp, end = 15.dp),
+                .padding(top = 10.dp, start = 15.dp, end = 15.dp),
             alarmName = alarm.name,
             onAlarmNameChange = {
                 println("vladlog: onValueChange: $it")
@@ -272,7 +268,6 @@ fun ScrollableTimePicker(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(300.dp)
     ) {
         Row(
             modifier = modifier

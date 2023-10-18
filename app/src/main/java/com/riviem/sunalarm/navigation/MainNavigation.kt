@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.riviem.sunalarm.ui.theme.BackgroundBottomColor
 
 @Composable
 fun MainNavigation(
@@ -36,7 +36,7 @@ fun MainNavigation(
                 NavigationBar(
                     modifier = Modifier
                         .height(70.dp),
-                    containerColor = BackgroundBottomColor,
+                    containerColor = MaterialTheme.colorScheme.background,
                     contentColor = Color.White,
                 ) {
                     items.forEach { destination ->

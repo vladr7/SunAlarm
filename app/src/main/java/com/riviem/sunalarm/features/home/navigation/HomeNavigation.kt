@@ -13,12 +13,12 @@ fun NavController.navigateToHome(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.homeScreen(
     onAlarmClick: () -> Unit,
-    onSaveOrDiscardClick: () -> Unit
+    onSaveOrDiscardClick: () -> Unit,
 ) {
     composable(route = MainBottomDestination.Home.route) {
         HomeRoute(
             onAlarmClick = onAlarmClick,
-            onSaveOrDiscardClick = onSaveOrDiscardClick
+            onSaveOrDiscardClick = onSaveOrDiscardClick,
         )
     }
 }

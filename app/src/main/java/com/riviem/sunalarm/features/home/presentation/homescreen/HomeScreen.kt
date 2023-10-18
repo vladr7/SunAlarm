@@ -47,7 +47,7 @@ import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePicke
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     onAlarmClick: () -> Unit,
-    onSaveOrDiscardClick: () -> Unit
+    onSaveOrDiscardClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -58,7 +58,7 @@ fun HomeRoute(
             onAlarmClick = { alarm ->
                 viewModel.onAlarmClick(alarm)
                 onAlarmClick()
-            }
+            },
         )
     } else {
         TimePickerScreen(
@@ -79,7 +79,7 @@ fun HomeRoute(
 fun HomeScreen(
     modifier: Modifier = Modifier,
     context: Context,
-    onAlarmClick: (AlarmUIModel) -> Unit
+    onAlarmClick: (AlarmUIModel) -> Unit,
 ) {
     val activity = context as MainActivity
 
@@ -107,7 +107,9 @@ fun HomeScreen(
                 onAlarmClick = onAlarmClick,
                 onCheckedChange = { checked, alarm ->
 
-                }
+                },
+                modifier = modifier
+                    .fillMaxWidth()
             )
         }
     }
@@ -212,6 +214,7 @@ fun AlarmsList(
     )
 ) {
     LazyColumn(
+        modifier = modifier,
         content = {
             items(alarms) { item ->
                 AlarmItem(
