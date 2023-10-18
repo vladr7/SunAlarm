@@ -85,6 +85,10 @@ fun LightAlarmConfiguration(
 ) {
     Column(
         modifier = modifier
+            .background(
+                color = Color.DarkGray.copy(alpha = 0.2f),
+                shape = MaterialTheme.shapes.extraLarge
+            )
             .fillMaxWidth()
     ) {
         SelectDays(
