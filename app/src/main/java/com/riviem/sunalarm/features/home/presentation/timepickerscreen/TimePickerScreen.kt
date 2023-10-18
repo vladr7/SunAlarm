@@ -1,5 +1,8 @@
 package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -43,6 +46,7 @@ fun TimePickerScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScrollableTimePicker(
     modifier: Modifier = Modifier,
@@ -65,7 +69,7 @@ fun ScrollableTimePicker(
 
     Row(
         modifier = modifier
-            .height(240.dp)
+            .height(300.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -75,13 +79,20 @@ fun ScrollableTimePicker(
                 .weight(1f),
             content = {
                 items(hours) { hour ->
-                    TimeScrollItem(
-                        time = hour,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Box(
+                        modifier = Modifier
+                            .height(100.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        TimeScrollItem(
+                            time = hour,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             },
-            state = hoursState
+            state = hoursState,
+            flingBehavior = rememberSnapFlingBehavior(lazyListState = hoursState)
         )
         Text(
             text = ":",
@@ -94,13 +105,20 @@ fun ScrollableTimePicker(
                 .weight(1f),
             content = {
                 items(minutes) { minute ->
-                    TimeScrollItem(
-                        time = minute,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Box(
+                        modifier = Modifier
+                            .height(100.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        TimeScrollItem(
+                            time = minute,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             },
-            state = minutesState
+            state = minutesState,
+            flingBehavior = rememberSnapFlingBehavior(lazyListState = minutesState)
         )
     }
 }
@@ -115,7 +133,6 @@ private fun TimeScrollItem(
         color = Color.White,
         fontSize = 50.sp,
         modifier = modifier
-            .padding(bottom = 30.dp)
             .wrapContentSize(Alignment.Center)
     )
 }
