@@ -1,6 +1,9 @@
 package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -95,7 +98,11 @@ fun TimePickerScreen(
             )
         }
 
-        if (showColorPicker) {
+        AnimatedVisibility(
+            visible = showColorPicker,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             ColorPickerDialog(
                 onColorChanged = {
                     println("vladlog: onColorChanged: $it")
