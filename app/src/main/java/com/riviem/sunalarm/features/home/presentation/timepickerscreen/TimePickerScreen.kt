@@ -233,7 +233,7 @@ fun LightAlarmConfiguration(
         )
         ChooseScreenColor(
             modifier = Modifier
-                .padding(top = 10.dp, start = 15.dp, end = 15.dp),
+                .padding(top = 25.dp, start = 25.dp, end = 15.dp),
             onChooseColorClicked = onChooseColorClicked
         )
     }
