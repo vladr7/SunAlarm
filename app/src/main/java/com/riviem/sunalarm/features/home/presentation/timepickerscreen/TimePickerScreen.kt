@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,13 +32,22 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.skydoves.colorpicker.compose.ColorEnvelope
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.riviem.sunalarm.R
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import kotlinx.coroutines.delay
@@ -47,36 +57,136 @@ fun TimePickerScreen(
     alarm: AlarmUIModel,
     onSaveClick: (AlarmUIModel) -> Unit,
 ) {
+    var showColorPicker by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            ScrollableTimePicker(
+                onHourSelected = {
+                    println("vladlog: onHourSelected: $it")
+                },
+                onMinuteSelected = {
+                    println("vladlog: onMinuteSelected: $it")
+                },
+                modifier = Modifier
+                    .height(300.dp)
+            )
+            LightAlarmConfiguration(
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .weight(1f)
+                    .fillMaxHeight(),
+                alarm = alarm,
+                onDayClicked = {
+                    println("vladlog: onDayClicked: $it")
+                },
+                onChooseColorClicked = {
+                    showColorPicker = !showColorPicker
+                }
+            )
+            SaveButton(
+                modifier = Modifier
+                    .weight(1f),
+                onSaveClick = onSaveClick,
+                alarm = alarm
+            )
+        }
+
+        if (showColorPicker) {
+            ColorPickerDialog(
+                onColorChanged = {
+                    println("vladlog: onColorChanged: $it")
+                },
+                onSaveColorClicked = {
+                    showColorPicker = false
+                },
+                onCancelColorClicked = {
+                    showColorPicker = false
+                },
+            )
+        }
+    }
+}
+
+@Composable
+fun ColorPickerDialog(
+    modifier: Modifier = Modifier,
+    onColorChanged: (Color) -> Unit,
+    onSaveColorClicked: () -> Unit,
+    onCancelColorClicked: () -> Unit
+) {
+    Box(
+        modifier = modifier
             .fillMaxSize()
+            .background(
+                shape = MaterialTheme.shapes.large,
+                color = Color.Black.copy(alpha = 0.9f)
+            )
     ) {
-        ScrollableTimePicker(
-            onHourSelected = {
-                println("vladlog: onHourSelected: $it")
-            },
-            onMinuteSelected = {
-                println("vladlog: onMinuteSelected: $it")
-            },
+        ColorPicker(
+            onColorChanged = onColorChanged,
             modifier = Modifier
-                .height(300.dp)
+                .align(Alignment.Center)
         )
-        LightAlarmConfiguration(
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
-                .padding(top = 20.dp)
-                .weight(1f)
-                .fillMaxHeight(),
-            alarm = alarm,
-            onDayClicked = {
-                println("vladlog: onDayClicked: $it")
-            }
+                .align(Alignment.BottomCenter)
+                .padding(
+                    bottom = 100.dp
+                )
+        ) {
+            SaveColorButton(
+                modifier = Modifier
+                    .padding(bottom = 20.dp, end = 20.dp),
+                onSaveClick = onSaveColorClicked
+            )
+            CancelColorButton(
+                modifier = Modifier
+                    .padding(bottom = 20.dp, start = 20.dp),
+                onCancelClick = onCancelColorClicked
+            )
+        }
+    }
+}
+
+@Composable
+fun CancelColorButton(
+    modifier: Modifier,
+    onCancelClick: () -> Unit
+) {
+    Button(
+        onClick = onCancelClick,
+        modifier = modifier
+            .width(150.dp)
+            .height(50.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.cancel),
+            fontSize = 18.sp,
+            color = Color.White
         )
-        SaveButton(
-            modifier = Modifier
-                .weight(1f),
-            onSaveClick = onSaveClick,
-            alarm = alarm
+    }
+}
+
+@Composable
+fun SaveColorButton(
+    modifier: Modifier = Modifier,
+    onSaveClick: () -> Unit
+) {
+    Button(
+        onClick = onSaveClick,
+        modifier = modifier
+            .width(150.dp)
+            .height(50.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.save_color),
+            fontSize = 18.sp,
+            color = Color.White
         )
     }
 }
@@ -85,7 +195,8 @@ fun TimePickerScreen(
 fun LightAlarmConfiguration(
     modifier: Modifier = Modifier,
     alarm: AlarmUIModel,
-    onDayClicked: (Day) -> Unit
+    onDayClicked: (Day) -> Unit,
+    onChooseColorClicked: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -120,7 +231,51 @@ fun LightAlarmConfiguration(
                 println("vladlog: onValueChange: $it")
             }
         )
+        ChooseScreenColor(
+            modifier = Modifier
+                .padding(top = 10.dp, start = 15.dp, end = 15.dp),
+            onChooseColorClicked = onChooseColorClicked
+        )
     }
+}
+
+@Composable
+fun ChooseScreenColor(
+    modifier: Modifier = Modifier,
+    onChooseColorClicked: () -> Unit
+) {
+    Text(
+        text = stringResource(R.string.screen_color),
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        modifier = modifier
+            .clickable {
+                onChooseColorClicked()
+            }
+    )
+}
+
+@Composable
+fun ColorPicker(
+    modifier: Modifier = Modifier,
+    onColorChanged: (Color) -> Unit,
+) {
+    val controller = rememberColorPickerController()
+
+    HsvColorPicker(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(10.dp),
+        controller = controller,
+        onColorChanged = { colorEnvelope: ColorEnvelope ->
+            val color: Color = colorEnvelope.color
+            val hexCode: String = colorEnvelope.hexCode
+            val fromUser: Boolean = colorEnvelope.fromUser
+            onColorChanged(color)
+        }
+    )
 }
 
 @Composable

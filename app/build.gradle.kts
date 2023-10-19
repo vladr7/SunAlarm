@@ -84,7 +84,7 @@ dependencies {
     implementation(libs.bundles.appupdate)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.play.services.basement)
-
+    implementation(libs.colorpicker.compose)
 
     testImplementation(libs.junit)
     testImplementation(libs.androidx.test.junit)
