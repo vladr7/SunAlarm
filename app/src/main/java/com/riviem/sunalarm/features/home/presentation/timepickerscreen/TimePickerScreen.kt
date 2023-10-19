@@ -244,16 +244,30 @@ fun ChooseScreenColor(
     modifier: Modifier = Modifier,
     onChooseColorClicked: () -> Unit
 ) {
-    Text(
-        text = stringResource(R.string.screen_color),
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color.White,
+    Row(
         modifier = modifier
             .clickable {
                 onChooseColorClicked()
-            }
-    )
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.screen_color),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier
+        )
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .size(25.dp)
+                .background(
+                    shape = CircleShape,
+                    color = Color.Yellow
+                )
+        )
+    }
 }
 
 @Composable
