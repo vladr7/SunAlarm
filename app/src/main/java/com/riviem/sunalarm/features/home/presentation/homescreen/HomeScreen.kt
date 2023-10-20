@@ -2,6 +2,9 @@ package com.riviem.sunalarm.features.home.presentation.homescreen
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,7 +55,7 @@ fun HomeRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    if (!state.showTimePickerScreen) {
+    if(!state.showTimePickerScreen) {
         HomeScreen(
             context = context,
             onAlarmClick = { alarm ->
@@ -60,7 +63,13 @@ fun HomeRoute(
                 onAlarmClick()
             },
         )
-    } else {
+    }
+
+    AnimatedVisibility(
+        visible = state.showTimePickerScreen,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
         TimePickerScreen(
             alarm = state.selectedAlarm ?: AlarmUIModel(
                 id = 0, time = "07:00", name = "Alarm 1", isOn = false, days = listOf()
@@ -71,7 +80,6 @@ fun HomeRoute(
             }
         )
     }
-
 }
 
 @SuppressLint("ScheduleExactAlarm")

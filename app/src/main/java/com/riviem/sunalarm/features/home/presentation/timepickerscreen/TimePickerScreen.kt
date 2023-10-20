@@ -61,6 +61,7 @@ fun TimePickerScreen(
     onSaveClick: (AlarmUIModel) -> Unit,
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
+    var showSnoozeDialog by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -88,6 +89,9 @@ fun TimePickerScreen(
                 },
                 onChooseColorClicked = {
                     showColorPicker = !showColorPicker
+                },
+                onSnoozeClicked = {
+                    showSnoozeDialog = !showSnoozeDialog
                 }
             )
             SaveButton(
@@ -115,7 +119,22 @@ fun TimePickerScreen(
                 },
             )
         }
+
+        AnimatedVisibility(
+            visible = showSnoozeDialog,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            SnoozeDialog(
+
+            )
+        }
     }
+}
+
+@Composable
+fun SnoozeDialog() {
+
 }
 
 @Composable
@@ -146,15 +165,15 @@ fun ColorPickerDialog(
                     bottom = 100.dp
                 )
         ) {
-            SaveColorButton(
-                modifier = Modifier
-                    .padding(bottom = 20.dp, end = 20.dp),
-                onSaveClick = onSaveColorClicked
-            )
             CancelColorButton(
                 modifier = Modifier
                     .padding(bottom = 20.dp, start = 20.dp),
                 onCancelClick = onCancelColorClicked
+            )
+            SaveColorButton(
+                modifier = Modifier
+                    .padding(bottom = 20.dp, end = 20.dp),
+                onSaveClick = onSaveColorClicked
             )
         }
     }
@@ -203,7 +222,8 @@ fun LightAlarmConfiguration(
     modifier: Modifier = Modifier,
     alarm: AlarmUIModel,
     onDayClicked: (Day) -> Unit,
-    onChooseColorClicked: () -> Unit
+    onChooseColorClicked: () -> Unit,
+    onSnoozeClicked: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -229,7 +249,7 @@ fun LightAlarmConfiguration(
                 onDayClicked(it)
             }
         )
-        AlarmTextField(
+        ChangeAlarmName(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, start = 15.dp, end = 15.dp),
@@ -243,7 +263,29 @@ fun LightAlarmConfiguration(
                 .padding(top = 25.dp, start = 25.dp, end = 15.dp),
             onChooseColorClicked = onChooseColorClicked
         )
+        ConfigureSnooze(
+            modifier = Modifier
+                .padding(top = 25.dp, start = 25.dp, end = 15.dp),
+            onSnoozeClicked = onSnoozeClicked
+        )
     }
+}
+
+@Composable
+fun ConfigureSnooze(
+    modifier: Modifier = Modifier,
+    onSnoozeClicked: () -> Unit
+) {
+    Text(
+        modifier = modifier
+            .clickable {
+                onSnoozeClicked()
+            },
+        text = stringResource(R.string.snooze),
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.White
+    )
 }
 
 @Composable
@@ -300,7 +342,7 @@ fun ColorPicker(
 }
 
 @Composable
-fun AlarmTextField(
+fun ChangeAlarmName(
     modifier: Modifier = Modifier,
     alarmName: String,
     onAlarmNameChange: (String) -> Unit

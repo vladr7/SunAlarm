@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SunAlarm</string>
-    <string name="screen_color">Screen color</string>
+    <string name="screen_color">Light color</string>
     <string name="save_color">Save color</string>
     <string name="cancel">Cancel</string>
+    <string name="snooze">Snooze</string>
 </resources>
