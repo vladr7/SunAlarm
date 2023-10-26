@@ -14,6 +14,14 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     private val _state = MutableStateFlow<HomeState>(HomeState())
     val state: StateFlow<HomeState> = _state
 
+    init {
+        getAlarms()
+    }
+
+    private fun getAlarms() {
+
+    }
+
     fun onAlarmClick(alarm: AlarmUIModel) {
         _state.update {
             it.copy(
@@ -35,6 +43,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
 
 data class HomeState(
     val showTimePickerScreen: Boolean = false,
-    val selectedAlarm: AlarmUIModel? = null
+    val selectedAlarm: AlarmUIModel? = null,
+    val alarms: List<AlarmUIModel> = emptyList()
 )
 

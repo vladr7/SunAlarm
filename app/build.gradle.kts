@@ -85,6 +85,10 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.play.services.basement)
     implementation(libs.colorpicker.compose)
+    implementation(libs.room.runtime)
+    implementation(libs.room.coroutines)
+    annotationProcessor(libs.room.annotationProcessor)
+    kapt(libs.room.annotationProcessor)
 
     testImplementation(libs.junit)
     testImplementation(libs.androidx.test.junit)
