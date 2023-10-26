@@ -61,7 +61,6 @@ fun TimePickerScreen(
     onSaveClick: (AlarmUIModel) -> Unit,
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
-    var showSnoozeDialog by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -90,9 +89,6 @@ fun TimePickerScreen(
                 onChooseColorClicked = {
                     showColorPicker = !showColorPicker
                 },
-                onSnoozeClicked = {
-                    showSnoozeDialog = !showSnoozeDialog
-                }
             )
             SaveButton(
                 modifier = Modifier
@@ -119,22 +115,7 @@ fun TimePickerScreen(
                 },
             )
         }
-
-        AnimatedVisibility(
-            visible = showSnoozeDialog,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            SnoozeDialog(
-
-            )
-        }
     }
-}
-
-@Composable
-fun SnoozeDialog() {
-
 }
 
 @Composable
@@ -160,6 +141,7 @@ fun ColorPickerDialog(
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
+                .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(
                     bottom = 100.dp
@@ -223,7 +205,6 @@ fun LightAlarmConfiguration(
     alarm: AlarmUIModel,
     onDayClicked: (Day) -> Unit,
     onChooseColorClicked: () -> Unit,
-    onSnoozeClicked: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -263,29 +244,7 @@ fun LightAlarmConfiguration(
                 .padding(top = 25.dp, start = 25.dp, end = 15.dp),
             onChooseColorClicked = onChooseColorClicked
         )
-        ConfigureSnooze(
-            modifier = Modifier
-                .padding(top = 25.dp, start = 25.dp, end = 15.dp),
-            onSnoozeClicked = onSnoozeClicked
-        )
     }
-}
-
-@Composable
-fun ConfigureSnooze(
-    modifier: Modifier = Modifier,
-    onSnoozeClicked: () -> Unit
-) {
-    Text(
-        modifier = modifier
-            .clickable {
-                onSnoozeClicked()
-            },
-        text = stringResource(R.string.snooze),
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color.White
-    )
 }
 
 @Composable
