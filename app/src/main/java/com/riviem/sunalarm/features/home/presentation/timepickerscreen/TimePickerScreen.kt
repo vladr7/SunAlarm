@@ -72,18 +72,18 @@ fun TimePickerScreen(
             ScrollableTimePicker(
                 onHourSelected = {
                     newAlarm = newAlarm.copy(
-                        time = newAlarm.time.withHour(it)
+                        ringTime = newAlarm.ringTime.withHour(it)
                     )
                 },
                 onMinuteSelected = {
                     newAlarm = newAlarm.copy(
-                        time = newAlarm.time.withMinute(it)
+                        ringTime = newAlarm.ringTime.withMinute(it)
                     )
                 },
                 modifier = Modifier
                     .height(300.dp),
-                selectedHour = alarm.time.hour,
-                selectedMinute = alarm.time.minute
+                selectedHour = alarm.ringTime.hour,
+                selectedMinute = alarm.ringTime.minute
             )
             LightAlarmConfiguration(
                 modifier = Modifier

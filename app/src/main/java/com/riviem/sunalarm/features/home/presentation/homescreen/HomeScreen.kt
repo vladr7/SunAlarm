@@ -205,7 +205,7 @@ fun AlarmsList(
                         onCheckedChange(it, item)
                     },
                     days = item.days,
-                    time = item.time,
+                    time = item.ringTime,
                     isOn = item.isOn,
                     name = item.name
                 )

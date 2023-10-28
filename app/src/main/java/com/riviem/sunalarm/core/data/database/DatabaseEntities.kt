@@ -12,7 +12,7 @@ import java.time.ZonedDateTime
 data class DatabaseAlarm(
     @PrimaryKey
     val id: String,
-    val time: String,
+    val ringTime: String,
     val name: String,
     val isOn: Boolean,
     val days: List<Day>,
@@ -23,7 +23,7 @@ data class DatabaseAlarm(
 fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
     return DatabaseAlarm(
         id = id,
-        time = time.toString(),
+        ringTime = ringTime.toString(),
         name = name,
         isOn = isOn,
         days = days,
@@ -35,7 +35,7 @@ fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
 fun DatabaseAlarm.asUIModel(): AlarmUIModel {
     return AlarmUIModel(
         id = id,
-        time = ZonedDateTime.parse(time),
+        ringTime = ZonedDateTime.parse(ringTime),
         name = name,
         isOn = isOn,
         days = days,

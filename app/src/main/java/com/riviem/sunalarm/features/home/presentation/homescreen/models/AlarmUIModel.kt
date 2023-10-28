@@ -5,7 +5,7 @@ import java.time.ZonedDateTime
 
 data class AlarmUIModel(
     val id: String,
-    val time: ZonedDateTime,
+    val ringTime: ZonedDateTime,
     val name: String,
     val isOn: Boolean,
     val days: List<Day> = weekDays,

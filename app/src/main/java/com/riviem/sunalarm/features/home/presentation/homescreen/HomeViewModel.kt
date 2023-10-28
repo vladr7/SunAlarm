@@ -27,7 +27,7 @@ class HomeViewModel @Inject constructor(
         HomeState(
             selectedAlarm = AlarmUIModel(
                 id = UUID.randomUUID().toString(),
-                time = ZonedDateTime.now(),
+                ringTime = ZonedDateTime.now(),
                 name = "Alarm",
                 isOn = false,
                 color = Color.Yellow
@@ -79,7 +79,7 @@ class HomeViewModel @Inject constructor(
                 showTimePickerScreen = true,
                 selectedAlarm = AlarmUIModel(
                     id = UUID.randomUUID().toString(),
-                    time = ZonedDateTime.now(),
+                    ringTime = ZonedDateTime.now(),
                     name = "Alarm",
                     isOn = false,
                     color = Color.Yellow
