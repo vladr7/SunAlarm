@@ -21,8 +21,11 @@ interface AlarmDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(alarms: List<DatabaseAlarm>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(alarm: DatabaseAlarm)
+
     @Query("delete from databasealarm")
-    fun deleteAllFoods()
+    fun deleteAllAlarms()
 }
 
 @Database(entities = [DatabaseAlarm::class], version = 1)

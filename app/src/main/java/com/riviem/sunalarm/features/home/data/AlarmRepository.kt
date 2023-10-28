@@ -8,4 +8,8 @@ interface AlarmRepository {
     fun getAlarms(): Flow<List<DatabaseAlarm>>
 
     fun insertAll(alarms: List<DatabaseAlarm>)
+
+    fun deleteAllAlarms()
+
+    fun insert(alarm: DatabaseAlarm)
 }

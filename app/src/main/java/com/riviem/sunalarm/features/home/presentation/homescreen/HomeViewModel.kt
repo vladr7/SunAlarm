@@ -78,6 +78,21 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    fun onAddNewAlarmClick() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val randomNumber = (0..1000).random()
+            alarmRepository.insert(
+                alarm = DatabaseAlarm(
+                    id = randomNumber,
+                    time = "12:10",
+                    name = "Alarm $randomNumber",
+                    isOn = true,
+                    days = listOf()
+                )
+            )
+        }
+    }
 }
 
 data class HomeState(

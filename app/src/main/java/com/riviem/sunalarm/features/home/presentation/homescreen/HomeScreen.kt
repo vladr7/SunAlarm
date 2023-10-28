@@ -55,14 +55,17 @@ fun HomeRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    if(!state.showTimePickerScreen) {
+    if (!state.showTimePickerScreen) {
         HomeScreen(
             context = context,
             onAlarmClick = { alarm ->
                 viewModel.onAlarmClick(alarm)
                 onAlarmClick()
             },
-            alarms = state.alarms
+            alarms = state.alarms,
+            onAddNewAlarmClick = {
+                viewModel.onAddNewAlarmClick()
+            }
         )
     }
 
@@ -89,7 +92,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     context: Context,
     onAlarmClick: (AlarmUIModel) -> Unit,
-    alarms: List<AlarmUIModel>
+    alarms: List<AlarmUIModel>,
+    onAddNewAlarmClick: () -> Unit
 ) {
     val activity = context as MainActivity
 
@@ -110,7 +114,7 @@ fun HomeScreen(
                 modifier = modifier
                     .padding(top = 20.dp),
                 onClick = {
-
+                    onAddNewAlarmClick()
                 }
             )
             AlarmsList(
