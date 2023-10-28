@@ -34,12 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
+import com.riviem.sunalarm.R
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
@@ -274,7 +276,11 @@ fun AlarmSelectedDays(
     days: List<Day>
 ) {
     if (days.allDoorsSelected()) {
-        Text(text = "Every day", fontSize = 16.sp, color = Color.White)
+        Text(
+            text = stringResource(R.string.every_day), fontSize = 16.sp, color = Color.White,
+            modifier = modifier
+                .padding(end = 10.dp)
+        )
     } else {
         Row(
             modifier = modifier
