@@ -89,7 +89,7 @@ fun TimePickerScreen(
                     .padding(top = 20.dp)
                     .weight(1f)
                     .fillMaxHeight(),
-                alarm = alarm,
+                alarm = newAlarm,
                 onDayClicked = {
                     newAlarm = newAlarm.copy(
                         days = newAlarm.days.map { day ->
@@ -104,6 +104,11 @@ fun TimePickerScreen(
                 onChooseColorClicked = {
                     showColorPicker = !showColorPicker
                 },
+                onAlarmNameChange = {
+                    newAlarm = newAlarm.copy(
+                        name = it
+                    )
+                }
             )
             SaveButton(
                 modifier = Modifier
@@ -225,6 +230,7 @@ fun LightAlarmConfiguration(
     alarm: AlarmUIModel,
     onDayClicked: (Day) -> Unit,
     onChooseColorClicked: () -> Unit,
+    onAlarmNameChange: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -256,7 +262,7 @@ fun LightAlarmConfiguration(
                 .padding(top = 10.dp, start = 15.dp, end = 15.dp),
             alarmName = alarm.name,
             onAlarmNameChange = {
-                println("vladlog: onValueChange: $it")
+                onAlarmNameChange(it)
             }
         )
         ChooseScreenColor(

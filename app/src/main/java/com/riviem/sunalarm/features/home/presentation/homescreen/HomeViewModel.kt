@@ -43,6 +43,8 @@ class HomeViewModel @Inject constructor(
     private fun getAlarms() {
         viewModelScope.launch {
             alarmRepository.getAlarms().collectLatest { databaseAlarms ->
+                println("vladlog: ------------------------------------")
+                println("vladlog: ${databaseAlarms.asUIModel()}")
                 _state.update {
                     it.copy(alarms = databaseAlarms.asUIModel())
                 }
