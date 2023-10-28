@@ -93,7 +93,7 @@ fun TimePickerScreen(
                 onDayClicked = {
                     newAlarm = newAlarm.copy(
                         days = newAlarm.days.map { day ->
-                            if (day.dayLetter == it.dayLetter) {
+                            if (day.dayFullName == it.dayFullName) {
                                 day.copy(isSelected = !day.isSelected)
                             } else {
                                 day
