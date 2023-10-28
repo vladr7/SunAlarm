@@ -1,8 +1,10 @@
 package com.riviem.sunalarm.features.home.presentation.homescreen.models
 
+import java.time.ZonedDateTime
+
 data class AlarmUIModel(
-    val id: Int,
-    val time: String,
+    val id: String,
+    val time: ZonedDateTime,
     val name: String,
     val isOn: Boolean,
     val days: List<Day> = weekDays

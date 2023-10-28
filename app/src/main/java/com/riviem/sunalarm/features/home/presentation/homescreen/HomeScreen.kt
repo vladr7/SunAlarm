@@ -46,6 +46,7 @@ import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIM
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePickerScreen
+import java.time.ZonedDateTime
 
 
 @Composable
@@ -77,9 +78,7 @@ fun HomeRoute(
         exit = fadeOut()
     ) {
         TimePickerScreen(
-            alarm = state.selectedAlarm ?: AlarmUIModel(
-                id = 0, time = "07:00", name = "Alarm 1", isOn = false, days = listOf()
-            ),
+            alarm = state.selectedAlarm,
             onSaveClick = { alarm ->
                 viewModel.onSaveAlarmClick(alarm)
                 onSaveOrDiscardClick()
@@ -214,7 +213,7 @@ fun AlarmsList(
 @Composable
 fun AlarmItem(
     modifier: Modifier = Modifier,
-    time: String,
+    time: ZonedDateTime,
     name: String,
     isOn: Boolean,
     onAlarmClick: () -> Unit,
@@ -251,7 +250,7 @@ fun AlarmItem(
 }
 
 @Composable
-private fun AlarmNameAndTime(name: String, time: String) {
+private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
     Column {
         Text(
             text = name,
@@ -262,7 +261,7 @@ private fun AlarmNameAndTime(name: String, time: String) {
                 .offset(y = (-10).dp)
         )
         Text(
-            text = time,
+            text = "${time.hour}:${time.minute}",
             fontSize = 30.sp,
             color = Color.White,
             modifier = Modifier.padding(start = 18.dp, top = 10.dp)

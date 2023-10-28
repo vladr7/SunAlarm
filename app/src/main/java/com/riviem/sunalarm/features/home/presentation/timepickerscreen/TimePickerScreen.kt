@@ -75,7 +75,9 @@ fun TimePickerScreen(
                     println("vladlog: onMinuteSelected: $it")
                 },
                 modifier = Modifier
-                    .height(300.dp)
+                    .height(300.dp),
+                selectedHour = alarm.time.hour,
+                selectedMinute = alarm.time.minute
             )
             LightAlarmConfiguration(
                 modifier = Modifier
@@ -411,8 +413,8 @@ fun SaveButton(
 @Composable
 fun ScrollableTimePicker(
     modifier: Modifier = Modifier,
-    selectedHour: Int = 15,
-    selectedMinute: Int = 39,
+    selectedHour: Int,
+    selectedMinute: Int,
     onHourSelected: (Int) -> Unit,
     onMinuteSelected: (Int) -> Unit,
 ) {

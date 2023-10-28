@@ -2,17 +2,17 @@ package com.riviem.sunalarm.features.home.presentation.homescreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,35 +20,20 @@ class HomeViewModel @Inject constructor(
     private val alarmRepository: AlarmRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<HomeState>(HomeState())
+    private val _state = MutableStateFlow<HomeState>(
+        HomeState(
+            selectedAlarm = AlarmUIModel(
+                id = UUID.randomUUID().toString(),
+                time = ZonedDateTime.now(),
+                name = "Alarm",
+                isOn = false,
+            )
+        )
+    )
     val state: StateFlow<HomeState> = _state
 
     init {
-        updateAlarmList()
         getAlarms()
-    }
-
-    private fun updateAlarmList() {
-        viewModelScope.launch(Dispatchers.IO) {
-            alarmRepository.insertAll(
-                alarms = listOf(
-                    DatabaseAlarm(
-                        id = 1,
-                        time = "12:00",
-                        name = "Alarm 1",
-                        isOn = true,
-                        days = listOf()
-                    ),
-                    DatabaseAlarm(
-                        id = 2,
-                        time = "12:05",
-                        name = "Alarm 2",
-                        isOn = true,
-                        days = listOf()
-                    ),
-                )
-            )
-        }
     }
 
     private fun getAlarms() {
@@ -80,15 +65,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAddNewAlarmClick() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val randomNumber = (0..1000).random()
-            alarmRepository.insert(
-                alarm = DatabaseAlarm(
-                    id = randomNumber,
-                    time = "12:10",
-                    name = "Alarm $randomNumber",
-                    isOn = true,
-                    days = listOf()
+        _state.update {
+            it.copy(
+                showTimePickerScreen = true,
+                selectedAlarm = AlarmUIModel(
+                    id = UUID.randomUUID().toString(),
+                    time = ZonedDateTime.now(),
+                    name = "Alarm",
+                    isOn = false,
                 )
             )
         }
@@ -97,7 +81,7 @@ class HomeViewModel @Inject constructor(
 
 data class HomeState(
     val showTimePickerScreen: Boolean = false,
-    val selectedAlarm: AlarmUIModel? = null,
+    val selectedAlarm: AlarmUIModel,
     val alarms: List<AlarmUIModel> = emptyList()
 )
 
