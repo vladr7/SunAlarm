@@ -61,6 +61,7 @@ fun TimePickerScreen(
     onSaveClick: (AlarmUIModel) -> Unit,
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
+    var newAlarm by remember { mutableStateOf(alarm) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -69,10 +70,14 @@ fun TimePickerScreen(
         ) {
             ScrollableTimePicker(
                 onHourSelected = {
-                    println("vladlog: onHourSelected: $it")
+                    newAlarm = newAlarm.copy(
+                        time = newAlarm.time.withHour(it)
+                    )
                 },
                 onMinuteSelected = {
-                    println("vladlog: onMinuteSelected: $it")
+                    newAlarm = newAlarm.copy(
+                        time = newAlarm.time.withMinute(it)
+                    )
                 },
                 modifier = Modifier
                     .height(300.dp),
@@ -86,7 +91,15 @@ fun TimePickerScreen(
                     .fillMaxHeight(),
                 alarm = alarm,
                 onDayClicked = {
-                    println("vladlog: onDayClicked: $it")
+                    newAlarm = newAlarm.copy(
+                        days = newAlarm.days.map { day ->
+                            if (day.dayLetter == it.dayLetter) {
+                                day.copy(isSelected = !day.isSelected)
+                            } else {
+                                day
+                            }
+                        }
+                    )
                 },
                 onChooseColorClicked = {
                     showColorPicker = !showColorPicker
@@ -95,8 +108,11 @@ fun TimePickerScreen(
             SaveButton(
                 modifier = Modifier
                     .weight(1f),
-                onSaveClick = onSaveClick,
-                alarm = alarm
+                onSaveClick = {
+                    onSaveClick(
+                        newAlarm
+                    )
+                },
             )
         }
 
@@ -107,7 +123,9 @@ fun TimePickerScreen(
         ) {
             ColorPickerDialog(
                 onColorChanged = {
-                    println("vladlog: onColorChanged: $it")
+                    newAlarm = newAlarm.copy(
+                        color = it
+                    )
                 },
                 onSaveColorClicked = {
                     showColorPicker = false
@@ -388,8 +406,7 @@ fun CheckboxDay(
 @Composable
 fun SaveButton(
     modifier: Modifier = Modifier,
-    onSaveClick: (AlarmUIModel) -> Unit,
-    alarm: AlarmUIModel
+    onSaveClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -400,7 +417,7 @@ fun SaveButton(
             modifier = modifier
                 .padding(16.dp),
             onClick = {
-                onSaveClick(alarm)
+                onSaveClick()
             }
         ) {
             Text(text = "Save")

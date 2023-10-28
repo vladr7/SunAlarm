@@ -1,5 +1,7 @@
 package com.riviem.sunalarm.core.data.database
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
@@ -13,7 +15,8 @@ data class DatabaseAlarm(
     val time: String,
     val name: String,
     val isOn: Boolean,
-    val days: List<Day>
+    val days: List<Day>,
+    val color: Int
 )
 
 fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
@@ -22,7 +25,8 @@ fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
         time = time.toString(),
         name = name,
         isOn = isOn,
-        days = days
+        days = days,
+        color = color.toArgb()
     )
 }
 
@@ -32,31 +36,20 @@ fun DatabaseAlarm.asUIModel(): AlarmUIModel {
         time = ZonedDateTime.parse(time),
         name = name,
         isOn = isOn,
-        days = days
+        days = days,
+        color = Color(color)
     )
 }
 
 fun List<DatabaseAlarm>.asUIModel(): List<AlarmUIModel> {
-    return map {
-        AlarmUIModel(
-            id = it.id,
-            time = ZonedDateTime.parse(it.time),
-            name = it.name,
-            isOn = it.isOn,
-            days = it.days
-        )
+    return this.map {
+        it.asUIModel()
     }
 }
 
 fun List<AlarmUIModel>.asDatabaseModel(): List<DatabaseAlarm> {
     return this.map {
-        DatabaseAlarm(
-            id = it.id,
-            time = it.time.toString(),
-            name = it.name,
-            isOn = it.isOn,
-            days = it.days
-        )
+        it.asDatabaseModel()
     }
 }
 

@@ -1,5 +1,6 @@
 package com.riviem.sunalarm.features.home.presentation.homescreen.models
 
+import androidx.compose.ui.graphics.Color
 import java.time.ZonedDateTime
 
 data class AlarmUIModel(
@@ -7,7 +8,8 @@ data class AlarmUIModel(
     val time: ZonedDateTime,
     val name: String,
     val isOn: Boolean,
-    val days: List<Day> = weekDays
+    val days: List<Day> = weekDays,
+    val color: Color
 )
 
 val weekDays = listOf(

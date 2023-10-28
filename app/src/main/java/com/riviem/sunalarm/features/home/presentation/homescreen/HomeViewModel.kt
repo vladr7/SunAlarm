@@ -1,11 +1,14 @@
 package com.riviem.sunalarm.features.home.presentation.homescreen
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.riviem.sunalarm.core.data.database.asDatabaseModel
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -27,6 +30,7 @@ class HomeViewModel @Inject constructor(
                 time = ZonedDateTime.now(),
                 name = "Alarm",
                 isOn = false,
+                color = Color.Yellow
             )
         )
     )
@@ -56,6 +60,9 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onSaveAlarmClick(alarm: AlarmUIModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            alarmRepository.insert(alarm.asDatabaseModel())
+        }
         _state.update {
             it.copy(
                 showTimePickerScreen = false,
@@ -73,6 +80,7 @@ class HomeViewModel @Inject constructor(
                     time = ZonedDateTime.now(),
                     name = "Alarm",
                     isOn = false,
+                    color = Color.Yellow
                 )
             )
         }
