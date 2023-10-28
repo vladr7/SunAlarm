@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AlarmDao{
 
-    @Query("select * from databasealarm")
+    @Query("select * from databasealarm order by createdTimestamp desc")
     fun getAlarms(): Flow<List<DatabaseAlarm>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

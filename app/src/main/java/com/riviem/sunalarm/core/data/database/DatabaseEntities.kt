@@ -16,7 +16,8 @@ data class DatabaseAlarm(
     val name: String,
     val isOn: Boolean,
     val days: List<Day>,
-    val color: Int
+    val color: Int,
+    val createdTimestamp: String
 )
 
 fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
@@ -26,7 +27,8 @@ fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
         name = name,
         isOn = isOn,
         days = days,
-        color = color.toArgb()
+        color = color.toArgb(),
+        createdTimestamp = createdTimestamp.toString()
     )
 }
 
@@ -37,7 +39,8 @@ fun DatabaseAlarm.asUIModel(): AlarmUIModel {
         name = name,
         isOn = isOn,
         days = days,
-        color = Color(color)
+        color = Color(color),
+        createdTimestamp = ZonedDateTime.parse(createdTimestamp)
     )
 }
 

@@ -9,7 +9,8 @@ data class AlarmUIModel(
     val name: String,
     val isOn: Boolean,
     val days: List<Day> = weekDays,
-    val color: Color
+    val color: Color,
+    val createdTimestamp: ZonedDateTime = ZonedDateTime.now()
 )
 
 val weekDays = listOf(
