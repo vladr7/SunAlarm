@@ -68,6 +68,9 @@ fun HomeRoute(
             alarms = state.alarms,
             onAddNewAlarmClick = {
                 viewModel.onAddNewAlarmClick()
+            },
+            onAlarmCheckChanged = { checked, alarm ->
+                viewModel.onAlarmCheckChanged(checked, alarm)
             }
         )
     }
@@ -94,7 +97,8 @@ fun HomeScreen(
     context: Context,
     onAlarmClick: (AlarmUIModel) -> Unit,
     alarms: List<AlarmUIModel>,
-    onAddNewAlarmClick: () -> Unit
+    onAddNewAlarmClick: () -> Unit,
+    onAlarmCheckChanged: (Boolean, AlarmUIModel) -> Unit,
 ) {
     val activity = context as MainActivity
 
@@ -121,7 +125,7 @@ fun HomeScreen(
             AlarmsList(
                 onAlarmClick = onAlarmClick,
                 onCheckedChange = { checked, alarm ->
-
+                    onAlarmCheckChanged(checked, alarm)
                 },
                 modifier = modifier
                     .fillMaxWidth(),

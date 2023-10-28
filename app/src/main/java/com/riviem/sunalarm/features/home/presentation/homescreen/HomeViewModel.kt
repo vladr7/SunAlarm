@@ -87,6 +87,13 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    fun onAlarmCheckChanged(checked: Boolean, alarm: AlarmUIModel) {
+        val newAlarm = alarm.copy(isOn = checked)
+        viewModelScope.launch(Dispatchers.IO) {
+            alarmRepository.insert(newAlarm.asDatabaseModel())
+        }
+    }
 }
 
 data class HomeState(
