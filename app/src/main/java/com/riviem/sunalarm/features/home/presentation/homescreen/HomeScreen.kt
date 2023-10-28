@@ -41,7 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.DayUIModel
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePickerScreen
 
@@ -62,6 +62,7 @@ fun HomeRoute(
                 viewModel.onAlarmClick(alarm)
                 onAlarmClick()
             },
+            alarms = state.alarms
         )
     }
 
@@ -88,6 +89,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     context: Context,
     onAlarmClick: (AlarmUIModel) -> Unit,
+    alarms: List<AlarmUIModel>
 ) {
     val activity = context as MainActivity
 
@@ -117,7 +119,8 @@ fun HomeScreen(
 
                 },
                 modifier = modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                alarms = alarms
             )
         }
     }
@@ -179,47 +182,7 @@ fun AlarmsList(
     modifier: Modifier = Modifier,
     onAlarmClick: (AlarmUIModel) -> Unit,
     onCheckedChange: (Boolean, AlarmUIModel) -> Unit,
-    alarms: List<AlarmUIModel> = listOf(
-        AlarmUIModel(
-            id = 0,
-            time = "07:00",
-            isOn = false,
-            name = "Alarm 1",
-        ),
-        AlarmUIModel(
-            id = 1,
-            time = "07:10",
-            isOn = true,
-            name = "Alarm 1",
-        ),
-        AlarmUIModel(
-            id = 2,
-            time = "07:20",
-            isOn = true,
-            name = "Alarm 1",
-
-            ),
-        AlarmUIModel(
-            id = 3,
-            time = "07:30",
-            isOn = true,
-            name = "Alarm 1",
-
-            ),
-        AlarmUIModel(
-            id = 4,
-            time = "07:40",
-            isOn = false,
-            name = "Alarm 1",
-
-            ),
-        AlarmUIModel(
-            id = 5,
-            time = "07:50",
-            isOn = false,
-            name = "Alarm 1",
-        ),
-    )
+    alarms: List<AlarmUIModel>
 ) {
     LazyColumn(
         modifier = modifier,
@@ -250,7 +213,7 @@ fun AlarmItem(
     isOn: Boolean,
     onAlarmClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
-    days: List<DayUIModel>
+    days: List<Day>
 ) {
     Row(
         modifier = modifier
@@ -304,7 +267,7 @@ private fun AlarmNameAndTime(name: String, time: String) {
 @Composable
 fun AlarmSelectedDays(
     modifier: Modifier = Modifier,
-    days: List<DayUIModel>
+    days: List<Day>
 ) {
     if (days.allDoorsSelected()) {
         Text(text = "Every day", fontSize = 16.sp, color = Color.White)
@@ -319,7 +282,7 @@ fun AlarmSelectedDays(
                 DayWithOrWithoutDot(
                     modifier = modifier
                         .padding(end = 3.dp),
-                    day = day.day.dayLetter,
+                    day = day.dayLetter,
                     isSelected = day.isSelected
                 )
             }

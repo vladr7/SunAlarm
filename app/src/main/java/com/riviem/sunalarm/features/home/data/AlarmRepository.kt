@@ -1,8 +1,11 @@
 package com.riviem.sunalarm.features.home.data
 
-import com.riviem.sunalarm.features.home.data.models.Alarm
+import com.riviem.sunalarm.core.data.database.DatabaseAlarm
+import kotlinx.coroutines.flow.Flow
 
 interface AlarmRepository {
 
-    fun getAlarms(): List<Alarm>
+    fun getAlarms(): Flow<List<DatabaseAlarm>>
+
+    fun insertAll(alarms: List<DatabaseAlarm>)
 }

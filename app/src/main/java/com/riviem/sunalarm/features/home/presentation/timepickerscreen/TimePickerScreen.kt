@@ -335,7 +335,7 @@ fun SelectDays(
     ) {
         alarm.days.forEach { dayUIModel ->
             CheckboxDay(
-                day = dayUIModel.day,
+                day = dayUIModel,
                 isSelected = dayUIModel.isSelected,
                 onDayClicked = onDayClicked
             )

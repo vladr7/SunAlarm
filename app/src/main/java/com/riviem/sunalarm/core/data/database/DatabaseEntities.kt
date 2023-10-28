@@ -2,41 +2,39 @@ package com.riviem.sunalarm.core.data.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.firebase.Timestamp
-import com.riviem.sunalarm.features.home.data.models.Alarm
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.DayUIModel
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 
 @Entity
-data class DatabaseAlarm (
+data class DatabaseAlarm(
     @PrimaryKey
-    val id: String = "",
+    val id: Int,
     val time: String,
     val name: String,
     val isOn: Boolean,
-    val days: List<DayUIModel> = weekDays
+    val days: List<Day>
 )
 
-fun List<DatabaseAlarm>.asDomainModel(): List<Alarm> {
+fun List<DatabaseAlarm>.asUIModel(): List<AlarmUIModel> {
     return map {
-        Alarm(
-
+        AlarmUIModel(
+            id = it.id,
+            time = it.time,
+            name = it.name,
+            isOn = it.isOn,
+            days = it.days
         )
     }
 }
 
-fun List<Food>.asDatabaseModel(): List<DatabaseAlarm> {
+fun List<AlarmUIModel>.asDatabaseModel(): List<DatabaseAlarm> {
     return this.map {
         DatabaseAlarm(
             id = it.id,
-            author = it.author,
-            authorUid = it.authorUid,
-            description = it.description,
-            addedDateInSeconds = it.addedDateInSeconds,
-            imageRef = it.imageRef,
-            category = it.category,
-            ingredients = it.ingredients,
-            title = it.title
+            time = it.time,
+            name = it.name,
+            isOn = it.isOn,
+            days = it.days
         )
     }
 }
