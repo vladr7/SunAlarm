@@ -1,5 +1,6 @@
 package com.riviem.sunalarm.features.light
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.core.data.database.asUIModel
@@ -16,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LightViewModel @Inject constructor(
     private val alarmRepository: AlarmRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow<LightState>(LightState())
     val state: StateFlow<LightState> = _state
@@ -28,6 +29,12 @@ class LightViewModel @Inject constructor(
                 it.copy(selectedAlarm = alarm.asUIModel())
             }
             println("vladlog: getAlarmById: ${alarm.asUIModel()}")
+        }
+    }
+
+    fun stopAlarm(alarm: AlarmUIModel, context: Context) {
+        if (alarm.isOn) {
+            alarmRepository.setNextLightAlarm(alarm = alarm, context = context)
         }
     }
 }

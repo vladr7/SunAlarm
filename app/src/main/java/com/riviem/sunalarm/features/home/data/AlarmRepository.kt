@@ -19,5 +19,7 @@ interface AlarmRepository {
 
     fun setLightAlarm(alarm: AlarmUIModel, context: Context)
 
+    fun setNextLightAlarm(alarm: AlarmUIModel, context: Context)
+
     fun cancelAlarm(alarm: AlarmUIModel, context: Context)
 }

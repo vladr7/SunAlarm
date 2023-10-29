@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Day(
     @DocumentId
-    val dayLetter: String,
-    val dayFullName: String,
+    val letter: String,
+    val fullName: String,
     val isSelected: Boolean
 ): java.io.Serializable
 

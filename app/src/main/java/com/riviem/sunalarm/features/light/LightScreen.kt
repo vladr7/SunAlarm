@@ -25,6 +25,7 @@ fun LightScreen(
     createdTimestamp: Int,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = androidx.compose.ui.platform.LocalContext.current
     val activity = androidx.compose.ui.platform.LocalContext.current as android.app.Activity
 
     LaunchedEffect(key1 = Unit) {
@@ -42,6 +43,9 @@ fun LightScreen(
     ) {
         Button(
             onClick = {
+                state.selectedAlarm?.let {
+                    viewModel.stopAlarm(it, context = context)
+                }
                 activity.finishAffinity()
             },
             modifier = Modifier.size(200.dp),
@@ -55,6 +59,9 @@ fun LightScreen(
         }
         Button(
             onClick = {
+                state.selectedAlarm?.let {
+                    viewModel.stopAlarm(it, context = context)
+                }
                 activity.finishAffinity()
             },
             modifier = Modifier.size(200.dp),

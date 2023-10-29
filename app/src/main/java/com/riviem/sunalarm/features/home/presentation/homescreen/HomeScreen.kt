@@ -308,7 +308,7 @@ fun AlarmSelectedDays(
                 DayWithOrWithoutDot(
                     modifier = modifier
                         .padding(end = 3.dp),
-                    day = day.dayLetter,
+                    day = day.letter,
                     isSelected = day.isSelected
                 )
             }

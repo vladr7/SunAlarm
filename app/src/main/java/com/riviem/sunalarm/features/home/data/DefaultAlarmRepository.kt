@@ -39,22 +39,73 @@ class DefaultAlarmRepository @Inject constructor(
 
     override fun setLightAlarm(alarm: AlarmUIModel, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val currentDayOfWeek = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) + 5) % 7 // 0 - Monday, 1 - Tuesday, etc.
+
+        val currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 60 + Calendar.getInstance().get(Calendar.MINUTE)
+        val alarmTime = alarm.ringTime.hour * 60 + alarm.ringTime.minute
+
+        val daysToNextAlarm = if (alarm.days[currentDayOfWeek].isSelected && currentTime <= alarmTime) {
+            0 // Set alarm for today
+        } else {
+            // Find the next selected day after today
+            val daysAfterCurrent = alarm.days.drop(currentDayOfWeek + 1) + alarm.days.take(currentDayOfWeek + 1)
+            daysAfterCurrent.indexOfFirst { it.isSelected } + 1
+        }
 
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, alarm.ringTime.hour)
         calendar.set(Calendar.MINUTE, alarm.ringTime.minute)
         calendar.set(Calendar.SECOND, 0)
+        calendar.add(Calendar.DAY_OF_YEAR, daysToNextAlarm)
 
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra("createdTimestamp", alarm.createdTimestamp)
+
         val pendingIntent = PendingIntent.getBroadcast(
-            context, alarm.createdTimestamp, intent,
-            PendingIntent.FLAG_IMMUTABLE
+            context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
         )
-        println("vladlog: setLightAlarm: ${calendar.time}")
+
+        println("vladlog: setLightAlarm for next day: ${calendar.time}")
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
+
+
+    override fun setNextLightAlarm(alarm: AlarmUIModel, context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val currentDayOfWeek = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) + 5) % 7 // 0 - Monday, 1 - Tuesday, etc.
+
+
+        val daysAfterCurrent = alarm.days.drop(currentDayOfWeek + 1)
+        val daysBeforeCurrent = alarm.days.take(currentDayOfWeek)
+
+        val nextSelectedDayIndexAfterCurrent = daysAfterCurrent.indexOfFirst { it.isSelected }
+
+        val daysToNextAlarm = if (nextSelectedDayIndexAfterCurrent != -1) {
+            nextSelectedDayIndexAfterCurrent + 1
+        } else {
+            daysBeforeCurrent.indexOfFirst { it.isSelected } + 7 - currentDayOfWeek
+        }
+
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, alarm.ringTime.hour)
+        calendar.set(Calendar.MINUTE, alarm.ringTime.minute)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.add(Calendar.DAY_OF_YEAR, daysToNextAlarm)
+
+        val intent = Intent(context, AlarmReceiver::class.java)
+        intent.putExtra("createdTimestamp", alarm.createdTimestamp)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
+        )
+
+        println("vladlog: setLightAlarm for next day: ${calendar.time}")
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+    }
+
+
 
     override fun cancelAlarm(alarm: AlarmUIModel, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

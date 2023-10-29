@@ -96,7 +96,7 @@ fun TimePickerScreen(
                 onDayClicked = {
                     newAlarm = newAlarm.copy(
                         days = newAlarm.days.map { day ->
-                            if (day.dayFullName == it.dayFullName) {
+                            if (day.fullName == it.fullName) {
                                 day.copy(isSelected = !day.isSelected)
                             } else {
                                 day
@@ -436,7 +436,7 @@ fun CheckboxDay(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = day.dayLetter,
+            text = day.letter,
             fontSize = 14.sp,
             color = Color.White
         )
