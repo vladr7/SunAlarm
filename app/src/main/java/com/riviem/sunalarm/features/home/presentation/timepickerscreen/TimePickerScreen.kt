@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -61,6 +60,7 @@ import kotlinx.coroutines.delay
 fun TimePickerScreen(
     alarm: AlarmUIModel,
     onSaveClick: (AlarmUIModel) -> Unit,
+    onCancelClick: () -> Unit
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
     var newAlarm by remember { mutableStateOf(alarm) }
@@ -113,17 +113,28 @@ fun TimePickerScreen(
                     )
                 }
             )
-            SaveButton(
+            Row(
                 modifier = Modifier
-                    .weight(1f),
-                onSaveClick = {
-                    onSaveClick(
-                        newAlarm.copy(
-                            isOn = true
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                CancelButton(
+                    modifier = Modifier,
+                    onCancelClick = {
+                        onCancelClick()
+                    }
+                )
+                SaveButton(
+                    modifier = Modifier,
+                    onSaveClick = {
+                        onSaveClick(
+                            newAlarm.copy(
+                                isOn = true
+                            )
                         )
-                    )
-                },
-            )
+                    },
+                )
+            }
         }
 
         AnimatedVisibility(
@@ -146,6 +157,22 @@ fun TimePickerScreen(
                 },
             )
         }
+    }
+}
+
+@Composable
+fun CancelButton(
+    modifier: Modifier = Modifier,
+    onCancelClick: () -> Unit,
+) {
+    Button(
+        modifier = modifier
+            .padding(16.dp),
+        onClick = {
+            onCancelClick()
+        }
+    ) {
+        Text(text = stringResource(id = R.string.cancel))
     }
 }
 
@@ -422,20 +449,14 @@ fun SaveButton(
     modifier: Modifier = Modifier,
     onSaveClick: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            modifier = modifier
-                .padding(16.dp),
-            onClick = {
-                onSaveClick()
-            }
-        ) {
-            Text(text = "Save")
+    Button(
+        modifier = modifier
+            .padding(16.dp),
+        onClick = {
+            onSaveClick()
         }
+    ) {
+        Text(text = "Save")
     }
 }
 

@@ -85,6 +85,10 @@ fun HomeRoute(
             onSaveClick = { alarm ->
                 viewModel.onSaveAlarmClick(alarm)
                 onSaveOrDiscardClick()
+            },
+            onCancelClick = {
+                viewModel.onCancelAlarmClick()
+                onSaveOrDiscardClick()
             }
         )
     }

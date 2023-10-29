@@ -94,6 +94,14 @@ class HomeViewModel @Inject constructor(
             alarmRepository.insert(newAlarm.asDatabaseModel())
         }
     }
+
+    fun onCancelAlarmClick() {
+        _state.update {
+            it.copy(
+                showTimePickerScreen = false
+            )
+        }
+    }
 }
 
 data class HomeState(
