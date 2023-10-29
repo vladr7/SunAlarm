@@ -63,6 +63,7 @@ fun TimePickerScreen(
 ) {
     var showColorPicker by remember { mutableStateOf(false) }
     var newAlarm by remember { mutableStateOf(alarm) }
+    var newColor by remember { mutableStateOf(alarm.color) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -116,7 +117,9 @@ fun TimePickerScreen(
                     .weight(1f),
                 onSaveClick = {
                     onSaveClick(
-                        newAlarm
+                        newAlarm.copy(
+                            isOn = true
+                        )
                     )
                 },
             )
@@ -129,11 +132,12 @@ fun TimePickerScreen(
         ) {
             ColorPickerDialog(
                 onColorChanged = {
-                    newAlarm = newAlarm.copy(
-                        color = it
-                    )
+                    newColor = it
                 },
                 onSaveColorClicked = {
+                    newAlarm = newAlarm.copy(
+                        color = newColor
+                    )
                     showColorPicker = false
                 },
                 onCancelColorClicked = {
@@ -269,7 +273,8 @@ fun LightAlarmConfiguration(
         ChooseScreenColor(
             modifier = Modifier
                 .padding(top = 25.dp, start = 25.dp, end = 15.dp),
-            onChooseColorClicked = onChooseColorClicked
+            onChooseColorClicked = onChooseColorClicked,
+            color = alarm.color
         )
     }
 }
@@ -277,7 +282,8 @@ fun LightAlarmConfiguration(
 @Composable
 fun ChooseScreenColor(
     modifier: Modifier = Modifier,
-    onChooseColorClicked: () -> Unit
+    onChooseColorClicked: () -> Unit,
+    color: Color
 ) {
     Row(
         modifier = modifier
@@ -299,7 +305,7 @@ fun ChooseScreenColor(
                 .size(25.dp)
                 .background(
                     shape = CircleShape,
-                    color = Color.Yellow
+                    color = color
                 )
         )
     }
