@@ -34,7 +34,7 @@ class LightViewModel @Inject constructor(
 
     fun stopAlarm(alarm: AlarmUIModel, context: Context) {
         if (alarm.isOn) {
-            alarmRepository.setNextLightAlarm(alarm = alarm, context = context)
+            alarmRepository.setLightAlarm(alarm = alarm, context = context)
         }
     }
 }
