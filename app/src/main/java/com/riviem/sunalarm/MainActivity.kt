@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,12 +19,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        println("vladlog: AlarmReceiver Alarm Triggered!")
-        Toast.makeText(context, "Alarm Triggered!", Toast.LENGTH_LONG).show()
+        val createdTimestamp = intent?.getIntExtra("createdTimestamp", -1)
+        println("vladlog: AlarmReceiver Alarm Triggered! createdTimestamp: $createdTimestamp")
 
         val mainActivityIntent = Intent(context, MainActivity::class.java)
         mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        mainActivityIntent.putExtra("fromAlarm", true)  // Add this line
+        mainActivityIntent.putExtra("fromAlarm", true)
+        mainActivityIntent.putExtra("createdTimestamp", createdTimestamp)
         context?.startActivity(mainActivityIntent)
     }
 }
@@ -38,6 +38,8 @@ class MainActivity : ComponentActivity() {
         this.setTurnScreenOn(true)
         this.setShowWhenLocked(true)
         val startedFromAlarm = intent.getBooleanExtra("fromAlarm", false)
+        val createdTimestamp = intent.getIntExtra("createdTimestamp", -1)
+        println("vladlog: MainActivity onCreate: createdTimestamp: $createdTimestamp")
 
         setContent {
             SunAlarmTheme {
@@ -50,6 +52,7 @@ class MainActivity : ComponentActivity() {
                     if(startedFromAlarm) {
                         LightScreen()
                     } else {
+//                        LightScreen()
                         MainNavigation()
                     }
                 }

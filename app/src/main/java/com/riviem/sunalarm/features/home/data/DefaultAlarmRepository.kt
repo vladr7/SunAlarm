@@ -42,6 +42,7 @@ class DefaultAlarmRepository @Inject constructor(
         calendar.set(Calendar.SECOND, 0)
 
         val intent = Intent(context, AlarmReceiver::class.java)
+        intent.putExtra("createdTimestamp", alarm.createdTimestamp)
         val pendingIntent = PendingIntent.getBroadcast(
             context, alarm.createdTimestamp, intent,
             PendingIntent.FLAG_IMMUTABLE
