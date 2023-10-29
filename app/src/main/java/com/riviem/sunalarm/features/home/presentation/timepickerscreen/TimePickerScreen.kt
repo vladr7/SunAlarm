@@ -3,6 +3,7 @@ package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -386,7 +387,10 @@ fun CheckboxDay(
     val circleSize = 35.dp
 
     val animatedBorderWidth by animateDpAsState(
-        targetValue = if (isSelected) 1.dp else 0.dp, label = ""
+        targetValue = if (isSelected) 1.5.dp else 0.dp, label = ""
+    )
+    val animatedAlpha by animateFloatAsState(
+        targetValue = if (isSelected) 1f else 0.3f, label = ""
     )
 
     val newModifier = modifier
@@ -396,7 +400,7 @@ fun CheckboxDay(
         }
         .border(
             width = animatedBorderWidth,
-            color = Color.White.copy(alpha = 0.7f),
+            color = Color.White.copy(alpha = animatedAlpha),
             shape = CircleShape
         )
 
