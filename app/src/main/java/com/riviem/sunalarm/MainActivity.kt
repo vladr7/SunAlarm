@@ -50,7 +50,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     askPermissionDisplayOverOtherApps(this)
                     if(startedFromAlarm) {
-                        LightScreen()
+                        LightScreen(
+                            createdTimestamp = createdTimestamp
+                        )
                     } else {
 //                        LightScreen()
                         MainNavigation()

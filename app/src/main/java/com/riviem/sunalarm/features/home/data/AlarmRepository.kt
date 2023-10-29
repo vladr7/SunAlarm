@@ -9,6 +9,8 @@ interface AlarmRepository {
 
     fun getAlarms(): Flow<List<DatabaseAlarm>>
 
+    fun getAlarmById(createdTimestampId: Int): DatabaseAlarm
+
     fun insertAll(alarms: List<DatabaseAlarm>)
 
     fun deleteAllAlarms()

@@ -21,6 +21,10 @@ class DefaultAlarmRepository @Inject constructor(
         return alarmDatabase.alarmDao.getAlarms()
     }
 
+    override fun getAlarmById(createdTimestampId: Int): DatabaseAlarm {
+        return alarmDatabase.alarmDao.getAlarmById(createdTimestampId)
+    }
+
     override fun insertAll(alarms: List<DatabaseAlarm>) {
         alarmDatabase.alarmDao.insertAll(alarms)
     }

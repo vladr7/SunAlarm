@@ -26,6 +26,9 @@ interface AlarmDao{
 
     @Query("delete from databasealarm")
     fun deleteAllAlarms()
+
+    @Query("select * from databasealarm where createdTimestamp = :createdTimestampId")
+    fun getAlarmById(createdTimestampId: Int): DatabaseAlarm
 }
 
 @Database(entities = [DatabaseAlarm::class], version = 1)
