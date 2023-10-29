@@ -259,6 +259,8 @@ fun AlarmItem(
 
 @Composable
 private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
+    val hour = if(time.hour < 10) "0${time.hour}" else time.hour
+    val minute = if(time.minute < 10) "0${time.minute}" else time.minute
     Column {
         Text(
             text = name,
@@ -269,7 +271,7 @@ private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
                 .offset(y = (-10).dp)
         )
         Text(
-            text = "${time.hour}:${time.minute}",
+            text = "$hour:$minute",
             fontSize = 30.sp,
             color = Color.White,
             modifier = Modifier.padding(start = 18.dp, top = 10.dp)
