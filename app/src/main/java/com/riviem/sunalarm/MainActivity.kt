@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.riviem.sunalarm.features.light.LightScreen
 import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,6 +25,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val mainActivityIntent = Intent(context, MainActivity::class.java)
         mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        mainActivityIntent.putExtra("fromAlarm", true)  // Add this line
         context?.startActivity(mainActivityIntent)
     }
 }
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         this.setTurnScreenOn(true)
         this.setShowWhenLocked(true)
+        val startedFromAlarm = intent.getBooleanExtra("fromAlarm", false)
 
         setContent {
             SunAlarmTheme {
@@ -44,7 +47,11 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     askPermissionDisplayOverOtherApps(this)
-                    MainNavigation()
+                    if(startedFromAlarm) {
+                        LightScreen()
+                    } else {
+                        MainNavigation()
+                    }
                 }
             }
         }
