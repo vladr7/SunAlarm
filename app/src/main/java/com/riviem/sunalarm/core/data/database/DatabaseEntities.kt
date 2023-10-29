@@ -11,36 +11,33 @@ import java.time.ZonedDateTime
 @Entity
 data class DatabaseAlarm(
     @PrimaryKey
-    val id: String,
+    val createdTimestamp: Int,
     val ringTime: String,
     val name: String,
     val isOn: Boolean,
     val days: List<Day>,
     val color: Int,
-    val createdTimestamp: String
 )
 
 fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
     return DatabaseAlarm(
-        id = id,
+        createdTimestamp = createdTimestamp,
         ringTime = ringTime.toString(),
         name = name,
         isOn = isOn,
         days = days,
         color = color.toArgb(),
-        createdTimestamp = createdTimestamp.toString()
     )
 }
 
 fun DatabaseAlarm.asUIModel(): AlarmUIModel {
     return AlarmUIModel(
-        id = id,
+        createdTimestamp = createdTimestamp,
         ringTime = ZonedDateTime.parse(ringTime),
         name = name,
         isOn = isOn,
         days = days,
         color = Color(color),
-        createdTimestamp = ZonedDateTime.parse(createdTimestamp)
     )
 }
 

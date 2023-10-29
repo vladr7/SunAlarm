@@ -4,13 +4,12 @@ import androidx.compose.ui.graphics.Color
 import java.time.ZonedDateTime
 
 data class AlarmUIModel(
-    val id: String,
+    val createdTimestamp: Int = ZonedDateTime.now().toEpochSecond().toInt(),
     val ringTime: ZonedDateTime,
     val name: String,
     val isOn: Boolean,
     val days: List<Day> = weekDays,
     val color: Color,
-    val createdTimestamp: ZonedDateTime = ZonedDateTime.now()
 )
 
 val weekDays = listOf(

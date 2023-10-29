@@ -1,7 +1,11 @@
 package com.riviem.sunalarm.features.home.presentation.homescreen
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -40,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.riviem.sunalarm.AlarmReceiver
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
@@ -47,6 +53,7 @@ import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePickerScreen
 import java.time.ZonedDateTime
+import java.util.Calendar
 
 
 @Composable
@@ -70,7 +77,7 @@ fun HomeRoute(
                 viewModel.onAddNewAlarmClick()
             },
             onAlarmCheckChanged = { checked, alarm ->
-                viewModel.onAlarmCheckChanged(checked, alarm)
+                viewModel.onAlarmCheckChanged(checked, alarm, context)
             }
         )
     }
@@ -83,7 +90,7 @@ fun HomeRoute(
         TimePickerScreen(
             alarm = state.selectedAlarm,
             onSaveClick = { alarm ->
-                viewModel.onSaveAlarmClick(alarm)
+                viewModel.onSaveAlarmClick(alarm, context)
                 onSaveOrDiscardClick()
             },
             onCancelClick = {
@@ -349,7 +356,36 @@ fun AlarmSwitch(
         })
 }
 
+@SuppressLint("ScheduleExactAlarm")
+@Composable
+private fun SetAlarmButton(hour: Int, minute: Int, context: Context) {
+    Button(onClick = {
+        // Get the AlarmManager
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        // Create a Calendar object for the alarm time
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minute)
+        calendar.set(Calendar.SECOND, 0)
+
+        // Create a PendingIntent object for the alarm receiver
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Set the alarm
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+
+        println("vladlog: Alarm set! $hour:$minute")
+        Toast.makeText(context, "Alarm set!", Toast.LENGTH_SHORT).show()
+    }) {
+        Text("Set Alarm")
+    }
+
+}
 
 
 

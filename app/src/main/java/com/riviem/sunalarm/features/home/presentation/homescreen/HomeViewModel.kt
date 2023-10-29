@@ -1,5 +1,6 @@
 package com.riviem.sunalarm.features.home.presentation.homescreen
 
+import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +26,6 @@ class HomeViewModel @Inject constructor(
     private val _state = MutableStateFlow<HomeState>(
         HomeState(
             selectedAlarm = AlarmUIModel(
-                id = UUID.randomUUID().toString(),
                 ringTime = ZonedDateTime.now(),
                 name = "Alarm",
                 isOn = false,
@@ -43,8 +42,8 @@ class HomeViewModel @Inject constructor(
     private fun getAlarms() {
         viewModelScope.launch {
             alarmRepository.getAlarms().collectLatest { databaseAlarms ->
-                println("vladlog: ------------------------------------")
-                println("vladlog: ${databaseAlarms.asUIModel()}")
+//                println("vladlog: ------------------------------------")
+//                println("vladlog: ${databaseAlarms.asUIModel()}")
                 _state.update {
                     it.copy(alarms = databaseAlarms.asUIModel())
                 }
@@ -61,7 +60,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onSaveAlarmClick(alarm: AlarmUIModel) {
+    fun onSaveAlarmClick(alarm: AlarmUIModel, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             alarmRepository.insert(alarm.asDatabaseModel())
         }
@@ -71,6 +70,9 @@ class HomeViewModel @Inject constructor(
                 selectedAlarm = alarm
             )
         }
+        if(alarm.isOn) {
+            alarmRepository.setLightAlarm(alarm, context)
+        }
     }
 
     fun onAddNewAlarmClick() {
@@ -78,7 +80,6 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 showTimePickerScreen = true,
                 selectedAlarm = AlarmUIModel(
-                    id = UUID.randomUUID().toString(),
                     ringTime = ZonedDateTime.now(),
                     name = "Alarm",
                     isOn = false,
@@ -88,10 +89,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onAlarmCheckChanged(checked: Boolean, alarm: AlarmUIModel) {
+    fun onAlarmCheckChanged(checked: Boolean, alarm: AlarmUIModel, context: Context) {
         val newAlarm = alarm.copy(isOn = checked)
         viewModelScope.launch(Dispatchers.IO) {
             alarmRepository.insert(newAlarm.asDatabaseModel())
+        }
+        if(checked) {
+            alarmRepository.setLightAlarm(newAlarm, context)
+        } else {
+            alarmRepository.cancelAlarm(newAlarm, context)
         }
     }
 
