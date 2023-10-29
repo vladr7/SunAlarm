@@ -44,7 +44,7 @@ class DefaultAlarmRepository @Inject constructor(
         val currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 60 + Calendar.getInstance().get(Calendar.MINUTE)
         val alarmTime = alarm.ringTime.hour * 60 + alarm.ringTime.minute
 
-        val daysToNextAlarm = if (alarm.days[currentDayOfWeek].isSelected && currentTime <= alarmTime) {
+        val daysToNextAlarm = if (alarm.days[currentDayOfWeek].isSelected && currentTime <= alarmTime - 1) {
             0 // Set alarm for today
         } else {
             // Find the next selected day after today

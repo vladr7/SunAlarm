@@ -1,5 +1,6 @@
 package com.riviem.sunalarm
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -49,7 +50,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     askPermissionDisplayOverOtherApps(this)
+                    askBrightnessPermission(this)
                     if(startedFromAlarm) {
+                        setBrightness(this, 5)
                         LightScreen(
                             createdTimestamp = createdTimestamp
                         )
@@ -61,6 +64,39 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
+}
+
+fun setBrightness(context: Context, brightnessValue: Int) {
+    // Ensure brightnessValue is between 0 and 255
+    val brightness = brightnessValue.coerceIn(0, 255)
+
+    // For the app window
+    val layoutParams = (context as Activity).window.attributes
+    layoutParams.screenBrightness = brightness.toFloat() / 255
+    context.window.attributes = layoutParams
+
+    // For system settings
+    try {
+        Settings.System.putInt(
+            context.contentResolver,
+            Settings.System.SCREEN_BRIGHTNESS,
+            brightness
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+
+private fun askBrightnessPermission(mainActivity: MainActivity) {
+    if (!Settings.System.canWrite(mainActivity)) {
+        val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+        intent.data = Uri.parse("package:" + mainActivity.packageName)
+        mainActivity.startActivity(intent)
+    }
+
 }
 
 private fun askPermissionDisplayOverOtherApps(
