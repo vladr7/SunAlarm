@@ -70,6 +70,24 @@ class DefaultAlarmRepository @Inject constructor(
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
 
+    override fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(context, AlarmReceiver::class.java)
+        intent.putExtra("createdTimestamp", alarm.createdTimestamp)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.MINUTE, 5)
+
+        println("vladlog: snoozeAlarm: ${calendar.time}")
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+    }
+
     override fun cancelAlarm(alarm: AlarmUIModel, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 

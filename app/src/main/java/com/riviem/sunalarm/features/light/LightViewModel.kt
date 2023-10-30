@@ -37,6 +37,12 @@ class LightViewModel @Inject constructor(
             alarmRepository.setLightAlarm(alarm = alarm, context = context)
         }
     }
+
+    fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
+        if (alarm.isOn) {
+            alarmRepository.snoozeAlarm(alarm = alarm, context = context)
+        }
+    }
 }
 
 data class LightState(
