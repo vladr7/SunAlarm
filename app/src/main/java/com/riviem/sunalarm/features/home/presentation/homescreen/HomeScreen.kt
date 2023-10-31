@@ -34,8 +34,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -54,6 +57,7 @@ import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIM
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePickerScreen
+import kotlinx.coroutines.delay
 import java.time.ZonedDateTime
 import java.util.Calendar
 
@@ -128,28 +132,37 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HomeScreenTitle(
+            Box(
                 modifier = modifier
-                    .padding(top = 100.dp),
-                title = title,
-                subtitle = subtitle
-            )
-            AddNewAlarmButton(
-                modifier = modifier
-                    .padding(top = 20.dp),
-                onClick = {
-                    onAddNewAlarmClick()
-                }
-            )
-            AlarmsList(
-                onAlarmClick = onAlarmClick,
-                onCheckedChange = { checked, alarm ->
-                    onAlarmCheckChanged(checked, alarm)
-                },
-                modifier = modifier
-                    .fillMaxWidth(),
-                alarms = alarms
-            )
+                    .padding(top = 50.dp)
+                    .weight(0.30f)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                HomeScreenTitle(
+                    modifier = modifier.fillMaxWidth(),
+                    title = title,
+                    subtitle = subtitle
+                )
+            }
+            Column(
+                modifier = modifier.weight(0.70f)
+            ) {
+                AddNewAlarmButton(
+                    onClick = {
+                        onAddNewAlarmClick()
+                    }
+                )
+
+                AlarmsList(
+                    onAlarmClick = onAlarmClick,
+                    onCheckedChange = { checked, alarm ->
+                        onAlarmCheckChanged(checked, alarm)
+                    },
+                    modifier = modifier.fillMaxWidth(),
+                    alarms = alarms
+                )
+            }
         }
     }
 }
@@ -160,21 +173,35 @@ fun HomeScreenTitle(
     title: String,
     subtitle: String,
 ) {
-    val titleState = rememberUpdatedState(title)
-    val subtitleState = rememberUpdatedState(subtitle)
+    var showContent by remember {
+        mutableStateOf(false)
+    }
+    var newTitle by remember {
+        mutableStateOf(title)
+    }
+    var newSubtitle by remember {
+        mutableStateOf(subtitle)
+    }
+    LaunchedEffect(key1 = title) {
+        showContent = false
+        delay(500L)
+        newTitle = title
+        newSubtitle = subtitle
+        showContent = true
+    }
 
     Column(
-        modifier = modifier.padding(horizontal = 20.dp),
+        modifier = modifier.padding(horizontal = 30.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AnimatedVisibility(
-            visible = true,
+            visible = showContent,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
             Text(
-                text = titleState.value,
+                text = newTitle,
                 fontSize = 30.sp,
                 color = Color.White,
                 textAlign = TextAlign.Center,
@@ -186,16 +213,14 @@ fun HomeScreenTitle(
         Spacer(modifier = Modifier.padding(4.dp))
 
         AnimatedVisibility(
-            visible = true,
-            enter = fadeIn(),
-            exit = fadeOut()
+            visible = showContent,
         ) {
             Text(
-                text = subtitleState.value,
+                text = newSubtitle,
                 fontSize = 16.sp,
                 color = Color.White,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.animateContentSize()  // animates size changes
+                modifier = Modifier.animateContentSize()
             )
         }
     }
