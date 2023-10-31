@@ -61,17 +61,19 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onSaveAlarmClick(alarm: AlarmUIModel, context: Context) {
+        val nextAlarmTime = alarmRepository.getNextAlarmDateTime(alarm)
+        val newAlarm = alarm.copy(ringTime = nextAlarmTime)
         viewModelScope.launch(Dispatchers.IO) {
-            alarmRepository.insert(alarm.asDatabaseModel())
+            alarmRepository.insert(newAlarm.asDatabaseModel())
         }
         _state.update {
             it.copy(
                 showTimePickerScreen = false,
-                selectedAlarm = alarm
+                selectedAlarm = newAlarm
             )
         }
         if(alarm.isOn) {
-            alarmRepository.setLightAlarm(alarm, context)
+            alarmRepository.setLightAlarm(newAlarm, context)
         }
     }
 
@@ -90,7 +92,8 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAlarmCheckChanged(checked: Boolean, alarm: AlarmUIModel, context: Context) {
-        val newAlarm = alarm.copy(isOn = checked)
+        val nextAlarmTime = alarmRepository.getNextAlarmDateTime(alarm)
+        val newAlarm = alarm.copy(isOn = checked, ringTime = nextAlarmTime)
         viewModelScope.launch(Dispatchers.IO) {
             alarmRepository.insert(newAlarm.asDatabaseModel())
         }

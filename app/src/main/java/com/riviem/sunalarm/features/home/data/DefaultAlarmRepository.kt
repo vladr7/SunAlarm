@@ -5,13 +5,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.riviem.sunalarm.AlarmReceiver
+import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.data.database.AlarmDatabase
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import kotlinx.coroutines.flow.Flow
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.Calendar
 import javax.inject.Inject
 
 
@@ -39,9 +39,7 @@ class DefaultAlarmRepository @Inject constructor(
         alarmDatabase.alarmDao.insert(alarm)
     }
 
-    override fun setLightAlarm(alarm: AlarmUIModel, context: Context) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
+    override fun getNextAlarmDateTime(alarm: AlarmUIModel): ZonedDateTime {
         val now = ZonedDateTime.now(ZoneId.systemDefault())
         val currentDayOfWeek = now.dayOfWeek.value % 7 // 0 - Monday, 1 - Tuesday, etc.
 
@@ -49,26 +47,29 @@ class DefaultAlarmRepository @Inject constructor(
         val currentMinute = now.minute
         val currentTimeInMinutes = currentHour * 60 + currentMinute
         val alarmTimeInMinutes = alarm.ringTime.hour * 60 + alarm.ringTime.minute
-        val alarmTime = alarm.ringTime
 
         val daysToNextAlarm = if (alarm.days[currentDayOfWeek].isSelected && currentTimeInMinutes <= alarmTimeInMinutes - 1) {
-            println("vladlog: setLightAlarm for today")
             0L // Set alarm for today
         } else {
             // Find the next selected day after today
-            println("vladlog: setLightAlarm for next day")
             val daysAfterCurrent = (alarm.days.drop(currentDayOfWeek + 1) + alarm.days.take(currentDayOfWeek + 1))
             daysAfterCurrent.indexOfFirst { it.isSelected } + 1L
         }
 
-        val alarmDateTime = now
-            .withHour(alarmTime.hour)
-            .withMinute(alarmTime.minute)
+        return now
+            .withHour(alarm.ringTime.hour)
+            .withMinute(alarm.ringTime.minute)
             .withSecond(0)
             .plusDays(daysToNextAlarm)
+    }
+
+    override fun setLightAlarm(alarm: AlarmUIModel, context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val alarmDateTime = getNextAlarmDateTime(alarm)
 
         val intent = Intent(context, AlarmReceiver::class.java)
-        intent.putExtra("createdTimestamp", alarm.createdTimestamp)
+        intent.putExtra(Constants.CREATED_TIMESTAMP_ID, alarm.createdTimestamp)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
@@ -79,23 +80,24 @@ class DefaultAlarmRepository @Inject constructor(
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmDateTime.toInstant().toEpochMilli(), pendingIntent)
     }
 
+
     override fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java)
-        intent.putExtra("createdTimestamp", alarm.createdTimestamp)
+        intent.putExtra(Constants.CREATED_TIMESTAMP_ID, alarm.createdTimestamp)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MINUTE, 5)
+        val snoozeDateTime = ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(5)
 
-        println("vladlog: snoozeAlarm: ${calendar.time}")
+        println("vladlog: snoozeAlarm: $snoozeDateTime")
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, snoozeDateTime.toInstant().toEpochMilli(), pendingIntent)
     }
+
 
     override fun cancelAlarm(alarm: AlarmUIModel, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
