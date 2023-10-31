@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import java.time.ZonedDateTime
 
 data class AlarmUIModel(
-    val createdTimestamp: Int = ZonedDateTime.now().toEpochSecond().toInt(),
+    val createdTimestamp: Int,
     val ringTime: ZonedDateTime,
     val name: String,
     val isOn: Boolean,

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.features.light.LightScreen
 import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
@@ -20,13 +21,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        val createdTimestamp = intent?.getIntExtra("createdTimestamp", -1)
+        val createdTimestamp = intent?.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
         println("vladlog: AlarmReceiver Alarm Triggered! createdTimestamp: $createdTimestamp")
 
         val mainActivityIntent = Intent(context, MainActivity::class.java)
         mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        mainActivityIntent.putExtra("fromAlarm", true)
-        mainActivityIntent.putExtra("createdTimestamp", createdTimestamp)
+        mainActivityIntent.putExtra(Constants.FROM_ALARM_ID, true)
+        mainActivityIntent.putExtra(Constants.CREATED_TIMESTAMP_ID, createdTimestamp)
         context?.startActivity(mainActivityIntent)
     }
 }
@@ -38,8 +39,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         this.setTurnScreenOn(true)
         this.setShowWhenLocked(true)
-        val startedFromAlarm = intent.getBooleanExtra("fromAlarm", false)
-        val createdTimestamp = intent.getIntExtra("createdTimestamp", -1)
+        val startedFromAlarm = intent.getBooleanExtra(Constants.FROM_ALARM_ID, false)
+        val createdTimestamp = intent.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
         println("vladlog: MainActivity onCreate: createdTimestamp: $createdTimestamp")
 
         setContent {

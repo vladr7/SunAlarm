@@ -39,6 +39,7 @@ class HomeViewModel @Inject constructor(
                 name = "Alarm",
                 isOn = false,
                 color = Color.Yellow,
+                createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt()
             ),
             title = "",
             subtitle = "",
@@ -133,6 +134,7 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 showTimePickerScreen = true,
                 selectedAlarm = AlarmUIModel(
+                    createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt(),
                     ringTime = ZonedDateTime.now(),
                     name = "Alarm",
                     isOn = false,

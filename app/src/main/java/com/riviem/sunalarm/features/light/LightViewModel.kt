@@ -25,10 +25,12 @@ class LightViewModel @Inject constructor(
     fun getAlarmById(createdTimestampId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val alarm = alarmRepository.getAlarmById(createdTimestampId = createdTimestampId)
-            _state.update {
-                it.copy(selectedAlarm = alarm.asUIModel())
+            println("vladlog: getAlarmById: $alarm")
+            if(alarm != null) {
+                _state.update {
+                    it.copy(selectedAlarm = alarm.asUIModel())
+                }
             }
-            println("vladlog: getAlarmById: ${alarm.asUIModel()}")
         }
     }
 
