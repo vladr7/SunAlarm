@@ -9,6 +9,8 @@ import com.riviem.sunalarm.core.data.database.AlarmDatabase
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import kotlinx.coroutines.flow.Flow
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -39,24 +41,31 @@ class DefaultAlarmRepository @Inject constructor(
 
     override fun setLightAlarm(alarm: AlarmUIModel, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val currentDayOfWeek = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) + 5) % 7 // 0 - Monday, 1 - Tuesday, etc.
 
-        val currentTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 60 + Calendar.getInstance().get(Calendar.MINUTE)
-        val alarmTime = alarm.ringTime.hour * 60 + alarm.ringTime.minute
+        val now = ZonedDateTime.now(ZoneId.systemDefault())
+        val currentDayOfWeek = now.dayOfWeek.value % 7 // 0 - Monday, 1 - Tuesday, etc.
 
-        val daysToNextAlarm = if (alarm.days[currentDayOfWeek].isSelected && currentTime <= alarmTime - 1) {
-            0 // Set alarm for today
+        val currentHour = now.hour
+        val currentMinute = now.minute
+        val currentTimeInMinutes = currentHour * 60 + currentMinute
+        val alarmTimeInMinutes = alarm.ringTime.hour * 60 + alarm.ringTime.minute
+        val alarmTime = alarm.ringTime
+
+        val daysToNextAlarm = if (alarm.days[currentDayOfWeek].isSelected && currentTimeInMinutes <= alarmTimeInMinutes - 1) {
+            println("vladlog: setLightAlarm for today")
+            0L // Set alarm for today
         } else {
             // Find the next selected day after today
-            val daysAfterCurrent = alarm.days.drop(currentDayOfWeek + 1) + alarm.days.take(currentDayOfWeek + 1)
-            daysAfterCurrent.indexOfFirst { it.isSelected } + 1
+            println("vladlog: setLightAlarm for next day")
+            val daysAfterCurrent = (alarm.days.drop(currentDayOfWeek + 1) + alarm.days.take(currentDayOfWeek + 1))
+            daysAfterCurrent.indexOfFirst { it.isSelected } + 1L
         }
 
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, alarm.ringTime.hour)
-        calendar.set(Calendar.MINUTE, alarm.ringTime.minute)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.add(Calendar.DAY_OF_YEAR, daysToNextAlarm)
+        val alarmDateTime = now
+            .withHour(alarmTime.hour)
+            .withMinute(alarmTime.minute)
+            .withSecond(0)
+            .plusDays(daysToNextAlarm)
 
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra("createdTimestamp", alarm.createdTimestamp)
@@ -65,9 +74,9 @@ class DefaultAlarmRepository @Inject constructor(
             context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: setLightAlarm for next day: ${calendar.time}")
+        println("vladlog: setLightAlarm for: $alarmDateTime")
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmDateTime.toInstant().toEpochMilli(), pendingIntent)
     }
 
     override fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
