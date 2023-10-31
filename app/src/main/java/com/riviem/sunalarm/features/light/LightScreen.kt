@@ -1,16 +1,26 @@
 package com.riviem.sunalarm.features.light
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.ui.theme.Purple40
 
 @Composable
 fun LightScreen(
@@ -30,48 +41,102 @@ fun LightScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val activity = androidx.compose.ui.platform.LocalContext.current as android.app.Activity
 
+    var showContent by remember { mutableStateOf(false) }
+    val lightModifier = if (showContent) Modifier
+        .background(
+            color = state.selectedAlarm?.color ?: Color.DarkGray
+        )
+    else Modifier
+        .clickable {
+            showContent = true
+        }
+        .background(
+            color = state.selectedAlarm?.color ?: Color.Yellow
+        )
+
     LaunchedEffect(key1 = Unit) {
         viewModel.getAlarmById(createdTimestampId = createdTimestamp)
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                color = state.selectedAlarm?.color ?: Color.Yellow
+        modifier = lightModifier
+            .fillMaxSize(),
+        verticalArrangement = SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AnimatedVisibility(
+            visible = showContent,
+            enter = fadeIn(
+                tween(1000)
             ),
+            exit = fadeOut(
+                tween(1000)
+            )
+        ) {
+            LightScreenContent(
+                onSnoozeClick = {
+                    state.selectedAlarm?.let {
+                        viewModel.snoozeAlarm(it, context = context)
+                    }
+                    activity.finishAffinity()
+                },
+                onDismissClick = {
+                    state.selectedAlarm?.let {
+                        viewModel.stopAlarm(it, context = context)
+                    }
+                    activity.finishAffinity()
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun LightScreenContent(
+    onSnoozeClick: () -> Unit,
+    onDismissClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = {
-                state.selectedAlarm?.let {
-                    viewModel.snoozeAlarm(it, context = context)
-                }
-                activity.finishAffinity()
-            },
-            modifier = Modifier.size(200.dp),
-            shape = RoundedCornerShape(5)
+            onClick = onSnoozeClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
+                .weight(0.5f),
+            shape = RoundedCornerShape(5),
+            colors = ButtonColors(
+                containerColor = Purple40.copy(alpha = 0.5f),
+                contentColor = Color.White,
+                disabledContentColor = Color.White,
+                disabledContainerColor = Color.Gray
+            )
         ) {
             Text(
                 text = stringResource(id = R.string.snooze),
-                fontSize = 24.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                fontSize = 70.sp,
             )
         }
         Button(
-            onClick = {
-                state.selectedAlarm?.let {
-                    viewModel.stopAlarm(it, context = context)
-                }
-                activity.finishAffinity()
-            },
-            modifier = Modifier.size(200.dp),
+            onClick = onDismissClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
+                .weight(0.5f),
+            colors = ButtonColors(
+                containerColor = Color.Red.copy(alpha = 0.2f),
+                contentColor = Color.White,
+                disabledContentColor = Color.White,
+                disabledContainerColor = Color.Gray
+            ),
             shape = RoundedCornerShape(5)
         ) {
             Text(
-                text = "Stop",
-                fontSize = 24.sp
+                text = stringResource(R.string.dismiss),
+                fontSize = 70.sp,
             )
         }
     }

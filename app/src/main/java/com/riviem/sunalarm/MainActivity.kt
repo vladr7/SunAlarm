@@ -15,7 +15,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.features.light.LightScreen
-import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -58,8 +57,10 @@ class MainActivity : ComponentActivity() {
                             createdTimestamp = createdTimestamp
                         )
                     } else {
-//                        LightScreen()
-                        MainNavigation()
+                        LightScreen(
+                            createdTimestamp = createdTimestamp
+                        )
+//                        MainNavigation()
                     }
                 }
             }
