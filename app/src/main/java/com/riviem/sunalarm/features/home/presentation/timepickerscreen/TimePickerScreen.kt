@@ -95,9 +95,12 @@ fun TimePickerScreen(
                     .fillMaxHeight(),
                 alarm = newAlarm,
                 onDayClicked = {
+                    val numberOfSelectedDays = newAlarm.days.filter { day ->
+                        day.isSelected
+                    }.size
                     newAlarm = newAlarm.copy(
                         days = newAlarm.days.map { day ->
-                            if (day.fullName == it.fullName) {
+                            if (day.fullName == it.fullName && (numberOfSelectedDays > 1 || !day.isSelected)) {
                                 day.copy(isSelected = !day.isSelected)
                             } else {
                                 day

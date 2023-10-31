@@ -13,11 +13,11 @@ data class AlarmUIModel(
 )
 
 val weekDays = listOf(
-    Day("M", "Monday", false),
-    Day("T", "Tuesday", false),
-    Day("W", "Wednesday", false),
-    Day("T", "Thursday", false),
-    Day("F", "Friday", false),
-    Day("S", "Saturday", false),
-    Day("S", "Sunday", false)
+    Day("M", "Monday", true),
+    Day("T", "Tuesday", true),
+    Day("W", "Wednesday", true),
+    Day("T", "Thursday", true),
+    Day("F", "Friday", true),
+    Day("S", "Saturday", true),
+    Day("S", "Sunday", true)
 )
