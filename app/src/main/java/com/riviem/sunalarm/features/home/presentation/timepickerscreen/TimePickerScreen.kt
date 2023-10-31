@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -484,17 +485,31 @@ fun ScrollableTimePicker(
         minutesState.animateScrollToItem(index = 600 + selectedMinute - 1)
     }
 
-    LaunchedEffect(key1 = hoursState.firstVisibleItemIndex) {
+    val localDensity = LocalDensity.current
+
+    LaunchedEffect(
+        key1 = hoursState.firstVisibleItemIndex,
+        hoursState.firstVisibleItemScrollOffset
+    ) {
         val index = hoursState.firstVisibleItemIndex
-        val hour = hours[index]
+        val offset = hoursState.firstVisibleItemScrollOffset
+        val actualIndex =
+            if (offset > with(localDensity) { 50.dp.toPx() }) index + 1 else index
+        val hour = hours[actualIndex]
         onHourSelected((hour.toInt() + 1) % 24)
     }
 
-    LaunchedEffect(key1 = minutesState.firstVisibleItemIndex) {
+    LaunchedEffect(
+        key1 = minutesState.firstVisibleItemIndex,
+        minutesState.firstVisibleItemScrollOffset
+    ) {
         val index = minutesState.firstVisibleItemIndex
-        val minute = minutes[index]
+        val offset = minutesState.firstVisibleItemScrollOffset
+        val actualIndex = if (offset > with(localDensity) { 50.dp.toPx() }) index + 1 else index
+        val minute = minutes[actualIndex]
         onMinuteSelected((minute.toInt() + 1) % 60)
     }
+
 
     Box(
         modifier = modifier
