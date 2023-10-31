@@ -5,4 +5,22 @@
     <string name="cancel">Cancel</string>
     <string name="snooze">Snooze</string>
     <string name="every_day">Every day</string>
+    <plurals name="days_plural">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+
+    <plurals name="hours_plural">
+        <item quantity="one">hour</item>
+        <item quantity="other">hours</item>
+    </plurals>
+
+    <plurals name="minutes_plural">
+        <item quantity="one">minute</item>
+        <item quantity="other">minutes</item>
+    </plurals>
+
+    <string name="next_alarm_format">Next alarm in %1$d %2$s %3$d %4$s %5$d %6$s</string>
+    <string name="next_alarm_in">"Next alarm in "</string>
+
 </resources>

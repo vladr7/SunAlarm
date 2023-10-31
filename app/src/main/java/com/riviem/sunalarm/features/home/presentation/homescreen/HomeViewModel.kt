@@ -4,18 +4,22 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.data.database.asDatabaseModel
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,8 +33,10 @@ class HomeViewModel @Inject constructor(
                 ringTime = ZonedDateTime.now(),
                 name = "Alarm",
                 isOn = false,
-                color = Color.Yellow
-            )
+                color = Color.Yellow,
+            ),
+            subtitle = "",
+            nextAlarmTriggerTime = ZonedDateTime.now(),
         )
     )
     val state: StateFlow<HomeState> = _state
@@ -47,7 +53,23 @@ class HomeViewModel @Inject constructor(
                 _state.update {
                     it.copy(alarms = databaseAlarms.asUIModel())
                 }
+                updateTitleAndSubtitle(databaseAlarms.asUIModel())
             }
+        }
+    }
+
+    private fun updateTitleAndSubtitle(alarms: List<AlarmUIModel>) {
+        val activeAlarms = alarms.filter { it.isOn }
+        val nextAlarm = activeAlarms.minByOrNull { it.ringTime }
+        val nextAlarmTime = alarmRepository.getNextAlarmDateTime(nextAlarm ?: return)
+        val formatter = DateTimeFormatter.ofPattern("EEE, MMM d, HH:mm")
+        val subtitle = nextAlarmTime.format(formatter)
+
+        _state.update {
+            it.copy(
+                subtitle = subtitle,
+                nextAlarmTriggerTime = nextAlarmTime,
+            )
         }
     }
 
@@ -72,7 +94,7 @@ class HomeViewModel @Inject constructor(
                 selectedAlarm = newAlarm
             )
         }
-        if(alarm.isOn) {
+        if (alarm.isOn) {
             alarmRepository.setLightAlarm(newAlarm, context)
         }
     }
@@ -97,7 +119,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             alarmRepository.insert(newAlarm.asDatabaseModel())
         }
-        if(checked) {
+        if (checked) {
             alarmRepository.setLightAlarm(newAlarm, context)
         } else {
             alarmRepository.cancelAlarm(newAlarm, context)
@@ -116,6 +138,8 @@ class HomeViewModel @Inject constructor(
 data class HomeState(
     val showTimePickerScreen: Boolean = false,
     val selectedAlarm: AlarmUIModel,
-    val alarms: List<AlarmUIModel> = emptyList()
+    val alarms: List<AlarmUIModel> = emptyList(),
+    val subtitle: String,
+    val nextAlarmTriggerTime: ZonedDateTime
 )
 

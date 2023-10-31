@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +53,7 @@ import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIM
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePickerScreen
+import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.Calendar
 
@@ -78,7 +80,9 @@ fun HomeRoute(
             },
             onAlarmCheckChanged = { checked, alarm ->
                 viewModel.onAlarmCheckChanged(checked, alarm, context)
-            }
+            },
+            subtitle = state.subtitle,
+            nextAlarmTriggerTime = state.nextAlarmTriggerTime
         )
     }
 
@@ -110,6 +114,8 @@ fun HomeScreen(
     alarms: List<AlarmUIModel>,
     onAddNewAlarmClick: () -> Unit,
     onAlarmCheckChanged: (Boolean, AlarmUIModel) -> Unit,
+    subtitle: String,
+    nextAlarmTriggerTime: ZonedDateTime
 ) {
     val activity = context as MainActivity
 
@@ -125,6 +131,8 @@ fun HomeScreen(
             HomeScreenTitle(
                 modifier = modifier
                     .padding(top = 100.dp),
+                nextAlarmTriggerTime = nextAlarmTriggerTime,
+                subtitle = subtitle
             )
             AddNewAlarmButton(
                 modifier = modifier
@@ -149,11 +157,30 @@ fun HomeScreen(
 @Composable
 fun HomeScreenTitle(
     modifier: Modifier = Modifier,
-    title: String = "Next alarm in 6 hours 1 minute",
-    subtitle: String = "Tue, Oct 17, 15:29",
+    subtitle: String,
+    nextAlarmTriggerTime: ZonedDateTime,
 ) {
+    val context = LocalContext.current
+    val duration = Duration.between(ZonedDateTime.now(), nextAlarmTriggerTime)
+    val days = duration.toDays()
+    val hours = duration.minusDays(days).toHours()
+    val minutes = duration.minusDays(days).minusHours(hours).toMinutes()
+    val daysString = if (days > 0) context.resources.getQuantityString(R.plurals.days_plural, days.toInt(), days) else ""
+    val hoursString = if (hours > 0) context.resources.getQuantityString(R.plurals.hours_plural, hours.toInt(), hours) else ""
+    val minutesString = context.resources.getQuantityString(R.plurals.minutes_plural, minutes.toInt(), minutes)
+    val titleBuilder = StringBuilder(stringResource(R.string.next_alarm_in))
+    if (days > 0) {
+        titleBuilder.append("$days $daysString ")
+    }
+    if (hours > 0) {
+        titleBuilder.append("$hours $hoursString ")
+    }
+    titleBuilder.append("$minutes $minutesString")
+    val title = titleBuilder.toString().trim()
+
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -161,7 +188,7 @@ fun HomeScreenTitle(
             text = title,
             fontSize = 30.sp,
             color = Color.White,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
