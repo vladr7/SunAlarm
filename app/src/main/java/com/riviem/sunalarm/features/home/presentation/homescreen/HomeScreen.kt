@@ -178,7 +178,8 @@ fun HomeScreenTitle(
                 fontSize = 30.sp,
                 color = Color.White,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.animateContentSize()  // animates size changes
+                modifier = Modifier.animateContentSize(),
+                lineHeight = 36.sp
             )
         }
 
@@ -294,8 +295,8 @@ fun AlarmItem(
 
 @Composable
 private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
-    val hour = if(time.hour < 10) "0${time.hour}" else time.hour
-    val minute = if(time.minute < 10) "0${time.minute}" else time.minute
+    val hour = if (time.hour < 10) "0${time.hour}" else time.hour
+    val minute = if (time.minute < 10) "0${time.minute}" else time.minute
     Column {
         Text(
             text = name,
