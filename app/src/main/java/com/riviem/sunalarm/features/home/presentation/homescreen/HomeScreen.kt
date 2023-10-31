@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -34,6 +35,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -158,27 +160,46 @@ fun HomeScreenTitle(
     title: String,
     subtitle: String,
 ) {
+    val titleState = rememberUpdatedState(title)
+    val subtitleState = rememberUpdatedState(subtitle)
+
     Column(
-        modifier = modifier
-            .padding(horizontal = 20.dp),
+        modifier = modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = title,
-            fontSize = 30.sp,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-        )
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Text(
+                text = titleState.value,
+                fontSize = 30.sp,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.animateContentSize()  // animates size changes
+            )
+        }
+
         Spacer(modifier = Modifier.padding(4.dp))
-        Text(
-            text = subtitle,
-            fontSize = 16.sp,
-            color = Color.White,
-            textAlign = TextAlign.Center
-        )
+
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Text(
+                text = subtitleState.value,
+                fontSize = 16.sp,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.animateContentSize()  // animates size changes
+            )
+        }
     }
 }
+
 
 @Composable
 fun AddNewAlarmButton(
