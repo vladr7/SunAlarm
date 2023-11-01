@@ -78,6 +78,11 @@ class LightViewModel @Inject constructor(
         if (alarm.isOn) {
             alarmRepository.setLightAlarm(alarm = alarm, context = context)
         }
+        _state.update {
+            it.copy(
+                selectedAlarm = alarm.copy(flashlight = false),
+            )
+        }
     }
 
     fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
@@ -85,6 +90,11 @@ class LightViewModel @Inject constructor(
             viewModelScope.launch {
                 alarmRepository.snoozeAlarm(alarm = alarm, context = context)
             }
+        }
+        _state.update {
+            it.copy(
+                selectedAlarm = alarm.copy(flashlight = false),
+            )
         }
     }
 }

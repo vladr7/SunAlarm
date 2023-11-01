@@ -2,6 +2,8 @@ package com.riviem.sunalarm.features.light
 
 import android.app.Activity
 import android.content.Context
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraManager
 import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -57,12 +59,29 @@ fun LightScreen(
             color = state.selectedAlarm?.color ?: Color.Yellow
         )
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getAlarmById(createdTimestampId = createdTimestamp)
+    }
+
     LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
         setBrightness(context, state.brightnessSettingUI.brightness)
     }
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.getAlarmById(createdTimestampId = createdTimestamp)
+    LaunchedEffect(key1 = state.selectedAlarm?.flashlight) {
+        if(state.selectedAlarm == null) return@LaunchedEffect
+        if(state.selectedAlarm?.flashlight == true) {
+            try {
+                handleFlashlight(context, true)
+            } catch (e: CameraAccessException) {
+                e.printStackTrace()
+            }
+        } else {
+            try {
+                handleFlashlight(context, false)
+            } catch (e: CameraAccessException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     Column(
@@ -165,4 +184,10 @@ fun setBrightness(context: Context, brightnessValue: Int) {
     } catch (e: Exception) {
         e.printStackTrace()
     }
+}
+
+private fun handleFlashlight(context: Context, on: Boolean) {
+    val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+    val cameraId = cameraManager.cameraIdList[0]
+    cameraManager.setTorchMode(cameraId, on)
 }
