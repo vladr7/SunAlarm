@@ -21,6 +21,18 @@ class SettingsViewModel @Inject constructor(
 
     init {
         getSnoozeLength()
+        viewModelScope.launch {
+            getBrightnessSettings()
+        }
+    }
+
+    private suspend fun getBrightnessSettings() {
+        val brightnessSettings = alarmRepository.getBrightnessSettings()
+        _state.update {
+            it.copy(
+                brightnessSettingUI = brightnessSettings
+            )
+        }
     }
 
     private fun getSnoozeLength() {
@@ -44,11 +56,13 @@ class SettingsViewModel @Inject constructor(
     fun setBrightnessSettings(brightnessSettingUI: BrightnessSettingUI) {
         viewModelScope.launch {
             alarmRepository.setBrightnessSettings(brightnessSettingUI = brightnessSettingUI)
+            getBrightnessSettings()
         }
     }
 }
 
 
 data class SettingsViewState(
-    val snoozeLength: Int = 0
+    val snoozeLength: Int = 0,
+    val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI()
 )

@@ -68,7 +68,8 @@ fun SettingsRoute(
         snoozeLength = state.snoozeLength,
         onBrightnessSaveClicked = {
             viewModel.setBrightnessSettings(it)
-        }
+        },
+        brightnessSettingUI = state.brightnessSettingUI
     )
 }
 
@@ -77,7 +78,8 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     onSnoozeSelected: (Int) -> Unit,
     snoozeLength: Int,
-    onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit
+    onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit,
+    brightnessSettingUI: BrightnessSettingUI
 ) {
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     var showBrightnessSettingDialog by remember { mutableStateOf(false) }
@@ -124,8 +126,7 @@ fun SettingsScreen(
                 onBrightnessSaveClicked(it)
                 showBrightnessSettingDialog = false
             },
-            brightness = 0,
-            brightnessGradually = 0
+            brightnessSettingUI = brightnessSettingUI,
         )
     }
 }
@@ -146,11 +147,10 @@ fun BrightnessSettingDialog(
     modifier: Modifier,
     onDismissRequest: () -> Unit,
     onSaveClicked: (BrightnessSettingUI) -> Unit,
-    brightness: Int,
-    brightnessGradually: Int
+    brightnessSettingUI: BrightnessSettingUI
 ) {
-    var brightnessSliderValue by remember { mutableIntStateOf(brightness) }
-    var brightnessGraduallySliderValue by remember { mutableIntStateOf(brightnessGradually) }
+    var brightnessSliderValue by remember { mutableIntStateOf(brightnessSettingUI.brightness) }
+    var brightnessGraduallySliderValue by remember { mutableIntStateOf(brightnessSettingUI.brightnessGraduallyMinutes) }
 
     AlertDialog(
         modifier = modifier
@@ -170,8 +170,6 @@ fun BrightnessSettingDialog(
                     fontSize = 36.sp,
                     modifier = Modifier.padding(bottom = 20.dp)
                 )
-                Spacer(modifier = Modifier.height(50.dp))
-                StaticDynamicButtons()
                 Spacer(modifier = Modifier.height(50.dp))
                 BrightnessSlider(
                     text = stringResource(R.string.brightness),
@@ -225,7 +223,7 @@ private fun CancelSaveButtons(
 private fun BrightnessSlider(
     text: String,
     sliderValue: Int,
-    onSliderValueChanged : (Int) -> Unit
+    onSliderValueChanged: (Int) -> Unit
 ) {
     Text(
         text = text,
@@ -259,7 +257,7 @@ private fun BrightnessSlider(
 private fun BrightnessGraduallySlider(
     text: String,
     sliderValue: Int,
-    onSliderValueChanged : (Int) -> Unit
+    onSliderValueChanged: (Int) -> Unit
 ) {
     Text(
         text = text,
@@ -287,22 +285,6 @@ private fun BrightnessGraduallySlider(
             disabledInactiveTickColor = SettingsDisabledSwitchTrackColor
         ),
     )
-}
-
-@Composable
-private fun StaticDynamicButtons() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = stringResource(R.string.static_text))
-        }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = stringResource(R.string.dynamic))
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
