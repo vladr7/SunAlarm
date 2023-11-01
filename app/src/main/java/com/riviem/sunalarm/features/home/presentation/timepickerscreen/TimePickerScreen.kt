@@ -573,7 +573,7 @@ fun ScrollableTimePicker(
 }
 
 @Composable
-private fun TransparentRectangle(
+fun TransparentRectangle(
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -585,7 +585,7 @@ private fun TransparentRectangle(
 }
 
 @Composable
-private fun TimeScrollItem(
+fun TimeScrollItem(
     modifier: Modifier = Modifier,
     time: String
 ) {
