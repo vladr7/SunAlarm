@@ -134,6 +134,12 @@ fun TimePickerScreen(
                     newAlarm = newAlarm.copy(
                         name = it
                     )
+                },
+                flashlightActivated = newAlarm.flashlight,
+                onFlashlightToggleClicked = {
+                    newAlarm = newAlarm.copy(
+                        flashlight = !newAlarm.flashlight
+                    )
                 }
             )
             CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)
@@ -295,10 +301,11 @@ fun LightAlarmConfiguration(
     alarm: AlarmUIModel,
     onDayClicked: (Day) -> Unit,
     onChooseColorClicked: () -> Unit,
-    onAlarmNameChange: (String) -> Unit
+    onAlarmNameChange: (String) -> Unit,
+    flashlightActivated: Boolean,
+    onFlashlightToggleClicked: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-    var flashlightActivated by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -341,7 +348,7 @@ fun LightAlarmConfiguration(
             modifier = Modifier
                 .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 25.dp),
             activated = flashlightActivated,
-            onClick = { flashlightActivated = !flashlightActivated },
+            onClick = onFlashlightToggleClicked,
             title = stringResource(R.string.flashlight),
             subtitle = stringResource(R.string.alarm_rings_with_flashlight),
             startIcon = if(flashlightActivated) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
