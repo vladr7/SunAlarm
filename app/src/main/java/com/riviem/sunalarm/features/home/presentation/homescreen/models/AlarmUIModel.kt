@@ -10,6 +10,7 @@ data class AlarmUIModel(
     val isOn: Boolean,
     val days: List<Day> = weekDays,
     val color: Color,
+    val flashlight: Boolean,
 )
 
 val weekDays = listOf(

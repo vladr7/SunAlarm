@@ -17,6 +17,7 @@ data class DatabaseAlarm(
     val isOn: Boolean,
     val days: List<Day>,
     val color: Int,
+    val flashlight: Boolean,
 )
 
 fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
@@ -27,6 +28,7 @@ fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
         isOn = isOn,
         days = days,
         color = color.toArgb(),
+        flashlight = flashlight,
     )
 }
 
@@ -38,6 +40,7 @@ fun DatabaseAlarm.asUIModel(): AlarmUIModel {
         isOn = isOn,
         days = days,
         color = Color(color),
+        flashlight = flashlight,
     )
 }
 

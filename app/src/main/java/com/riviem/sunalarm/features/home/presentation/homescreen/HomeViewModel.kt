@@ -39,7 +39,8 @@ class HomeViewModel @Inject constructor(
                 name = "Alarm",
                 isOn = false,
                 color = Color.Yellow,
-                createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt()
+                createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt(),
+                flashlight = false,
             ),
             title = "",
             subtitle = "",
@@ -138,7 +139,8 @@ class HomeViewModel @Inject constructor(
                     ringTime = ZonedDateTime.now(),
                     name = "Alarm",
                     isOn = false,
-                    color = Color.Yellow
+                    color = Color.Yellow,
+                    flashlight = false,
                 )
             )
         }
