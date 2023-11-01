@@ -41,6 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.presentation.askBrightnessPermission
+import com.riviem.sunalarm.core.presentation.hasBrightnessPermission
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.SaveButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimeScrollItem
@@ -81,6 +83,7 @@ fun SettingsScreen(
     onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit,
     brightnessSettingUI: BrightnessSettingUI
 ) {
+    val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     var showBrightnessSettingDialog by remember { mutableStateOf(false) }
 
@@ -97,7 +100,11 @@ fun SettingsScreen(
         BrightnessSettingButton(
             modifier = modifier.padding(top = 30.dp),
             onClick = {
-                showBrightnessSettingDialog = true
+                if(hasBrightnessPermission(activity)) {
+                    showBrightnessSettingDialog = true
+                } else {
+                    askBrightnessPermission(activity)
+                }
             }
         )
     }

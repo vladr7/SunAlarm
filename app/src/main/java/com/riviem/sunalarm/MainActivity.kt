@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.presentation.CAMERA_REQUEST_CODE
+import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
 import com.riviem.sunalarm.features.light.LightScreen
 import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
@@ -53,7 +52,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     askPermissionDisplayOverOtherApps(this)
-                    askBrightnessPermission(this)
                     if(startedFromAlarm) {
                         LightScreen(
                             createdTimestamp = createdTimestamp
@@ -88,26 +86,5 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private fun askBrightnessPermission(mainActivity: MainActivity) {
-    if (!Settings.System.canWrite(mainActivity)) {
-        val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-        intent.data = Uri.parse("package:" + mainActivity.packageName)
-        mainActivity.startActivity(intent)
-    }
-
-}
-
-private fun askPermissionDisplayOverOtherApps(
-    context: Context
-) {
-    if (Settings.canDrawOverlays(context)) {
-        // You have the permission
-    } else {
-        // You do not have the permission. Open the settings to let user grant it.
-        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${context.packageName}"))
-        context.startActivity(intent)
-    }
-
-}
 
 
