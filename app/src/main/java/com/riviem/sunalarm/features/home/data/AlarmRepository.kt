@@ -25,4 +25,8 @@ interface AlarmRepository {
     fun snoozeAlarm(alarm: AlarmUIModel, context: Context)
 
     fun cancelAlarm(alarm: AlarmUIModel, context: Context)
+
+    suspend fun setSnoozeLength(snoozeLength: Int)
+
+    suspend fun getSnoozeLength(): Int
 }

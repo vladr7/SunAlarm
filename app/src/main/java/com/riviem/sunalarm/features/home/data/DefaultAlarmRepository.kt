@@ -8,6 +8,8 @@ import com.riviem.sunalarm.AlarmReceiver
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.data.database.AlarmDatabase
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
+import com.riviem.sunalarm.core.data.local.LocalStorage
+import com.riviem.sunalarm.core.data.local.LocalStorageKeys
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import kotlinx.coroutines.flow.Flow
 import java.time.ZoneId
@@ -17,6 +19,7 @@ import javax.inject.Inject
 
 class DefaultAlarmRepository @Inject constructor(
     private val alarmDatabase: AlarmDatabase,
+    private val localStorage: LocalStorage
 ): AlarmRepository {
 
     override fun getAlarms(): Flow<List<DatabaseAlarm>> {
@@ -110,5 +113,13 @@ class DefaultAlarmRepository @Inject constructor(
 
         println("vladlog: cancelAlarm: ${alarm.ringTime}")
         alarmManager.cancel(pendingIntent)
+    }
+
+    override suspend fun setSnoozeLength(snoozeLength: Int) {
+        localStorage.putInt(LocalStorageKeys.SNOOZE_LENGTH_KEY, snoozeLength)
+    }
+
+    override suspend fun getSnoozeLength(): Int {
+        return localStorage.getInt(LocalStorageKeys.SNOOZE_LENGTH_KEY, 5)
     }
 }

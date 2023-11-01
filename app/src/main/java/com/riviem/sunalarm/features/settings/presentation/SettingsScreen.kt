@@ -52,14 +52,17 @@ fun SettingsRoute(
     SettingsScreen(
         onSnoozeSelected = {
             println("vladlog: onSnoozeSelected: $it")
-        }
+            viewModel.setSnoozeLength(it)
+        },
+        snoozeLength = state.snoozeLength
     )
 }
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    onSnoozeSelected: (Int) -> Unit
+    onSnoozeSelected: (Int) -> Unit,
+    snoozeLength: Int
 ) {
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     Column(
@@ -83,7 +86,8 @@ fun SettingsScreen(
             onSaveClicked = {
                 showSnoozeSettingDialog = false
             },
-            onSnoozeSelected = onSnoozeSelected
+            onSnoozeSelected = onSnoozeSelected,
+            snoozeLength = snoozeLength
         )
     }
 }
@@ -94,7 +98,8 @@ fun SnoozeSettingDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onSaveClicked: () -> Unit,
-    onSnoozeSelected: (Int) -> Unit
+    onSnoozeSelected: (Int) -> Unit,
+    snoozeLength: Int
 ) {
     AlertDialog(
         modifier = modifier
@@ -118,7 +123,7 @@ fun SnoozeSettingDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp),
-                    selectedSnooze = 5,
+                    selectedSnooze = snoozeLength,
                     onSnoozeSelected = onSnoozeSelected
                 )
                 Row(
@@ -160,11 +165,10 @@ fun ScrollableSnoozePicker(
 
     ScrollableValuePicker(
         modifier = modifier,
-        selectedValue = selectedSnooze,
         infiniteValues = snoozeLengths,
         onValueSelected = onSnoozeSelected,
         maxSize = snoozeLengths.size,
-        startScrollIndex = snoozeLengths.size / 2
+        startScrollIndex = selectedSnooze
     )
 }
 
@@ -173,7 +177,6 @@ fun ScrollableSnoozePicker(
 @Composable
 fun ScrollableValuePicker(
     modifier: Modifier = Modifier,
-    selectedValue: Int,
     infiniteValues: List<Int>,
     onValueSelected: (Int) -> Unit,
     maxSize: Int,
@@ -185,9 +188,9 @@ fun ScrollableValuePicker(
     val localDensity = LocalDensity.current
 
     LaunchedEffect(key1 = Unit) {
-        valueState.scrollToItem(index = startScrollIndex + selectedValue)
+        valueState.scrollToItem(index = startScrollIndex)
         delay(50L)
-        valueState.animateScrollToItem(index = startScrollIndex + selectedValue - 2)
+        valueState.animateScrollToItem(index = startScrollIndex - 1)
     }
 
     LaunchedEffect(
