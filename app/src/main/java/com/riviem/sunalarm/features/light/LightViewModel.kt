@@ -43,10 +43,13 @@ class LightViewModel @Inject constructor(
     private fun increaseBrightnessOvertime(brightnessSettingUI: BrightnessSettingUI) {
         viewModelScope.launch {
             var currentBrightness = brightnessSettingUI.brightness
-            val delayTimeMillis = brightnessSettingUI.brightnessGraduallyMinutes * 60L * 1000L
-            while (currentBrightness < 255) {
-                delay(delayTimeMillis)
-                currentBrightness += 10
+            val brightnessIncrement = 1  // Adjust as necessary
+            val totalIterations = (255 - currentBrightness) / brightnessIncrement
+            val totalDurationMillis = brightnessSettingUI.brightnessGraduallyMinutes * 60L * 1000L
+            val delayPerIteration = totalDurationMillis / totalIterations
+            for (i in 1..totalIterations) {
+                delay(delayPerIteration)  // Dynamic delay
+                currentBrightness += brightnessIncrement
                 if (currentBrightness > 255) {
                     currentBrightness = 255
                 }
@@ -60,6 +63,8 @@ class LightViewModel @Inject constructor(
             }
         }
     }
+
+
 
     fun getAlarmById(createdTimestampId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
