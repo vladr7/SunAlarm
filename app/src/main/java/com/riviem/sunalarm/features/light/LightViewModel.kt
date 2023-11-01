@@ -26,10 +26,8 @@ class LightViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val alarm = alarmRepository.getAlarmById(createdTimestampId = createdTimestampId)
             println("vladlog: getAlarmById: $alarm")
-            if(alarm != null) {
-                _state.update {
-                    it.copy(selectedAlarm = alarm.asUIModel())
-                }
+            _state.update {
+                it.copy(selectedAlarm = alarm.asUIModel())
             }
         }
     }
@@ -42,7 +40,9 @@ class LightViewModel @Inject constructor(
 
     fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
         if (alarm.isOn) {
-            alarmRepository.snoozeAlarm(alarm = alarm, context = context)
+            viewModelScope.launch {
+                alarmRepository.snoozeAlarm(alarm = alarm, context = context)
+            }
         }
     }
 }

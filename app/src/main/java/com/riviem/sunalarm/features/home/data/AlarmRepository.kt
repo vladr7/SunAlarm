@@ -22,7 +22,7 @@ interface AlarmRepository {
 
     fun getNextAlarmDateTime(alarm: AlarmUIModel): ZonedDateTime
 
-    fun snoozeAlarm(alarm: AlarmUIModel, context: Context)
+    suspend fun snoozeAlarm(alarm: AlarmUIModel, context: Context)
 
     fun cancelAlarm(alarm: AlarmUIModel, context: Context)
 

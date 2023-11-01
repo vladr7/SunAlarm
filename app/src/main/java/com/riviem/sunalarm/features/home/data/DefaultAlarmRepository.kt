@@ -84,7 +84,7 @@ class DefaultAlarmRepository @Inject constructor(
     }
 
 
-    override fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
+    override suspend fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java)
@@ -94,7 +94,8 @@ class DefaultAlarmRepository @Inject constructor(
             context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
-        val snoozeDateTime = ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(5)
+        val snoozeLength = localStorage.getInt(LocalStorageKeys.SNOOZE_LENGTH_KEY, 5)
+        val snoozeDateTime = ZonedDateTime.now(ZoneId.systemDefault()).plusMinutes(snoozeLength.toLong())
 
         println("vladlog: snoozeAlarm: $snoozeDateTime")
 
