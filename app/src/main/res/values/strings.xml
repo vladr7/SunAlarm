@@ -30,5 +30,7 @@
     <string name="dynamic">Dynamic</string>
     <string name="static_text">Static</string>
     <string name="increase_brightness_gradually_over_time">Increase brightness gradually over time</string>
+    <string name="alarm_rings_with_flashlight">Alarm rings with flashlight</string>
+    <string name="flashlight">Flashlight</string>
 
 </resources>

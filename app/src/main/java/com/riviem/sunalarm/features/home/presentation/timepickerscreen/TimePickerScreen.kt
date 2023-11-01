@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,8 +31,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FlashlightOff
+import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -43,10 +50,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
@@ -55,6 +65,15 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
+import com.riviem.sunalarm.ui.theme.SettingsActivateSwitchButtonColor
+import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchBorderColor
+import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
+import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchIconColor
+import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchTrackColor
+import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchBorderColor
+import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchButtonColor
+import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchIconColor
+import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchTrackColor
 import kotlinx.coroutines.delay
 
 @Composable
@@ -279,6 +298,7 @@ fun LightAlarmConfiguration(
     onAlarmNameChange: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
+    var flashlightActivated by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -316,6 +336,16 @@ fun LightAlarmConfiguration(
                 .padding(top = 25.dp, start = 25.dp, end = 15.dp),
             onChooseColorClicked = onChooseColorClicked,
             color = alarm.color
+        )
+        FlashlightToggle(
+            modifier = Modifier
+                .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 25.dp),
+            activated = flashlightActivated,
+            onClick = { flashlightActivated = !flashlightActivated },
+            title = stringResource(R.string.flashlight),
+            subtitle = stringResource(R.string.alarm_rings_with_flashlight),
+            startIcon = if(flashlightActivated) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
+            startIconColor = Color.White,
         )
     }
 }
@@ -605,4 +635,79 @@ fun TimeScrollItem(
         modifier = modifier
             .wrapContentSize(Alignment.Center)
     )
+}
+
+@Composable
+fun FlashlightToggle(
+    modifier: Modifier = Modifier,
+    activated: Boolean,
+    onClick: () -> Unit,
+    title: String,
+    subtitle: String,
+    startIcon: ImageVector,
+    startIconColor: Color,
+) {
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(110.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Image(
+            imageVector = startIcon,
+            contentDescription = null,
+            modifier = modifier
+                .size(30.dp),
+            colorFilter = ColorFilter.tint(startIconColor)
+        )
+        Column(
+            modifier = modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .weight(0.8f, fill = false),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = subtitle,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2
+            )
+        }
+
+        Spacer(modifier = modifier.weight(0.05f))
+        Switch(
+            modifier = modifier
+                .weight(0.15f)
+                .padding(end = 8.dp),
+            checked = activated,
+            onCheckedChange = { onClick() },
+            colors = SwitchColors(
+                checkedThumbColor = SettingsActivateSwitchButtonColor,
+                checkedBorderColor = SettingsActivateSwitchButtonColor,
+                checkedTrackColor = SettingsActivateSwitchButtonColor.copy(alpha = 0.7f),
+                checkedIconColor = Color.White,
+                uncheckedThumbColor = SettingsInactiveSwitchButtonColor,
+                uncheckedTrackColor = SettingsInactiveSwitchTrackColor,
+                uncheckedBorderColor = SettingsInactiveSwitchBorderColor,
+                uncheckedIconColor = SettingsInactiveSwitchIconColor,
+                disabledCheckedThumbColor = SettingsDisabledSwitchButtonColor,
+                disabledCheckedTrackColor = SettingsDisabledSwitchTrackColor,
+                disabledCheckedBorderColor = SettingsDisabledSwitchBorderColor,
+                disabledCheckedIconColor = SettingsDisabledSwitchIconColor,
+                disabledUncheckedThumbColor = SettingsDisabledSwitchButtonColor,
+                disabledUncheckedTrackColor = SettingsDisabledSwitchTrackColor,
+                disabledUncheckedBorderColor = SettingsDisabledSwitchBorderColor,
+                disabledUncheckedIconColor = SettingsDisabledSwitchIconColor
+            )
+        )
+    }
 }
