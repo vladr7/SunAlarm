@@ -34,4 +34,8 @@ interface AlarmRepository {
     suspend fun setBrightnessSettings(brightnessSettingUI: BrightnessSettingUI)
 
     suspend fun getBrightnessSettings(): BrightnessSettingUI
+
+    suspend fun getFirstDayOfWeek(): String
+
+    suspend fun setFirstDayOfWeek(firstDayOfWeek: String)
 }

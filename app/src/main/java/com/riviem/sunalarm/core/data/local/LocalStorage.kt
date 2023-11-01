@@ -3,7 +3,7 @@ package com.riviem.sunalarm.core.data.local
 interface LocalStorage {
 
     suspend fun putString(key: String, value: String)
-    suspend fun getString(key: String, defaultValue: String?): String?
+    suspend fun getString(key: String, defaultValue: String): String
     suspend fun putInt(key: String, value: Int)
     suspend fun getInt(key: String, defaultValue: Int): Int
     suspend fun putLong(key: String, value: Long)

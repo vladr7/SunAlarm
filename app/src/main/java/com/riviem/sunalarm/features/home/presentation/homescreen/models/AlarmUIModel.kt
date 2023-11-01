@@ -22,3 +22,7 @@ val weekDays = listOf(
     Day("S", "Saturday", true),
     Day("S", "Sunday", true)
 )
+
+fun getDayFromFullName(fullName: String): Day {
+    return weekDays.first { day -> day.fullName == fullName }
+}

@@ -28,10 +28,10 @@ class DefaultDataStore @Inject constructor (
         }
     }
 
-    override suspend fun getString(key: String, defaultValue: String?): String? {
+    override suspend fun getString(key: String, defaultValue: String): String {
         val prefKey = stringPreferencesKey(key)
         val preferences = context.dataStore.data.first()
-        return preferences[prefKey]
+        return preferences[prefKey] ?: defaultValue
     }
 
     override suspend fun putInt(key: String, value: Int) {

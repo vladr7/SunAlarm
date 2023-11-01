@@ -11,6 +11,7 @@ import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.local.LocalStorage
 import com.riviem.sunalarm.core.data.local.LocalStorageKeys
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import kotlinx.coroutines.flow.Flow
 import java.time.ZoneId
@@ -134,5 +135,13 @@ class DefaultAlarmRepository @Inject constructor(
         val brightness = localStorage.getInt(LocalStorageKeys.BRIGHTNESS_VALUE_KEY, 5)
         val brightnessGradually = localStorage.getInt(LocalStorageKeys.BRIGHTNESS_GRADUALLY_KEY, 0)
         return BrightnessSettingUI(brightness, brightnessGradually)
+    }
+
+    override suspend fun getFirstDayOfWeek(): String {
+        return localStorage.getString(LocalStorageKeys.FIRST_DAY_OF_WEEK_KEY, weekDays[0].fullName)
+    }
+
+    override suspend fun setFirstDayOfWeek(firstDayOfWeek: String) {
+        localStorage.putString(LocalStorageKeys.FIRST_DAY_OF_WEEK_KEY, firstDayOfWeek)
     }
 }

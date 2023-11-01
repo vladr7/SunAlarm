@@ -32,5 +32,6 @@
     <string name="increase_brightness_gradually_over_time">Increase brightness gradually over time</string>
     <string name="alarm_rings_with_flashlight">Alarm rings with flashlight</string>
     <string name="flashlight">Flashlight</string>
+    <string name="first_day_of_the_week">First day of the week</string>
 
 </resources>

@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
@@ -43,6 +46,8 @@ import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.askBrightnessPermission
 import com.riviem.sunalarm.core.presentation.hasBrightnessPermission
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.SaveButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimeScrollItem
@@ -71,7 +76,11 @@ fun SettingsRoute(
         onBrightnessSaveClicked = {
             viewModel.setBrightnessSettings(it)
         },
-        brightnessSettingUI = state.brightnessSettingUI
+        brightnessSettingUI = state.brightnessSettingUI,
+        onSelectFirstDayOfWeek = {
+            viewModel.setFirstDayOfWeek(it)
+        },
+        firstDayOfWeek = state.firstDayOfWeek
     )
 }
 
@@ -81,11 +90,14 @@ fun SettingsScreen(
     onSnoozeSelected: (Int) -> Unit,
     snoozeLength: Int,
     onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit,
-    brightnessSettingUI: BrightnessSettingUI
+    brightnessSettingUI: BrightnessSettingUI,
+    onSelectFirstDayOfWeek: (Day) -> Unit,
+    firstDayOfWeek: Day
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     var showBrightnessSettingDialog by remember { mutableStateOf(false) }
+    var showFirstDayOfWeekDropdown by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -100,12 +112,19 @@ fun SettingsScreen(
         BrightnessSettingButton(
             modifier = modifier.padding(top = 30.dp),
             onClick = {
-                if(hasBrightnessPermission(activity)) {
+                if (hasBrightnessPermission(activity)) {
                     showBrightnessSettingDialog = true
                 } else {
                     askBrightnessPermission(activity)
                 }
             }
+        )
+        FirstDayOfTheWeek(
+            modifier = modifier.padding(top = 30.dp),
+            onClick = {
+                showFirstDayOfWeekDropdown = true
+            },
+            firstDay = firstDayOfWeek.fullName
         )
     }
     AnimatedVisibility(visible = showSnoozeSettingDialog) {
@@ -136,6 +155,64 @@ fun SettingsScreen(
             brightnessSettingUI = brightnessSettingUI,
         )
     }
+    AnimatedVisibility(visible = showFirstDayOfWeekDropdown) {
+        FirstDayOfWeekDropdown(
+            modifier = modifier,
+            onDismissRequest = {
+                showFirstDayOfWeekDropdown = false
+            },
+            onClick = {
+                onSelectFirstDayOfWeek(it)
+                showFirstDayOfWeekDropdown = false
+            },
+            expanded = showFirstDayOfWeekDropdown
+        )
+    }
+}
+
+@Composable
+fun FirstDayOfWeekDropdown(
+    modifier: Modifier,
+    onDismissRequest: () -> Unit,
+    onClick: (Day) -> Unit,
+    expanded: Boolean
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { onDismissRequest() },
+            content = {
+                weekDays.forEach{ day ->
+                    DropdownMenuItem(text = {
+                        Text(text = day.fullName)
+                    }, onClick = {
+                        onClick(day)
+                    })
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun FirstDayOfTheWeek(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    firstDay: String
+) {
+    Row(
+        modifier = modifier.fillMaxWidth().padding(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Button(onClick = onClick, modifier = modifier) {
+            Text(text = stringResource(R.string.first_day_of_the_week))
+        }
+        Text(text = firstDay)
+    }
+
 }
 
 @Composable
