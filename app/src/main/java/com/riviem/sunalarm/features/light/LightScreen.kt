@@ -109,7 +109,7 @@ private fun LightScreenContent(
                 .weight(0.5f),
             shape = RoundedCornerShape(5),
             colors = ButtonColors(
-                containerColor = Purple40.copy(alpha = 0.5f),
+                containerColor = Purple40,
                 contentColor = Color.White,
                 disabledContentColor = Color.White,
                 disabledContainerColor = Color.Gray
@@ -127,7 +127,7 @@ private fun LightScreenContent(
                 .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
                 .weight(0.5f),
             colors = ButtonColors(
-                containerColor = Color.Red.copy(alpha = 0.2f),
+                containerColor = Color.Red,
                 contentColor = Color.White,
                 disabledContentColor = Color.White,
                 disabledContainerColor = Color.Gray
