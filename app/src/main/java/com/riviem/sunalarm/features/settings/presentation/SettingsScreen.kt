@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,10 +19,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,12 +39,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.skydoves.colorpicker.compose.BrightnessSlider
-import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimeScrollItem
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TransparentRectangle
+import com.riviem.sunalarm.ui.theme.SettingsActivateSwitchButtonColor
+import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
+import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchTrackColor
+import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchButtonColor
+import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchTrackColor
 import kotlinx.coroutines.delay
 
 @Composable
@@ -110,8 +117,8 @@ fun SettingsScreen(
             onSaveClicked = {
                 showBrightnessSettingDialog = false
             },
-            onBrightnessSelected = {},
-            brightness = 0
+            brightness = 0,
+            brightnessGradually = 0
         )
     }
 }
@@ -131,10 +138,13 @@ fun BrightnessSettingButton(modifier: Modifier, onClick: () -> Unit) {
 fun BrightnessSettingDialog(
     modifier: Modifier,
     onDismissRequest: () -> Unit,
-    onSaveClicked: () -> Unit,
-    onBrightnessSelected: () -> Unit,
-    brightness: Int
+    onSaveClicked: (Int) -> Unit,
+    brightness: Int,
+    brightnessGradually: Int
 ) {
+    var brightnessSliderValue by remember { mutableIntStateOf(brightness) }
+    var brightnessGraduallySliderValue by remember { mutableIntStateOf(brightnessGradually) }
+
     AlertDialog(
         modifier = modifier
             .height(500.dp),
@@ -153,10 +163,111 @@ fun BrightnessSettingDialog(
                     fontSize = 36.sp,
                     modifier = Modifier.padding(bottom = 20.dp)
                 )
-                BrightnessSlider(controller = ColorPickerController())
+                Spacer(modifier = Modifier.height(50.dp))
+                StaticDynamicButtons()
+                Spacer(modifier = Modifier.height(50.dp))
+                BrightnessSlider(
+                    text = stringResource(R.string.brightness),
+                    sliderValue = brightnessSliderValue,
+                    onSliderValueChanged = {
+                        brightnessSliderValue = it
+                    }
+                )
+                Spacer(modifier = Modifier.height(50.dp))
+                BrightnessGraduallySlider(
+                    text = stringResource(R.string.increase_brightness_gradually_over_time),
+                    sliderValue = brightnessGraduallySliderValue,
+                    onSliderValueChanged = {
+                        brightnessGraduallySliderValue = it
+                    }
+                )
             }
         }
     )
+}
+
+@Composable
+private fun BrightnessSlider(
+    text: String,
+    sliderValue: Int,
+    onSliderValueChanged : (Int) -> Unit
+) {
+    Text(
+        text = text,
+        fontSize = 16.sp,
+    )
+    Slider(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp),
+        value = sliderValue.toFloat(),
+        onValueChange = { newValue ->
+            onSliderValueChanged(newValue.toInt())
+        },
+        valueRange = 1f..100f,
+        steps = 100,
+        colors = SliderColors(
+            thumbColor = SettingsActivateSwitchButtonColor,
+            activeTrackColor = SettingsActivateSwitchButtonColor,
+            activeTickColor = SettingsActivateSwitchButtonColor.copy(alpha = 0.7f),
+            inactiveTrackColor = SettingsInactiveSwitchButtonColor,
+            inactiveTickColor = SettingsInactiveSwitchTrackColor,
+            disabledThumbColor = SettingsDisabledSwitchButtonColor,
+            disabledActiveTrackColor = SettingsDisabledSwitchTrackColor,
+            disabledActiveTickColor = SettingsDisabledSwitchTrackColor.copy(alpha = 0.7f),
+            disabledInactiveTrackColor = SettingsDisabledSwitchButtonColor,
+            disabledInactiveTickColor = SettingsDisabledSwitchTrackColor
+        ),
+    )
+}
+
+@Composable
+private fun BrightnessGraduallySlider(
+    text: String,
+    sliderValue: Int,
+    onSliderValueChanged : (Int) -> Unit
+) {
+    Text(
+        text = text,
+        fontSize = 16.sp,
+    )
+    Slider(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp),
+        value = sliderValue.toFloat(),
+        onValueChange = { newValue ->
+            onSliderValueChanged(newValue.toInt())
+        },
+        valueRange = 1f..100f,
+        steps = 100,
+        colors = SliderColors(
+            thumbColor = SettingsActivateSwitchButtonColor,
+            activeTrackColor = SettingsActivateSwitchButtonColor,
+            activeTickColor = SettingsActivateSwitchButtonColor.copy(alpha = 0.7f),
+            inactiveTrackColor = SettingsInactiveSwitchButtonColor,
+            inactiveTickColor = SettingsInactiveSwitchTrackColor,
+            disabledThumbColor = SettingsDisabledSwitchButtonColor,
+            disabledActiveTrackColor = SettingsDisabledSwitchTrackColor,
+            disabledActiveTickColor = SettingsDisabledSwitchTrackColor.copy(alpha = 0.7f),
+            disabledInactiveTrackColor = SettingsDisabledSwitchButtonColor,
+            disabledInactiveTickColor = SettingsDisabledSwitchTrackColor
+        ),
+    )
+}
+
+@Composable
+private fun StaticDynamicButtons() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = stringResource(R.string.static_text))
+        }
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = stringResource(R.string.dynamic))
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
