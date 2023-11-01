@@ -62,7 +62,10 @@ import androidx.compose.ui.unit.sp
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.presentation.hasCameraPermission
+import com.riviem.sunalarm.core.presentation.requestCameraPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.ui.theme.SettingsActivateSwitchButtonColor
@@ -82,6 +85,8 @@ fun TimePickerScreen(
     onSaveClick: (AlarmUIModel) -> Unit,
     onCancelClick: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val activity = androidx.compose.ui.platform.LocalContext.current as MainActivity
     var showColorPicker by remember { mutableStateOf(false) }
     var newAlarm by remember { mutableStateOf(alarm) }
     var newColor by remember { mutableStateOf(alarm.color) }
@@ -137,9 +142,13 @@ fun TimePickerScreen(
                 },
                 flashlightActivated = newAlarm.flashlight,
                 onFlashlightToggleClicked = {
-                    newAlarm = newAlarm.copy(
-                        flashlight = !newAlarm.flashlight
-                    )
+                    if(hasCameraPermission(context = context)) {
+                        newAlarm = newAlarm.copy(
+                            flashlight = !newAlarm.flashlight
+                        )
+                    } else {
+                        requestCameraPermission(activity = activity)
+                    }
                 }
             )
             CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)

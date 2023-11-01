@@ -13,7 +13,7 @@ import com.riviem.sunalarm.core.data.database.typeconverters.DayTypeConverter
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface AlarmDao{
+interface AlarmDao {
 
     @Query("select * from databasealarm order by createdTimestamp desc")
     fun getAlarms(): Flow<List<DatabaseAlarm>>
@@ -31,21 +31,24 @@ interface AlarmDao{
     fun getAlarmById(createdTimestampId: Int): DatabaseAlarm
 }
 
-@Database(entities = [DatabaseAlarm::class], version = 1)
+@Database(entities = [DatabaseAlarm::class], version = 2)
 @TypeConverters(DayTypeConverter::class)
-abstract class AlarmDatabase: RoomDatabase() {
+abstract class AlarmDatabase : RoomDatabase() {
     abstract val alarmDao: AlarmDao
 }
-
 
 private lateinit var INSTANCE: AlarmDatabase
 
 fun getAlarmDatabase(context: Context): AlarmDatabase {
     synchronized(AlarmDatabase::class.java) {
         if (!::INSTANCE.isInitialized) {
-            INSTANCE = Room.databaseBuilder(context.applicationContext,
+            INSTANCE = Room.databaseBuilder(
+                context.applicationContext,
                 AlarmDatabase::class.java,
-                "alarm").build()
+                "alarm"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
     }
     return INSTANCE

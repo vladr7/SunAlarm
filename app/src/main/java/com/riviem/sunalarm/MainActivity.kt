@@ -3,9 +3,11 @@ package com.riviem.sunalarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.presentation.CAMERA_REQUEST_CODE
 import com.riviem.sunalarm.features.light.LightScreen
 import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
@@ -65,6 +68,24 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            CAMERA_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted. Do camera operations.
+                } else {
+                    // Permission was denied. Inform the user or take alternative actions.
+                    Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 }
 
 private fun askBrightnessPermission(mainActivity: MainActivity) {
@@ -88,3 +109,5 @@ private fun askPermissionDisplayOverOtherApps(
     }
 
 }
+
+
