@@ -1,5 +1,8 @@
 package com.riviem.sunalarm.features.light
 
+import android.app.Activity
+import android.content.Context
+import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -53,6 +56,10 @@ fun LightScreen(
         .background(
             color = state.selectedAlarm?.color ?: Color.Yellow
         )
+
+    LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
+        setBrightness(context, state.brightnessSettingUI.brightness)
+    }
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getAlarmById(createdTimestampId = createdTimestamp)
@@ -139,5 +146,23 @@ private fun LightScreenContent(
                 fontSize = 70.sp,
             )
         }
+    }
+}
+
+fun setBrightness(context: Context, brightnessValue: Int) {
+    val brightness = brightnessValue.coerceIn(0, 255)
+
+    val layoutParams = (context as Activity).window.attributes
+    layoutParams.screenBrightness = brightness.toFloat() / 255
+    context.window.attributes = layoutParams
+
+    try {
+        Settings.System.putInt(
+            context.contentResolver,
+            Settings.System.SCREEN_BRIGHTNESS,
+            brightness
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }

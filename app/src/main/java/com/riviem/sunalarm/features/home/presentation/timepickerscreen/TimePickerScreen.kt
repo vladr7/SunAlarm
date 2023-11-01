@@ -117,28 +117,7 @@ fun TimePickerScreen(
                     )
                 }
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                CancelButton(
-                    modifier = Modifier,
-                    onCancelClick = {
-                        onCancelClick()
-                    }
-                )
-                SaveButton(
-                    modifier = Modifier,
-                    onSaveClick = {
-                        onSaveClick(
-                            newAlarm.copy(
-                                isOn = true
-                            )
-                        )
-                    },
-                )
-            }
+            CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)
         }
 
         AnimatedVisibility(
@@ -161,6 +140,36 @@ fun TimePickerScreen(
                 },
             )
         }
+    }
+}
+
+@Composable
+private fun CancelAndSaveButtons(
+    onCancelClick: () -> Unit,
+    onSaveClick: (AlarmUIModel) -> Unit,
+    newAlarm: AlarmUIModel
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        CancelButton(
+            modifier = Modifier,
+            onCancelClick = {
+                onCancelClick()
+            }
+        )
+        SaveButton(
+            modifier = Modifier,
+            onSaveClick = {
+                onSaveClick(
+                    newAlarm.copy(
+                        isOn = true
+                    )
+                )
+            },
+        )
     }
 }
 

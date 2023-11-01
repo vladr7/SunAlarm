@@ -3,6 +3,7 @@ package com.riviem.sunalarm.features.home.data
 import android.content.Context
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
@@ -29,4 +30,8 @@ interface AlarmRepository {
     suspend fun setSnoozeLength(snoozeLength: Int)
 
     suspend fun getSnoozeLength(): Int
+
+    suspend fun setBrightnessSettings(brightnessSettingUI: BrightnessSettingUI)
+
+    suspend fun getBrightnessSettings(): BrightnessSettingUI
 }

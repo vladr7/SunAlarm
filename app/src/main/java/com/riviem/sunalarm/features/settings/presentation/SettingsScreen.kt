@@ -41,8 +41,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.SaveButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimeScrollItem
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TransparentRectangle
+import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import com.riviem.sunalarm.ui.theme.SettingsActivateSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchTrackColor
@@ -60,10 +63,12 @@ fun SettingsRoute(
 
     SettingsScreen(
         onSnoozeSelected = {
-            println("vladlog: onSnoozeSelected: $it")
             viewModel.setSnoozeLength(it)
         },
-        snoozeLength = state.snoozeLength
+        snoozeLength = state.snoozeLength,
+        onBrightnessSaveClicked = {
+            viewModel.setBrightnessSettings(it)
+        }
     )
 }
 
@@ -71,7 +76,8 @@ fun SettingsRoute(
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     onSnoozeSelected: (Int) -> Unit,
-    snoozeLength: Int
+    snoozeLength: Int,
+    onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit
 ) {
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     var showBrightnessSettingDialog by remember { mutableStateOf(false) }
@@ -115,6 +121,7 @@ fun SettingsScreen(
                 showBrightnessSettingDialog = false
             },
             onSaveClicked = {
+                onBrightnessSaveClicked(it)
                 showBrightnessSettingDialog = false
             },
             brightness = 0,
@@ -138,7 +145,7 @@ fun BrightnessSettingButton(modifier: Modifier, onClick: () -> Unit) {
 fun BrightnessSettingDialog(
     modifier: Modifier,
     onDismissRequest: () -> Unit,
-    onSaveClicked: (Int) -> Unit,
+    onSaveClicked: (BrightnessSettingUI) -> Unit,
     brightness: Int,
     brightnessGradually: Int
 ) {
@@ -181,9 +188,37 @@ fun BrightnessSettingDialog(
                         brightnessGraduallySliderValue = it
                     }
                 )
+                CancelSaveButtons(
+                    onCancelClicked = {
+                        onDismissRequest()
+                    },
+                    onSaveClicked = {
+                        onSaveClicked(
+                            BrightnessSettingUI(
+                                brightness = brightnessSliderValue,
+                                brightnessGraduallyMinutes = brightnessGraduallySliderValue
+                            )
+                        )
+                    }
+                )
             }
         }
     )
+}
+
+@Composable
+private fun CancelSaveButtons(
+    onSaveClicked: () -> Unit,
+    onCancelClicked: () -> Unit
+) {
+    Row {
+        CancelButton {
+            onCancelClicked()
+        }
+        SaveButton {
+            onSaveClicked()
+        }
+    }
 }
 
 @Composable

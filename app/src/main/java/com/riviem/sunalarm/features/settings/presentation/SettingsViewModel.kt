@@ -3,6 +3,7 @@ package com.riviem.sunalarm.features.settings.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.features.home.data.AlarmRepository
+import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,6 +38,12 @@ class SettingsViewModel @Inject constructor(
         }
         _state.update {
             it.copy(snoozeLength = length)
+        }
+    }
+
+    fun setBrightnessSettings(brightnessSettingUI: BrightnessSettingUI) {
+        viewModelScope.launch {
+            alarmRepository.setBrightnessSettings(brightnessSettingUI = brightnessSettingUI)
         }
     }
 }

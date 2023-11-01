@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -21,6 +23,43 @@ class LightViewModel @Inject constructor(
 
     private val _state = MutableStateFlow<LightState>(LightState())
     val state: StateFlow<LightState> = _state
+
+    init {
+        getBrightnessSettings()
+    }
+
+    private fun getBrightnessSettings() {
+        viewModelScope.launch {
+            val brightnessSettings = alarmRepository.getBrightnessSettings()
+            _state.update {
+                it.copy(
+                    brightnessSettingUI = brightnessSettings
+                )
+            }
+            increaseBrightnessOvertime(brightnessSettings)
+        }
+    }
+
+    private fun increaseBrightnessOvertime(brightnessSettingUI: BrightnessSettingUI) {
+        viewModelScope.launch {
+            var currentBrightness = brightnessSettingUI.brightness
+            val delayTimeMillis = brightnessSettingUI.brightnessGraduallyMinutes * 60L * 1000L
+            while (currentBrightness < 255) {
+                delay(delayTimeMillis)
+                currentBrightness += 10
+                if (currentBrightness > 255) {
+                    currentBrightness = 255
+                }
+                _state.update {
+                    it.copy(
+                        brightnessSettingUI = it.brightnessSettingUI.copy(
+                            brightness = currentBrightness
+                        )
+                    )
+                }
+            }
+        }
+    }
 
     fun getAlarmById(createdTimestampId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -49,4 +88,5 @@ class LightViewModel @Inject constructor(
 
 data class LightState(
     val selectedAlarm: AlarmUIModel? = null,
+    val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI(),
 )

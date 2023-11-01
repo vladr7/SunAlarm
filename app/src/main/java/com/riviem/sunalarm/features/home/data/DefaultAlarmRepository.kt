@@ -11,6 +11,7 @@ import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.local.LocalStorage
 import com.riviem.sunalarm.core.data.local.LocalStorageKeys
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import kotlinx.coroutines.flow.Flow
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -122,5 +123,16 @@ class DefaultAlarmRepository @Inject constructor(
 
     override suspend fun getSnoozeLength(): Int {
         return localStorage.getInt(LocalStorageKeys.SNOOZE_LENGTH_KEY, 5)
+    }
+
+    override suspend fun setBrightnessSettings(brightnessSettingUI: BrightnessSettingUI) {
+        localStorage.putInt(LocalStorageKeys.BRIGHTNESS_VALUE_KEY, brightnessSettingUI.brightness)
+        localStorage.putInt(LocalStorageKeys.BRIGHTNESS_GRADUALLY_KEY, brightnessSettingUI.brightnessGraduallyMinutes)
+    }
+
+    override suspend fun getBrightnessSettings(): BrightnessSettingUI {
+        val brightness = localStorage.getInt(LocalStorageKeys.BRIGHTNESS_VALUE_KEY, 5)
+        val brightnessGradually = localStorage.getInt(LocalStorageKeys.BRIGHTNESS_GRADUALLY_KEY, 0)
+        return BrightnessSettingUI(brightness, brightnessGradually)
     }
 }
