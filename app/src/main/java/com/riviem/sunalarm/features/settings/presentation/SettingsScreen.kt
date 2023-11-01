@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
+import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimeScrollItem
@@ -65,6 +67,8 @@ fun SettingsScreen(
     snoozeLength: Int
 ) {
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
+    var showBrightnessSettingDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,6 +77,12 @@ fun SettingsScreen(
             modifier = modifier.padding(top = 30.dp),
             onClick = {
                 showSnoozeSettingDialog = true
+            }
+        )
+        BrightnessSettingButton(
+            modifier = modifier.padding(top = 30.dp),
+            onClick = {
+                showBrightnessSettingDialog = true
             }
         )
     }
@@ -90,6 +100,63 @@ fun SettingsScreen(
             snoozeLength = snoozeLength
         )
     }
+    AnimatedVisibility(visible = showBrightnessSettingDialog) {
+        BrightnessSettingDialog(
+            modifier = modifier
+                .fillMaxWidth(),
+            onDismissRequest = {
+                showBrightnessSettingDialog = false
+            },
+            onSaveClicked = {
+                showBrightnessSettingDialog = false
+            },
+            onBrightnessSelected = {},
+            brightness = 0
+        )
+    }
+}
+
+@Composable
+fun BrightnessSettingButton(modifier: Modifier, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Text(text = stringResource(R.string.brightness))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BrightnessSettingDialog(
+    modifier: Modifier,
+    onDismissRequest: () -> Unit,
+    onSaveClicked: () -> Unit,
+    onBrightnessSelected: () -> Unit,
+    brightness: Int
+) {
+    AlertDialog(
+        modifier = modifier
+            .height(500.dp),
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+        ),
+        content = {
+            Column(
+                modifier = modifier,
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.brightness),
+                    fontSize = 36.sp,
+                    modifier = Modifier.padding(bottom = 20.dp)
+                )
+                BrightnessSlider(controller = ColorPickerController())
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
