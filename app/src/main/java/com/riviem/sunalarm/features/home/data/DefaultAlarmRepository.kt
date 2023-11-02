@@ -146,7 +146,7 @@ class DefaultAlarmRepository @Inject constructor(
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: cancelLightAlarm: ${alarm.ringTime}")
+        println("vladlog: cancelLightAlarm: ${alarm.createdTimestamp}")
         alarmManager.cancel(pendingIntent)
     }
 
@@ -162,7 +162,7 @@ class DefaultAlarmRepository @Inject constructor(
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: cancelSoundAlarm: ${alarm.ringTime}")
+        println("vladlog: cancelSoundAlarm: ${alarm.createdTimestamp + 1}")
         alarmManager.cancel(pendingIntent)
     }
 

@@ -77,24 +77,26 @@ fun SettingsRoute(
         },
         firstDayOfWeek = state.firstDayOfWeek,
         onSnoozeSavedClicked = {
-            viewModel.setSnoozeLength()
+            viewModel.setSnoozeLength(it)
         },
         onSaveMinutesUntilSoundAlarmClicked = {
             viewModel.setMinutesUntilSoundAlarm(it)
-        }
+        },
+        minutesUntilSoundAlarm = state.minutesUntilSoundAlarm
     )
 }
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    onSnoozeSavedClicked: () -> Unit,
+    onSnoozeSavedClicked: (Int) -> Unit,
     snoozeLength: Int,
     onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit,
     brightnessSettingUI: BrightnessSettingUI,
     onSelectFirstDayOfWeek: (FirstDayOfWeek) -> Unit,
     firstDayOfWeek: FirstDayOfWeek,
     onSaveMinutesUntilSoundAlarmClicked: (Int) -> Unit,
+    minutesUntilSoundAlarm: Int,
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
@@ -144,11 +146,12 @@ fun SettingsScreen(
                 showSnoozeSettingDialog = false
             },
             onSaveClicked = {
-                onSnoozeSavedClicked()
+                onSnoozeSavedClicked(it)
                 showSnoozeSettingDialog = false
             },
-            length = snoozeLength,
-            title = stringResource(R.string.snooze_length)
+            length = 61,
+            title = stringResource(R.string.snooze_length),
+            initialSnoozeLength = snoozeLength
         )
     }
     AnimatedVisibility(visible = showBrightnessSettingDialog) {
@@ -185,12 +188,13 @@ fun SettingsScreen(
             onDismissRequest = {
                 showSoundAlarmMinutesDialog = false
             },
-            length = 61,
+            length = 121,
             title = stringResource(R.string.sound_alarm_minutes),
             onSaveClicked = {
                 onSaveMinutesUntilSoundAlarmClicked(it)
                 showSoundAlarmMinutesDialog = false
-            }
+            },
+            minutesUntilSoundAlarm = minutesUntilSoundAlarm
         )
     }
 }
@@ -201,14 +205,16 @@ fun SoundAlarmMinutesDialog(
     onDismissRequest: () -> Unit,
     length: Int,
     title: String,
-    onSaveClicked: (Int) -> Unit
+    onSaveClicked: (Int) -> Unit,
+    minutesUntilSoundAlarm: Int
 ) {
     ScrollOneItemDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
         title = title,
         length = length,
-        onSaveClicked = onSaveClicked
+        onSaveClicked = onSaveClicked,
+        startScrollIndex = minutesUntilSoundAlarm
     )
 }
 
@@ -430,14 +436,16 @@ fun SnoozeSettingDialog(
     onDismissRequest: () -> Unit,
     onSaveClicked: (Int) -> Unit,
     length: Int,
-    title: String
+    title: String,
+    initialSnoozeLength: Int
 ) {
     ScrollOneItemDialog(
         modifier,
         onDismissRequest,
         title,
         length,
-        onSaveClicked
+        onSaveClicked,
+        startScrollIndex = initialSnoozeLength
     )
 }
 
@@ -448,9 +456,14 @@ private fun ScrollOneItemDialog(
     onDismissRequest: () -> Unit,
     title: String,
     length: Int,
-    onSaveClicked: (Int) -> Unit
+    onSaveClicked: (Int) -> Unit,
+    startScrollIndex: Int
 ) {
-    var selectedValue by remember { mutableIntStateOf(length / 2) }
+    var selectedValue by remember { mutableIntStateOf(startScrollIndex) }
+
+    LaunchedEffect(key1 = startScrollIndex) {
+        selectedValue = startScrollIndex
+    }
 
     AlertDialog(
         modifier = modifier
@@ -470,14 +483,14 @@ private fun ScrollOneItemDialog(
                     fontSize = 36.sp,
                     modifier = Modifier.padding(bottom = 20.dp)
                 )
-                ScrollablePicker(
-                    modifier = Modifier
+                ScrollableValuePicker(
+                    modifier = modifier
                         .fillMaxWidth()
                         .height(300.dp),
-                    selectedItem = selectedValue,
-                    onSelectedItem = {
+                    onValueSelected = {
                         selectedValue = it
                     },
+                    startScrollIndex = selectedValue,
                     length = length
                 )
                 Row(
@@ -509,36 +522,19 @@ private fun ScrollOneItemDialog(
     )
 }
 
-@Composable
-fun ScrollablePicker(
-    modifier: Modifier = Modifier,
-    selectedItem: Int,
-    onSelectedItem: (Int) -> Unit,
-    length: Int
-    ) {
-    val list by remember { mutableStateOf(listOf(1..length)) }
-    ScrollableValuePicker(
-        modifier = modifier,
-        infiniteValues = list.flatten(),
-        onValueSelected = onSelectedItem,
-        maxSize = list.size,
-        startScrollIndex = selectedItem
-    )
-}
-
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScrollableValuePicker(
     modifier: Modifier = Modifier,
-    infiniteValues: List<Int>,
     onValueSelected: (Int) -> Unit,
-    maxSize: Int,
-    startScrollIndex: Int
+    startScrollIndex: Int,
+    length: Int
 ) {
+    val list = List(length) { it }
     val valueState = rememberLazyListState()
     val values =
-        infiniteValues.take(maxSize).map { if (it < 10) "0$it" else it.toString() }.toList()
+        list.take(list.size).map { if (it < 10) "0$it" else it.toString() }.toList()
     val localDensity = LocalDensity.current
 
     LaunchedEffect(key1 = Unit) {
