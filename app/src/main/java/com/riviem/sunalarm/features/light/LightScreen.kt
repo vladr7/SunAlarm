@@ -35,12 +35,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.ui.theme.Purple40
 
 @Composable
 fun LightScreen(
     viewModel: LightViewModel = hiltViewModel(),
     createdTimestamp: Int,
+    alarmType: AlarmType,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -60,7 +62,7 @@ fun LightScreen(
         )
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getAlarmById(createdTimestampId = createdTimestamp)
+        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType)
     }
 
     LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
@@ -108,7 +110,7 @@ fun LightScreen(
                 },
                 onDismissClick = {
                     state.selectedAlarm?.let {
-                        viewModel.stopAlarm(it, context = context)
+                        viewModel.stopAlarm(it, context = context, alarmType = alarmType)
                     }
                     activity.finishAffinity()
                 }

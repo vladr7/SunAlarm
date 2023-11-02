@@ -368,7 +368,7 @@ fun LightAlarmConfiguration(
         )
         FlashlightToggle(
             modifier = Modifier
-                .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 25.dp),
+                .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 15.dp),
             activated = flashlightActivated,
             onClick = onFlashlightToggleClicked,
             title = stringResource(R.string.flashlight),
@@ -378,7 +378,7 @@ fun LightAlarmConfiguration(
         )
         SoundAlarmToggle(
             modifier = Modifier
-                .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 25.dp),
+                .padding(start = 10.dp, end = 15.dp, bottom = 25.dp),
             activated = alarm.soundAlarmEnabled,
             onClick = onSoundAlarmToggleClicked,
             title = stringResource(R.string.sound_alarm),

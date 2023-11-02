@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.presentation.CAMERA_REQUEST_CODE
 import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
+import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.light.LightScreen
 import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
@@ -23,11 +24,13 @@ import dagger.hilt.android.AndroidEntryPoint
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val createdTimestamp = intent?.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
+        val alarmType = intent?.getStringExtra(Constants.ALARM_TYPE_ID)
         println("vladlog: AlarmReceiver Alarm Triggered! createdTimestamp: $createdTimestamp")
 
         val mainActivityIntent = Intent(context, MainActivity::class.java)
         mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         mainActivityIntent.putExtra(Constants.FROM_ALARM_ID, true)
+        mainActivityIntent.putExtra(Constants.ALARM_TYPE_ID, alarmType)
         mainActivityIntent.putExtra(Constants.CREATED_TIMESTAMP_ID, createdTimestamp)
         context?.startActivity(mainActivityIntent)
     }
@@ -42,6 +45,8 @@ class MainActivity : ComponentActivity() {
         this.setShowWhenLocked(true)
         val startedFromAlarm = intent.getBooleanExtra(Constants.FROM_ALARM_ID, false)
         val createdTimestamp = intent.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
+        val alarmTypeString = intent.getStringExtra(Constants.ALARM_TYPE_ID)
+        val alarmType = if(alarmTypeString == null) AlarmType.LIGHT else AlarmType.valueOf(alarmTypeString)
         println("vladlog: MainActivity onCreate: createdTimestamp: $createdTimestamp")
 
         setContent {
@@ -54,7 +59,8 @@ class MainActivity : ComponentActivity() {
                     askPermissionDisplayOverOtherApps(this)
                     if(startedFromAlarm) {
                         LightScreen(
-                            createdTimestamp = createdTimestamp
+                            createdTimestamp = createdTimestamp,
+                            alarmType = alarmType
                         )
                     } else {
 //                        LightScreen(

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.core.data.database.asUIModel
+import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
@@ -64,9 +65,14 @@ class LightViewModel @Inject constructor(
         }
     }
 
-    fun getAlarmById(createdTimestampId: Int) {
+    fun getAlarmById(createdTimestampId: Int, alarmType: AlarmType) {
         viewModelScope.launch(Dispatchers.IO) {
-            val alarm = alarmRepository.getAlarmById(createdTimestampId = createdTimestampId)
+            val id = if (alarmType == AlarmType.LIGHT) {
+                createdTimestampId
+            } else {
+                createdTimestampId - 1
+            }
+            val alarm = alarmRepository.getAlarmById(createdTimestampId = id)
             println("vladlog: getAlarmById: $alarm")
             _state.update {
                 it.copy(selectedAlarm = alarm.asUIModel())
@@ -74,8 +80,8 @@ class LightViewModel @Inject constructor(
         }
     }
 
-    fun stopAlarm(alarm: AlarmUIModel, context: Context) {
-        if (alarm.isOn) {
+    fun stopAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
+        if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
             alarmRepository.setLightAlarm(alarm = alarm, context = context)
         }
         _state.update {

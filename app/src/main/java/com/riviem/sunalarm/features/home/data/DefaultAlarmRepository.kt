@@ -10,6 +10,7 @@ import com.riviem.sunalarm.core.data.database.AlarmDatabase
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.local.LocalStorage
 import com.riviem.sunalarm.core.data.local.LocalStorageKeys
+import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
@@ -75,14 +76,37 @@ class DefaultAlarmRepository @Inject constructor(
 
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra(Constants.CREATED_TIMESTAMP_ID, alarm.createdTimestamp)
+        intent.putExtra(Constants.ALARM_TYPE_ID, AlarmType.LIGHT.name)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: setLightAlarm for: $alarmDateTime")
+        println("vladlog: setLightAlarm for: $alarmDateTime with id: ${alarm.createdTimestamp}")
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmDateTime.toInstant().toEpochMilli(), pendingIntent)
+
+        if (alarm.soundAlarmEnabled) {
+            setSoundAlarm(alarm, alarmDateTime, context)
+        }
+    }
+
+    private fun setSoundAlarm(alarm: AlarmUIModel, alarmDateTime: ZonedDateTime, context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val id = alarm.createdTimestamp + 1
+        val updatedAlarmDateTime = alarmDateTime.plusMinutes(alarm.minutesUntilSoundAlarm.toLong())
+
+        val intent = Intent(context, AlarmReceiver::class.java)
+        intent.putExtra(Constants.CREATED_TIMESTAMP_ID, id)
+        intent.putExtra(Constants.ALARM_TYPE_ID, AlarmType.SOUND.name)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, id, intent, PendingIntent.FLAG_IMMUTABLE
+        )
+
+        println("vladlog: setSoundAlarm for: $updatedAlarmDateTime with id: $id")
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, updatedAlarmDateTime.toInstant().toEpochMilli(), pendingIntent)
     }
 
 
@@ -106,6 +130,14 @@ class DefaultAlarmRepository @Inject constructor(
 
 
     override fun cancelAlarm(alarm: AlarmUIModel, context: Context) {
+        cancelLightAlarm(context, alarm)
+        cancelSoundAlarm(context, alarm)
+    }
+
+    private fun cancelLightAlarm(
+        context: Context,
+        alarm: AlarmUIModel
+    ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java)
@@ -114,7 +146,23 @@ class DefaultAlarmRepository @Inject constructor(
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: cancelAlarm: ${alarm.ringTime}")
+        println("vladlog: cancelLightAlarm: ${alarm.ringTime}")
+        alarmManager.cancel(pendingIntent)
+    }
+
+    private fun cancelSoundAlarm(
+        context: Context,
+        alarm: AlarmUIModel
+    ) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, alarm.createdTimestamp + 1, intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        println("vladlog: cancelSoundAlarm: ${alarm.ringTime}")
         alarmManager.cancel(pendingIntent)
     }
 

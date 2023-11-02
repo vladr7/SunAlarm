@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor(
                 flashlight = false,
                 days = weekDays,
                 soundAlarmEnabled = false,
-                minutesUntilSoundAlarm = 0,
+                minutesUntilSoundAlarm = 1,
             ),
             title = "",
             subtitle = "",
@@ -169,7 +169,7 @@ class HomeViewModel @Inject constructor(
                     flashlight = false,
                     days = weekDays,
                     soundAlarmEnabled = false,
-                    minutesUntilSoundAlarm = 0,
+                    minutesUntilSoundAlarm = 1,
                 )
             )
         }
