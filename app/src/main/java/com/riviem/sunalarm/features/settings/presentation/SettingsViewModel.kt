@@ -57,12 +57,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setSnoozeLength(length: Int) {
+    fun setSnoozeLength() {
         viewModelScope.launch {
-            alarmRepository.setSnoozeLength(snoozeLength = length)
-        }
-        _state.update {
-            it.copy(snoozeLength = length)
+            alarmRepository.setSnoozeLength(state.value.snoozeLength)
         }
     }
 
@@ -77,6 +74,12 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             alarmRepository.setFirstDayOfWeek(firstDayOfWeek.fullName)
             acquireFirstDayOfWeek()
+        }
+    }
+
+    fun setMinutesUntilSoundAlarm(minutes: Int) {
+        viewModelScope.launch {
+            alarmRepository.setMinutesUntilSoundAlarm(minutes)
         }
     }
 }

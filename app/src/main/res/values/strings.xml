@@ -35,5 +35,6 @@
     <string name="first_day_of_the_week">First day of the week</string>
     <string name="sound_alarm">Sound</string>
     <string name="sound_alarm_after_set_minutes">Sound alarm after set minutes</string>
+    <string name="sound_alarm_minutes">Sound alarm minutes</string>
 
 </resources>

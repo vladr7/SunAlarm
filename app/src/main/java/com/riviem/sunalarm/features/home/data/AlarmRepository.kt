@@ -38,4 +38,8 @@ interface AlarmRepository {
     suspend fun getFirstDayOfWeek(): String
 
     suspend fun setFirstDayOfWeek(firstDayOfWeek: String)
+
+    suspend fun setMinutesUntilSoundAlarm(minutes: Int)
+
+    suspend fun getMinutesUntilSoundAlarm(): Int
 }

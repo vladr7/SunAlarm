@@ -67,9 +67,6 @@ fun SettingsRoute(
     val activity = context as MainActivity
 
     SettingsScreen(
-        onSnoozeSelected = {
-            viewModel.setSnoozeLength(it)
-        },
         snoozeLength = state.snoozeLength,
         onBrightnessSaveClicked = {
             viewModel.setBrightnessSettings(it)
@@ -78,24 +75,32 @@ fun SettingsRoute(
         onSelectFirstDayOfWeek = {
             viewModel.setFirstDayOfWeek(it)
         },
-        firstDayOfWeek = state.firstDayOfWeek
+        firstDayOfWeek = state.firstDayOfWeek,
+        onSnoozeSavedClicked = {
+            viewModel.setSnoozeLength()
+        },
+        onSaveMinutesUntilSoundAlarmClicked = {
+            viewModel.setMinutesUntilSoundAlarm(it)
+        }
     )
 }
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    onSnoozeSelected: (Int) -> Unit,
+    onSnoozeSavedClicked: () -> Unit,
     snoozeLength: Int,
     onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit,
     brightnessSettingUI: BrightnessSettingUI,
     onSelectFirstDayOfWeek: (FirstDayOfWeek) -> Unit,
-    firstDayOfWeek: FirstDayOfWeek
+    firstDayOfWeek: FirstDayOfWeek,
+    onSaveMinutesUntilSoundAlarmClicked: (Int) -> Unit,
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     var showBrightnessSettingDialog by remember { mutableStateOf(false) }
     var showFirstDayOfWeekDropdown by remember { mutableStateOf(false) }
+    var showSoundAlarmMinutesDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -124,6 +129,12 @@ fun SettingsScreen(
             },
             firstDay = firstDayOfWeek.fullName
         )
+        SoundAlarmMinutesButton(
+            modifier = modifier.padding(top = 30.dp),
+            onClick = {
+                showSoundAlarmMinutesDialog = true
+            }
+        )
     }
     AnimatedVisibility(visible = showSnoozeSettingDialog) {
         SnoozeSettingDialog(
@@ -133,10 +144,11 @@ fun SettingsScreen(
                 showSnoozeSettingDialog = false
             },
             onSaveClicked = {
+                onSnoozeSavedClicked()
                 showSnoozeSettingDialog = false
             },
-            onSnoozeSelected = onSnoozeSelected,
-            snoozeLength = snoozeLength
+            length = snoozeLength,
+            title = stringResource(R.string.snooze_length)
         )
     }
     AnimatedVisibility(visible = showBrightnessSettingDialog) {
@@ -165,6 +177,48 @@ fun SettingsScreen(
             },
             expanded = showFirstDayOfWeekDropdown
         )
+    }
+    AnimatedVisibility(visible = showSoundAlarmMinutesDialog) {
+        SoundAlarmMinutesDialog(
+            modifier = modifier
+                .fillMaxWidth(),
+            onDismissRequest = {
+                showSoundAlarmMinutesDialog = false
+            },
+            length = 61,
+            title = stringResource(R.string.sound_alarm_minutes),
+            onSaveClicked = {
+                onSaveMinutesUntilSoundAlarmClicked(it)
+                showSoundAlarmMinutesDialog = false
+            }
+        )
+    }
+}
+
+@Composable
+fun SoundAlarmMinutesDialog(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    length: Int,
+    title: String,
+    onSaveClicked: (Int) -> Unit
+) {
+    ScrollOneItemDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        title = title,
+        length = length,
+        onSaveClicked = onSaveClicked
+    )
+}
+
+@Composable
+fun SoundAlarmMinutesButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    Button(onClick = onClick, modifier = modifier) {
+        Text(text = stringResource(R.string.sound_alarm_minutes))
     }
 }
 
@@ -370,15 +424,34 @@ private fun BrightnessGraduallySlider(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SnoozeSettingDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
-    onSaveClicked: () -> Unit,
-    onSnoozeSelected: (Int) -> Unit,
-    snoozeLength: Int
+    onSaveClicked: (Int) -> Unit,
+    length: Int,
+    title: String
 ) {
+    ScrollOneItemDialog(
+        modifier,
+        onDismissRequest,
+        title,
+        length,
+        onSaveClicked
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ScrollOneItemDialog(
+    modifier: Modifier,
+    onDismissRequest: () -> Unit,
+    title: String,
+    length: Int,
+    onSaveClicked: (Int) -> Unit
+) {
+    var selectedValue by remember { mutableIntStateOf(length / 2) }
+
     AlertDialog(
         modifier = modifier
             .height(500.dp),
@@ -393,16 +466,19 @@ fun SnoozeSettingDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(R.string.snooze_length),
+                    text = title,
                     fontSize = 36.sp,
                     modifier = Modifier.padding(bottom = 20.dp)
                 )
-                ScrollableSnoozePicker(
+                ScrollablePicker(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp),
-                    selectedSnooze = snoozeLength,
-                    onSnoozeSelected = onSnoozeSelected
+                    selectedItem = selectedValue,
+                    onSelectedItem = {
+                        selectedValue = it
+                    },
+                    length = length
                 )
                 Row(
                     modifier = Modifier
@@ -419,7 +495,7 @@ fun SnoozeSettingDialog(
                     }
                     Button(
                         onClick = {
-                            onSaveClicked()
+                            onSaveClicked(selectedValue)
                         },
                         modifier = Modifier.padding(top = 30.dp)
                     ) {
@@ -434,19 +510,19 @@ fun SnoozeSettingDialog(
 }
 
 @Composable
-fun ScrollableSnoozePicker(
+fun ScrollablePicker(
     modifier: Modifier = Modifier,
-    selectedSnooze: Int,
-    onSnoozeSelected: (Int) -> Unit
-) {
-    val snoozeLengths = List(121) { it }
-
+    selectedItem: Int,
+    onSelectedItem: (Int) -> Unit,
+    length: Int
+    ) {
+    val list by remember { mutableStateOf(listOf(1..length)) }
     ScrollableValuePicker(
         modifier = modifier,
-        infiniteValues = snoozeLengths,
-        onValueSelected = onSnoozeSelected,
-        maxSize = snoozeLengths.size,
-        startScrollIndex = selectedSnooze
+        infiniteValues = list.flatten(),
+        onValueSelected = onSelectedItem,
+        maxSize = list.size,
+        startScrollIndex = selectedItem
     )
 }
 
