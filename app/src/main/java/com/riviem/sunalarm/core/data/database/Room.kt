@@ -31,7 +31,7 @@ interface AlarmDao {
     fun getAlarmById(createdTimestampId: Int): DatabaseAlarm
 }
 
-@Database(entities = [DatabaseAlarm::class], version = 2)
+@Database(entities = [DatabaseAlarm::class], version = 3)
 @TypeConverters(DayTypeConverter::class)
 abstract class AlarmDatabase : RoomDatabase() {
     abstract val alarmDao: AlarmDao

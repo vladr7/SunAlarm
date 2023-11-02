@@ -144,7 +144,7 @@ fun TimePickerScreen(
                 },
                 flashlightActivated = newAlarm.flashlight,
                 onFlashlightToggleClicked = {
-                    if(hasCameraPermission(context = context)) {
+                    if (hasCameraPermission(context = context)) {
                         newAlarm = newAlarm.copy(
                             flashlight = !newAlarm.flashlight
                         )
@@ -365,8 +365,16 @@ fun LightAlarmConfiguration(
             onClick = onFlashlightToggleClicked,
             title = stringResource(R.string.flashlight),
             subtitle = stringResource(R.string.alarm_rings_with_flashlight),
-            startIcon = if(flashlightActivated) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
+            startIcon = if (flashlightActivated) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
             startIconColor = Color.White,
+        )
+        SoundAlarmToggle(
+            activated = alarm.soundEnabled,
+            onClick = { /*TODO*/ },
+            title = stringResource(R.string.sound_alarm),
+            subtitle = stringResource (R.string.sound_alarm_after_set_minutes),
+            startIcon = if(),
+            startIconColor =
         )
     }
 }
@@ -459,7 +467,7 @@ fun SelectDays(
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        when(firstDayOfWeek) {
+        when (firstDayOfWeek) {
             FirstDayOfWeek.MONDAY -> {
                 alarm.days.forEach { dayUIModel ->
                     CheckboxDay(
@@ -469,6 +477,7 @@ fun SelectDays(
                     )
                 }
             }
+
             FirstDayOfWeek.SUNDAY -> {
                 alarm.days[6].let { dayUIModel ->
                     CheckboxDay(
@@ -680,6 +689,27 @@ fun TimeScrollItem(
 }
 
 @Composable
+fun SoundAlarmToggle(
+    modifier: Modifier = Modifier,
+    activated: Boolean,
+    onClick: () -> Unit,
+    title: String,
+    subtitle: String,
+    startIcon: ImageVector,
+    startIconColor: Color,
+) {
+    SettingToggle(
+        modifier,
+        startIcon,
+        startIconColor,
+        title,
+        subtitle,
+        activated,
+        onClick,
+    )
+}
+
+@Composable
 fun FlashlightToggle(
     modifier: Modifier = Modifier,
     activated: Boolean,
@@ -689,7 +719,27 @@ fun FlashlightToggle(
     startIcon: ImageVector,
     startIconColor: Color,
 ) {
+    SettingToggle(
+        modifier,
+        startIcon,
+        startIconColor,
+        title,
+        subtitle,
+        activated,
+        onClick,
+    )
+}
 
+@Composable
+private fun SettingToggle(
+    modifier: Modifier,
+    startIcon: ImageVector,
+    startIconColor: Color,
+    title: String,
+    subtitle: String,
+    activated: Boolean,
+    onClick: () -> Unit,
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
