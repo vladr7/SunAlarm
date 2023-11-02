@@ -110,7 +110,8 @@ fun HomeRoute(
             onCancelClick = {
                 viewModel.onCancelAlarmClick()
                 onSaveOrDiscardClick()
-            }
+            },
+            firstDayOfWeek = state.firstDayOfWeek
         )
     }
 }

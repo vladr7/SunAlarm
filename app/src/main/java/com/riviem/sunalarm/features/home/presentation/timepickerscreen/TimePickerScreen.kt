@@ -68,6 +68,7 @@ import com.riviem.sunalarm.core.presentation.hasCameraPermission
 import com.riviem.sunalarm.core.presentation.requestCameraPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.ui.theme.SettingsActivateSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchBorderColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
@@ -83,7 +84,8 @@ import kotlinx.coroutines.delay
 fun TimePickerScreen(
     alarm: AlarmUIModel,
     onSaveClick: (AlarmUIModel) -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    firstDayOfWeek: FirstDayOfWeek
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val activity = androidx.compose.ui.platform.LocalContext.current as MainActivity
@@ -149,7 +151,8 @@ fun TimePickerScreen(
                     } else {
                         requestCameraPermission(activity = activity)
                     }
-                }
+                },
+                firstDayOfWeek = firstDayOfWeek
             )
             CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)
         }
@@ -312,7 +315,8 @@ fun LightAlarmConfiguration(
     onChooseColorClicked: () -> Unit,
     onAlarmNameChange: (String) -> Unit,
     flashlightActivated: Boolean,
-    onFlashlightToggleClicked: () -> Unit
+    onFlashlightToggleClicked: () -> Unit,
+    firstDayOfWeek: FirstDayOfWeek
 ) {
     val scrollState = rememberScrollState()
 
@@ -336,7 +340,8 @@ fun LightAlarmConfiguration(
             alarm = alarm,
             onDayClicked = {
                 onDayClicked(it)
-            }
+            },
+            firstDayOfWeek = firstDayOfWeek
         )
         ChangeAlarmName(
             modifier = Modifier
@@ -445,7 +450,8 @@ fun ChangeAlarmName(
 fun SelectDays(
     modifier: Modifier = Modifier,
     alarm: AlarmUIModel,
-    onDayClicked: (Day) -> Unit
+    onDayClicked: (Day) -> Unit,
+    firstDayOfWeek: FirstDayOfWeek
 ) {
     Row(
         modifier = modifier
@@ -453,12 +459,32 @@ fun SelectDays(
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        alarm.days.forEach { dayUIModel ->
-            CheckboxDay(
-                day = dayUIModel,
-                isSelected = dayUIModel.isSelected,
-                onDayClicked = onDayClicked
-            )
+        when(firstDayOfWeek) {
+            FirstDayOfWeek.MONDAY -> {
+                alarm.days.forEach { dayUIModel ->
+                    CheckboxDay(
+                        day = dayUIModel,
+                        isSelected = dayUIModel.isSelected,
+                        onDayClicked = onDayClicked
+                    )
+                }
+            }
+            FirstDayOfWeek.SUNDAY -> {
+                alarm.days[6].let { dayUIModel ->
+                    CheckboxDay(
+                        day = dayUIModel,
+                        isSelected = dayUIModel.isSelected,
+                        onDayClicked = onDayClicked
+                    )
+                }
+                alarm.days.take(6).forEach { dayUIModel ->
+                    CheckboxDay(
+                        day = dayUIModel,
+                        isSelected = dayUIModel.isSelected,
+                        onDayClicked = onDayClicked
+                    )
+                }
+            }
         }
     }
 }
