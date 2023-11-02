@@ -165,7 +165,7 @@ class HomeViewModel @Inject constructor(
                     isOn = false,
                     color = Color.Yellow,
                     flashlight = false,
-                    days = it.selectedAlarm.days
+                    days = weekDays
                 )
             )
         }
