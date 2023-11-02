@@ -55,6 +55,7 @@ import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePickerScreen
 import kotlinx.coroutines.delay
@@ -70,6 +71,10 @@ fun HomeRoute(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getFirstDayOfWeek()
+    }
 
     if (!state.showTimePickerScreen) {
         HomeScreen(
@@ -87,6 +92,7 @@ fun HomeRoute(
             },
             title = state.title,
             subtitle = state.subtitle,
+            firstDayOfWeek = state.firstDayOfWeek
         )
     }
 
@@ -120,6 +126,7 @@ fun HomeScreen(
     onAlarmCheckChanged: (Boolean, AlarmUIModel) -> Unit,
     title: String,
     subtitle: String,
+    firstDayOfWeek: FirstDayOfWeek
 ) {
     val activity = context as MainActivity
 
@@ -160,7 +167,8 @@ fun HomeScreen(
                         onAlarmCheckChanged(checked, alarm)
                     },
                     modifier = modifier.fillMaxWidth(),
-                    alarms = alarms
+                    alarms = alarms,
+                    firstDayOfWeek = firstDayOfWeek
                 )
             }
         }
@@ -256,7 +264,8 @@ fun AlarmsList(
     modifier: Modifier = Modifier,
     onAlarmClick: (AlarmUIModel) -> Unit,
     onCheckedChange: (Boolean, AlarmUIModel) -> Unit,
-    alarms: List<AlarmUIModel>
+    alarms: List<AlarmUIModel>,
+    firstDayOfWeek: FirstDayOfWeek
 ) {
     LazyColumn(
         modifier = modifier,
@@ -272,7 +281,8 @@ fun AlarmsList(
                     days = item.days,
                     time = item.ringTime,
                     isOn = item.isOn,
-                    name = item.name
+                    name = item.name,
+                    firstDayOfWeek = firstDayOfWeek
                 )
             }
         }
@@ -287,7 +297,8 @@ fun AlarmItem(
     isOn: Boolean,
     onAlarmClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
-    days: List<Day>
+    days: List<Day>,
+    firstDayOfWeek: FirstDayOfWeek
 ) {
     Row(
         modifier = modifier
@@ -307,7 +318,8 @@ fun AlarmItem(
         Spacer(modifier = Modifier.weight(1f))
         AlarmSelectedDays(
             modifier = modifier,
-            days = days
+            days = days,
+            firstDayOfWeek = firstDayOfWeek
         )
         AlarmSwitch(
             modifier = modifier
@@ -343,7 +355,8 @@ private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
 @Composable
 fun AlarmSelectedDays(
     modifier: Modifier = Modifier,
-    days: List<Day>
+    days: List<Day>,
+    firstDayOfWeek: FirstDayOfWeek
 ) {
     if (days.allDoorsSelected()) {
         Text(
@@ -358,14 +371,37 @@ fun AlarmSelectedDays(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            days.forEach { day ->
-                DayWithOrWithoutDot(
-                    modifier = modifier
-                        .padding(end = 3.dp),
-                    day = day.letter,
-                    isSelected = day.isSelected
-                )
+            when (firstDayOfWeek) {
+                FirstDayOfWeek.MONDAY -> {
+                    days.forEach { day ->
+                        DayWithOrWithoutDot(
+                            modifier = modifier
+                                .padding(end = 3.dp),
+                            day = day.letter,
+                            isSelected = day.isSelected
+                        )
+                    }
+                }
+
+                FirstDayOfWeek.SUNDAY -> {
+                    DayWithOrWithoutDot(
+                        modifier = modifier
+                            .padding(end = 3.dp),
+                        day = days[6].letter,
+                        isSelected = days[6].isSelected
+                    )
+                    days.subList(0, days.size - 1).forEach { day ->
+                        DayWithOrWithoutDot(
+                            modifier = modifier
+                                .padding(end = 3.dp),
+                            day = day.letter,
+                            isSelected = day.isSelected
+                        )
+                    }
+
+                }
             }
+
         }
     }
 }

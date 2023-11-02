@@ -13,7 +13,7 @@ data class AlarmUIModel(
     val flashlight: Boolean,
 )
 
-val weekDaysFromMonday = listOf(
+val weekDays = listOf(
     Day("M", "Monday", true),
     Day("T", "Tuesday", true),
     Day("W", "Wednesday", true),
@@ -21,16 +21,6 @@ val weekDaysFromMonday = listOf(
     Day("F", "Friday", true),
     Day("S", "Saturday", true),
     Day("S", "Sunday", true)
-)
-
-val weekDaysFromSunday = listOf(
-    Day("S", "Sunday", true),
-    Day("M", "Monday", true),
-    Day("T", "Tuesday", true),
-    Day("W", "Wednesday", true),
-    Day("T", "Thursday", true),
-    Day("F", "Friday", true),
-    Day("S", "Saturday", true)
 )
 
 

@@ -11,7 +11,7 @@ import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.local.LocalStorage
 import com.riviem.sunalarm.core.data.local.LocalStorageKeys
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDaysFromMonday
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import kotlinx.coroutines.flow.Flow
 import java.time.ZoneId
@@ -138,7 +138,7 @@ class DefaultAlarmRepository @Inject constructor(
     }
 
     override suspend fun getFirstDayOfWeek(): String {
-        return localStorage.getString(LocalStorageKeys.FIRST_DAY_OF_WEEK_KEY, weekDaysFromMonday[0].fullName)
+        return localStorage.getString(LocalStorageKeys.FIRST_DAY_OF_WEEK_KEY, weekDays[0].fullName)
     }
 
     override suspend fun setFirstDayOfWeek(firstDayOfWeek: String) {

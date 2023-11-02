@@ -12,8 +12,7 @@ import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDaysFromMonday
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDaysFromSunday
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,10 +43,11 @@ class HomeViewModel @Inject constructor(
                 color = Color.Yellow,
                 createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt(),
                 flashlight = false,
-                days = weekDaysFromMonday
+                days = weekDays
             ),
             title = "",
             subtitle = "",
+            firstDayOfWeek = FirstDayOfWeek.MONDAY
         )
     )
     val state: StateFlow<HomeState> = _state
@@ -57,23 +57,19 @@ class HomeViewModel @Inject constructor(
         getFirstDayOfWeek()
     }
 
-    private fun getFirstDayOfWeek() {
+    fun getFirstDayOfWeek() {
         viewModelScope.launch {
             val firstDayOfWeek = alarmRepository.getFirstDayOfWeek()
             if(firstDayOfWeek == FirstDayOfWeek.MONDAY.fullName) {
                 _state.update {
                     it.copy(
-                        selectedAlarm = it.selectedAlarm.copy(
-                            days = weekDaysFromMonday
-                        )
+                        firstDayOfWeek = FirstDayOfWeek.MONDAY
                     )
                 }
             } else {
                 _state.update {
                     it.copy(
-                        selectedAlarm = it.selectedAlarm.copy(
-                            days = weekDaysFromSunday
-                        )
+                        firstDayOfWeek = FirstDayOfWeek.SUNDAY
                     )
                 }
             }
@@ -203,5 +199,6 @@ data class HomeState(
     val alarms: List<AlarmUIModel> = emptyList(),
     val title: String,
     val subtitle: String,
+    val firstDayOfWeek: FirstDayOfWeek
 )
 
