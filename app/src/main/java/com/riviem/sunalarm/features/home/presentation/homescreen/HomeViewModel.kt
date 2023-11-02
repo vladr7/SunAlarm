@@ -43,7 +43,9 @@ class HomeViewModel @Inject constructor(
                 color = Color.Yellow,
                 createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt(),
                 flashlight = false,
-                days = weekDays
+                days = weekDays,
+                soundAlarmEnabled = false,
+                minutesUntilSoundAlarm = 0,
             ),
             title = "",
             subtitle = "",
@@ -165,7 +167,9 @@ class HomeViewModel @Inject constructor(
                     isOn = false,
                     color = Color.Yellow,
                     flashlight = false,
-                    days = weekDays
+                    days = weekDays,
+                    soundAlarmEnabled = false,
+                    minutesUntilSoundAlarm = 0,
                 )
             )
         }

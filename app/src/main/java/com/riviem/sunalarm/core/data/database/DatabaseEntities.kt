@@ -31,8 +31,8 @@ fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
         days = days,
         color = color.toArgb(),
         flashlight = flashlight,
-        soundEnabled = soundEnabled,
-        minutesUntilSound = minutesUntilSound,
+        soundEnabled = soundAlarmEnabled,
+        minutesUntilSound = minutesUntilSoundAlarm,
     )
 }
 
@@ -45,8 +45,8 @@ fun DatabaseAlarm.asUIModel(): AlarmUIModel {
         days = days,
         color = Color(color),
         flashlight = flashlight,
-        soundEnabled = soundEnabled,
-        minutesUntilSound = minutesUntilSound,
+        soundAlarmEnabled = soundEnabled,
+        minutesUntilSoundAlarm = minutesUntilSound,
     )
 }
 

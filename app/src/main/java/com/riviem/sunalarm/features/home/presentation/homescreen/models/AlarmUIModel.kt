@@ -11,8 +11,8 @@ data class AlarmUIModel(
     val days: List<Day>,
     val color: Color,
     val flashlight: Boolean,
-    val soundEnabled: Boolean,
-    val minutesUntilSound: Int,
+    val soundAlarmEnabled: Boolean,
+    val minutesUntilSoundAlarm: Int,
 )
 
 val weekDays = listOf(

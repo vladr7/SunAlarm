@@ -32,6 +32,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material3.Button
@@ -151,6 +153,11 @@ fun TimePickerScreen(
                     } else {
                         requestCameraPermission(activity = activity)
                     }
+                },
+                onSoundAlarmToggleClicked = {
+                    newAlarm = newAlarm.copy(
+                        soundAlarmEnabled = !newAlarm.soundAlarmEnabled
+                    )
                 },
                 firstDayOfWeek = firstDayOfWeek
             )
@@ -316,6 +323,7 @@ fun LightAlarmConfiguration(
     onAlarmNameChange: (String) -> Unit,
     flashlightActivated: Boolean,
     onFlashlightToggleClicked: () -> Unit,
+    onSoundAlarmToggleClicked: () -> Unit,
     firstDayOfWeek: FirstDayOfWeek
 ) {
     val scrollState = rememberScrollState()
@@ -369,12 +377,14 @@ fun LightAlarmConfiguration(
             startIconColor = Color.White,
         )
         SoundAlarmToggle(
-            activated = alarm.soundEnabled,
-            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 25.dp),
+            activated = alarm.soundAlarmEnabled,
+            onClick = onSoundAlarmToggleClicked,
             title = stringResource(R.string.sound_alarm),
             subtitle = stringResource (R.string.sound_alarm_after_set_minutes),
-            startIcon = if(),
-            startIconColor =
+            startIcon = if(alarm.soundAlarmEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+            startIconColor = Color.White,
         )
     }
 }
