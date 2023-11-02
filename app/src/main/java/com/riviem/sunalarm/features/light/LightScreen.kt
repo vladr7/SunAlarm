@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
+import android.media.MediaPlayer
 import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -38,6 +39,7 @@ import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.ui.theme.Purple40
 
+
 @Composable
 fun LightScreen(
     viewModel: LightViewModel = hiltViewModel(),
@@ -47,6 +49,14 @@ fun LightScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = androidx.compose.ui.platform.LocalContext.current
     val activity = androidx.compose.ui.platform.LocalContext.current as android.app.Activity
+    val mediaPlayer by remember {
+        mutableStateOf(
+            MediaPlayer.create(
+                context,
+                Settings.System.DEFAULT_RINGTONE_URI
+            )
+        )
+    }
 
     var showContent by remember { mutableStateOf(false) }
     val lightModifier = if (showContent) Modifier
@@ -61,6 +71,12 @@ fun LightScreen(
             color = state.selectedAlarm?.color ?: Color.Yellow
         )
 
+    if (alarmType == AlarmType.SOUND) {
+        LaunchedEffect(key1 = Unit) {
+            playSound(context, mediaPlayer)
+        }
+    }
+
     LaunchedEffect(key1 = Unit) {
         viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType)
     }
@@ -70,8 +86,8 @@ fun LightScreen(
     }
 
     LaunchedEffect(key1 = state.selectedAlarm?.flashlight) {
-        if(state.selectedAlarm == null) return@LaunchedEffect
-        if(state.selectedAlarm?.flashlight == true) {
+        if (state.selectedAlarm == null) return@LaunchedEffect
+        if (state.selectedAlarm?.flashlight == true) {
             try {
                 handleFlashlight(context, true)
             } catch (e: CameraAccessException) {
@@ -110,7 +126,12 @@ fun LightScreen(
                 },
                 onDismissClick = {
                     state.selectedAlarm?.let {
-                        viewModel.stopAlarm(it, context = context, alarmType = alarmType)
+                        viewModel.stopAlarm(
+                            it,
+                            context = context,
+                            alarmType = alarmType,
+                            mediaPlayer = mediaPlayer
+                        )
                     }
                     activity.finishAffinity()
                 }
@@ -193,3 +214,20 @@ private fun handleFlashlight(context: Context, on: Boolean) {
     val cameraId = cameraManager.cameraIdList[0]
     cameraManager.setTorchMode(cameraId, on)
 }
+
+private fun playSound(context: Context, mediaPlayer: MediaPlayer) {
+    mediaPlayer.setOnPreparedListener { mp ->
+        mp.start()
+    }
+    mediaPlayer.setOnCompletionListener { mp ->
+        mp.release()
+    }
+    mediaPlayer.isLooping = true
+    mediaPlayer.start()
+}
+
+fun stopSound(mediaPlayer: MediaPlayer) {
+    mediaPlayer.stop()
+    mediaPlayer.release()
+}
+

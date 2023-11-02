@@ -1,6 +1,7 @@
 package com.riviem.sunalarm.features.light
 
 import android.content.Context
+import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.core.data.database.asUIModel
@@ -80,7 +81,7 @@ class LightViewModel @Inject constructor(
         }
     }
 
-    fun stopAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
+    fun stopAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType, mediaPlayer: MediaPlayer) {
         if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
             alarmRepository.setLightAlarm(alarm = alarm, context = context)
         }
@@ -89,6 +90,7 @@ class LightViewModel @Inject constructor(
                 selectedAlarm = alarm.copy(flashlight = false),
             )
         }
+        stopSound(mediaPlayer)
     }
 
     fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
