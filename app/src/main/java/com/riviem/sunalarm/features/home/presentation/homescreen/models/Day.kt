@@ -2,13 +2,14 @@ package com.riviem.sunalarm.features.home.presentation.homescreen.models
 
 import com.google.firebase.firestore.DocumentId
 import kotlinx.serialization.Serializable
+import java.time.DayOfWeek
 
 @Serializable
 data class Day(
     @DocumentId
     val letter: String,
     val fullName: String,
-    val isSelected: Boolean
+    val isSelected: Boolean,
 ): java.io.Serializable
 
 fun List<Day>.allDoorsSelected(): Boolean {

@@ -46,7 +46,7 @@ class DefaultAlarmRepository @Inject constructor(
 
     override fun getNextAlarmDateTime(alarm: AlarmUIModel): ZonedDateTime {
         val now = ZonedDateTime.now(ZoneId.systemDefault())
-        val currentDayOfWeek = now.dayOfWeek.value % 7 // 0 - Monday, 1 - Tuesday, etc.
+        val currentDayOfWeek = now.dayOfWeek.value - 1 // 1 = Monday, 7 = Sunday
 
         val currentHour = now.hour
         val currentMinute = now.minute
