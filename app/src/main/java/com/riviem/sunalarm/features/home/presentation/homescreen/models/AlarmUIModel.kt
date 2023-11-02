@@ -8,12 +8,12 @@ data class AlarmUIModel(
     val ringTime: ZonedDateTime,
     val name: String,
     val isOn: Boolean,
-    val days: List<Day> = weekDays,
+    val days: List<Day>,
     val color: Color,
     val flashlight: Boolean,
 )
 
-val weekDays = listOf(
+val weekDaysFromMonday = listOf(
     Day("M", "Monday", true),
     Day("T", "Tuesday", true),
     Day("W", "Wednesday", true),
@@ -23,6 +23,15 @@ val weekDays = listOf(
     Day("S", "Sunday", true)
 )
 
-fun getDayFromFullName(fullName: String): Day {
-    return weekDays.first { day -> day.fullName == fullName }
-}
+val weekDaysFromSunday = listOf(
+    Day("S", "Sunday", true),
+    Day("M", "Monday", true),
+    Day("T", "Tuesday", true),
+    Day("W", "Wednesday", true),
+    Day("T", "Thursday", true),
+    Day("F", "Friday", true),
+    Day("S", "Saturday", true)
+)
+
+
+

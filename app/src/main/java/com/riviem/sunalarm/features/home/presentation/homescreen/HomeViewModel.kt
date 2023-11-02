@@ -11,6 +11,9 @@ import com.riviem.sunalarm.core.data.database.asDatabaseModel
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDaysFromMonday
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDaysFromSunday
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     application: Application,
-    private val alarmRepository: AlarmRepository
+    private val alarmRepository: AlarmRepository,
 ) : AndroidViewModel(application) {
 
     private val context = application.applicationContext
@@ -41,6 +44,7 @@ class HomeViewModel @Inject constructor(
                 color = Color.Yellow,
                 createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt(),
                 flashlight = false,
+                days = weekDaysFromMonday
             ),
             title = "",
             subtitle = "",
@@ -50,6 +54,30 @@ class HomeViewModel @Inject constructor(
 
     init {
         getAlarms()
+        getFirstDayOfWeek()
+    }
+
+    private fun getFirstDayOfWeek() {
+        viewModelScope.launch {
+            val firstDayOfWeek = alarmRepository.getFirstDayOfWeek()
+            if(firstDayOfWeek == FirstDayOfWeek.MONDAY.fullName) {
+                _state.update {
+                    it.copy(
+                        selectedAlarm = it.selectedAlarm.copy(
+                            days = weekDaysFromMonday
+                        )
+                    )
+                }
+            } else {
+                _state.update {
+                    it.copy(
+                        selectedAlarm = it.selectedAlarm.copy(
+                            days = weekDaysFromSunday
+                        )
+                    )
+                }
+            }
+        }
     }
 
     private fun getAlarms() {
@@ -141,6 +169,7 @@ class HomeViewModel @Inject constructor(
                     isOn = false,
                     color = Color.Yellow,
                     flashlight = false,
+                    days = it.selectedAlarm.days
                 )
             )
         }

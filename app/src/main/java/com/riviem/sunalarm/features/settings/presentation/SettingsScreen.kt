@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -46,8 +45,7 @@ import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.askBrightnessPermission
 import com.riviem.sunalarm.core.presentation.hasBrightnessPermission
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.SaveButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimeScrollItem
@@ -91,8 +89,8 @@ fun SettingsScreen(
     snoozeLength: Int,
     onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit,
     brightnessSettingUI: BrightnessSettingUI,
-    onSelectFirstDayOfWeek: (Day) -> Unit,
-    firstDayOfWeek: Day
+    onSelectFirstDayOfWeek: (FirstDayOfWeek) -> Unit,
+    firstDayOfWeek: FirstDayOfWeek
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
@@ -174,7 +172,7 @@ fun SettingsScreen(
 fun FirstDayOfWeekDropdown(
     modifier: Modifier,
     onDismissRequest: () -> Unit,
-    onClick: (Day) -> Unit,
+    onClick: (FirstDayOfWeek) -> Unit,
     expanded: Boolean
 ) {
     Column(
@@ -184,13 +182,12 @@ fun FirstDayOfWeekDropdown(
             expanded = expanded,
             onDismissRequest = { onDismissRequest() },
             content = {
-                weekDays.forEach{ day ->
-                    DropdownMenuItem(text = {
-                        Text(text = day.fullName)
-                    }, onClick = {
-                        onClick(day)
-                    })
-                }
+                DropdownMenuItem(text = {
+                    Text(text = FirstDayOfWeek.MONDAY.fullName)
+                }, onClick = { onClick(FirstDayOfWeek.MONDAY) })
+                DropdownMenuItem(text = {
+                    Text(text = FirstDayOfWeek.SUNDAY.fullName)
+                }, onClick = { onClick(FirstDayOfWeek.SUNDAY) })
             }
         )
     }
@@ -203,7 +200,9 @@ fun FirstDayOfTheWeek(
     firstDay: String
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 20.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {

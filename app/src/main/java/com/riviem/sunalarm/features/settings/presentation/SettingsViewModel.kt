@@ -3,9 +3,7 @@ package com.riviem.sunalarm.features.settings.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.features.home.data.AlarmRepository
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.getDayFromFullName
-import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
+import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +33,7 @@ class SettingsViewModel @Inject constructor(
             val firstDayOfWeek = alarmRepository.getFirstDayOfWeek()
             _state.update {
                 it.copy(
-                    firstDayOfWeek = getDayFromFullName(firstDayOfWeek)
+                    firstDayOfWeek = FirstDayOfWeek.getFirstDayOfWeek(firstDayOfWeek)
                 )
             }
         }
@@ -75,9 +73,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setFirstDayOfWeek(day: Day) {
+    fun setFirstDayOfWeek(firstDayOfWeek: FirstDayOfWeek) {
         viewModelScope.launch {
-            alarmRepository.setFirstDayOfWeek(day.fullName)
+            alarmRepository.setFirstDayOfWeek(firstDayOfWeek.fullName)
             acquireFirstDayOfWeek()
         }
     }
@@ -87,5 +85,5 @@ class SettingsViewModel @Inject constructor(
 data class SettingsViewState(
     val snoozeLength: Int = 0,
     val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI(),
-    val firstDayOfWeek: Day = weekDays[0],
+    val firstDayOfWeek: FirstDayOfWeek = FirstDayOfWeek.MONDAY
 )
