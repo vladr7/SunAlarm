@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -60,14 +59,14 @@ fun LightScreen(
         )
     }
 
-    var showContent by remember { mutableStateOf(false) }
-    val lightModifier = if (showContent) Modifier
+    var showDismissSnoozeScreen by remember { mutableStateOf(false) }
+    val lightModifier = if (showDismissSnoozeScreen) Modifier
         .background(
             color = state.selectedAlarm?.color ?: Color.DarkGray
         )
     else Modifier
         .clickable {
-            showContent = true
+            showDismissSnoozeScreen = true
         }
         .background(
             color = state.selectedAlarm?.color ?: Color.Yellow
@@ -80,7 +79,7 @@ fun LightScreen(
     }
 
     LaunchedEffect(key1 = Unit) {
-//        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType) // todo vlad uncomment
+        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType)
     }
 
     LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
@@ -110,13 +109,13 @@ fun LightScreen(
         verticalArrangement = SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AnimatedVisibility(visible = !showContent) {
+        AnimatedVisibility(visible = !showDismissSnoozeScreen) {
             TimeText(
                 text = state.currentTime,
             )
         }
         AnimatedVisibility(
-            visible = showContent,
+            visible = showDismissSnoozeScreen,
             enter = fadeIn(
                 tween(1000)
             ),
