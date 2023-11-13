@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +30,23 @@ class LightViewModel @Inject constructor(
 
     init {
         getBrightnessSettings()
+        setCurrentTime()
+    }
+
+    private fun setCurrentTime() {
+        viewModelScope.launch(Dispatchers.IO) {
+            while (true) {
+                val now = ZonedDateTime.now()
+                val formatter = DateTimeFormatter.ofPattern("HH:mm")
+                val currentTime = now.format(formatter)
+                _state.update {
+                    it.copy(
+                        currentTime = currentTime
+                    )
+                }
+                delay(1000)
+            }
+        }
     }
 
     private fun getBrightnessSettings() {
@@ -110,4 +129,5 @@ class LightViewModel @Inject constructor(
 data class LightState(
     val selectedAlarm: AlarmUIModel? = null,
     val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI(),
+    val currentTime: String = "",
 )

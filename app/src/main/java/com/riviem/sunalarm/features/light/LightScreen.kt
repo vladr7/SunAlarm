@@ -13,6 +13,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -78,7 +80,7 @@ fun LightScreen(
     }
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType)
+//        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType) // todo vlad uncomment
     }
 
     LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
@@ -108,6 +110,11 @@ fun LightScreen(
         verticalArrangement = SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        AnimatedVisibility(visible = !showContent) {
+            TimeText(
+                text = state.currentTime,
+            )
+        }
         AnimatedVisibility(
             visible = showContent,
             enter = fadeIn(
@@ -141,6 +148,27 @@ fun LightScreen(
 }
 
 @Composable
+private fun TimeText(
+    text: String,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .background(
+                color = Color.LightGray,
+                shape = RoundedCornerShape(25),
+            )
+            .padding(16.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 70.sp,
+            color = Color.Black
+        )
+    }
+}
+
+@Composable
 private fun LightScreenContent(
     onSnoozeClick: () -> Unit,
     onDismissClick: () -> Unit,
@@ -166,7 +194,7 @@ private fun LightScreenContent(
         ) {
             Text(
                 text = stringResource(id = R.string.snooze),
-                fontSize = 70.sp,
+                fontSize = 65.sp,
             )
         }
         Button(
@@ -185,7 +213,7 @@ private fun LightScreenContent(
         ) {
             Text(
                 text = stringResource(R.string.dismiss),
-                fontSize = 70.sp,
+                fontSize = 65.sp,
             )
         }
     }
