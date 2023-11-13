@@ -142,17 +142,17 @@ fun LightScreen(
                     activity.finishAffinity()
                 },
                 snoozeLength = state.snoozeLength,
-                onDismissLightAndSoundClick = {
+                onDismissSoundClick = {
                     stopSound(mediaPlayer)
                     state.selectedAlarm?.let {
-                        viewModel.stopLightAndSoundAlarm(
+                        viewModel.stopSoundAlarm(
                             it,
                             context = context,
                             alarmType = alarmType
                         )
                     }
-                    activity.finishAffinity()
-                }
+                },
+                showDismissSoundButton = state.showDismissSoundButton
             )
         }
     }
@@ -183,8 +183,9 @@ private fun TimeText(
 private fun LightScreenContent(
     onSnoozeClick: () -> Unit,
     onDismissLightClick: () -> Unit,
-    onDismissLightAndSoundClick: () -> Unit,
+    onDismissSoundClick: () -> Unit,
     snoozeLength: Int,
+    showDismissSoundButton: Boolean
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -235,25 +236,27 @@ private fun LightScreenContent(
                 lineHeight = 40.sp
             )
         }
-        Button(
-            onClick = onDismissLightAndSoundClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
-                .weight(0.5f),
-            colors = ButtonColors(
-                containerColor = Color.Red.copy(alpha = 0.5f),
-                contentColor = Color.White,
-                disabledContentColor = Color.White,
-                disabledContainerColor = Color.Gray
-            ),
-            shape = RoundedCornerShape(5)
-        ) {
-            Text(
-                text = stringResource(R.string.dismiss_light_plus_sound_alarm),
-                fontSize = 40.sp,
-                lineHeight = 40.sp
-            )
+        AnimatedVisibility(visible = showDismissSoundButton) {
+            Button(
+                onClick = onDismissSoundClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
+                    .weight(0.5f),
+                colors = ButtonColors(
+                    containerColor = Color.Red.copy(alpha = 0.5f),
+                    contentColor = Color.White,
+                    disabledContentColor = Color.White,
+                    disabledContainerColor = Color.Gray
+                ),
+                shape = RoundedCornerShape(5)
+            ) {
+                Text(
+                    text = stringResource(R.string.dismiss_sound_alarm),
+                    fontSize = 40.sp,
+                    lineHeight = 40.sp
+                )
+            }
         }
     }
 }
@@ -294,6 +297,7 @@ private fun playSound(mediaPlayer: MediaPlayer) {
 }
 
 fun stopSound(mediaPlayer: MediaPlayer) {
+    if(!mediaPlayer.isPlaying) return
     mediaPlayer.stop()
     mediaPlayer.release()
 }

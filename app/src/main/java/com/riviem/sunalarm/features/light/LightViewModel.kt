@@ -33,6 +33,14 @@ class LightViewModel @Inject constructor(
         getSnoozeTime()
     }
 
+    private fun initShowDismissSoundButton() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(showDismissSoundButton = state.value.selectedAlarm?.soundAlarmEnabled == true)
+            }
+        }
+    }
+
     private fun getSnoozeTime() {
         viewModelScope.launch {
             val snoozeTime = alarmRepository.getSnoozeLength()
@@ -106,6 +114,7 @@ class LightViewModel @Inject constructor(
             _state.update {
                 it.copy(selectedAlarm = alarm.asUIModel())
             }
+            initShowDismissSoundButton()
         }
     }
 
@@ -120,7 +129,7 @@ class LightViewModel @Inject constructor(
         }
     }
 
-    fun stopLightAndSoundAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
+    fun stopSoundAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
         if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
             alarmRepository.setLightAlarm(alarm = alarm, context = context)
         }
@@ -128,6 +137,7 @@ class LightViewModel @Inject constructor(
         _state.update {
             it.copy(
                 selectedAlarm = alarm.copy(flashlight = false),
+                showDismissSoundButton = false
             )
         }
     }
@@ -151,4 +161,5 @@ data class LightState(
     val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI(),
     val currentTime: String = "",
     val snoozeLength: Int = 0,
+    val showDismissSoundButton: Boolean = false,
 )
