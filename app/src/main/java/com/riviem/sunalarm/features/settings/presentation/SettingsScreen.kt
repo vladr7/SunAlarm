@@ -79,10 +79,6 @@ fun SettingsRoute(
         onSnoozeSavedClicked = {
             viewModel.setSnoozeLength(it)
         },
-        onSaveMinutesUntilSoundAlarmClicked = {
-            viewModel.setMinutesUntilSoundAlarm(it)
-        },
-        minutesUntilSoundAlarm = state.minutesUntilSoundAlarm
     )
 }
 
@@ -95,8 +91,6 @@ fun SettingsScreen(
     brightnessSettingUI: BrightnessSettingUI,
     onSelectFirstDayOfWeek: (FirstDayOfWeek) -> Unit,
     firstDayOfWeek: FirstDayOfWeek,
-    onSaveMinutesUntilSoundAlarmClicked: (Int) -> Unit,
-    minutesUntilSoundAlarm: Int,
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
@@ -130,12 +124,6 @@ fun SettingsScreen(
                 showFirstDayOfWeekDropdown = true
             },
             firstDay = firstDayOfWeek.fullName
-        )
-        SoundAlarmMinutesButton(
-            modifier = modifier.padding(top = 30.dp),
-            onClick = {
-                showSoundAlarmMinutesDialog = true
-            }
         )
     }
     AnimatedVisibility(visible = showSnoozeSettingDialog) {
@@ -180,51 +168,6 @@ fun SettingsScreen(
             },
             expanded = showFirstDayOfWeekDropdown
         )
-    }
-    AnimatedVisibility(visible = showSoundAlarmMinutesDialog) {
-        SoundAlarmMinutesDialog(
-            modifier = modifier
-                .fillMaxWidth(),
-            onDismissRequest = {
-                showSoundAlarmMinutesDialog = false
-            },
-            length = 121,
-            title = stringResource(R.string.sound_alarm_minutes),
-            onSaveClicked = {
-                onSaveMinutesUntilSoundAlarmClicked(it)
-                showSoundAlarmMinutesDialog = false
-            },
-            minutesUntilSoundAlarm = minutesUntilSoundAlarm
-        )
-    }
-}
-
-@Composable
-fun SoundAlarmMinutesDialog(
-    modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit,
-    length: Int,
-    title: String,
-    onSaveClicked: (Int) -> Unit,
-    minutesUntilSoundAlarm: Int
-) {
-    ScrollOneItemDialog(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-        title = title,
-        length = length,
-        onSaveClicked = onSaveClicked,
-        startScrollIndex = minutesUntilSoundAlarm
-    )
-}
-
-@Composable
-fun SoundAlarmMinutesButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
-) {
-    Button(onClick = onClick, modifier = modifier) {
-        Text(text = stringResource(R.string.sound_alarm_minutes))
     }
 }
 

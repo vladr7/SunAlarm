@@ -193,11 +193,4 @@ class DefaultAlarmRepository @Inject constructor(
         localStorage.putString(LocalStorageKeys.FIRST_DAY_OF_WEEK_KEY, firstDayOfWeek)
     }
 
-    override suspend fun setMinutesUntilSoundAlarm(minutes: Int) {
-        localStorage.putInt(LocalStorageKeys.MINUTES_UNTIL_SOUND_ALARM_KEY, minutes)
-    }
-
-    override suspend fun getMinutesUntilSoundAlarm(): Int {
-        return localStorage.getInt(LocalStorageKeys.MINUTES_UNTIL_SOUND_ALARM_KEY, 30)
-    }
 }

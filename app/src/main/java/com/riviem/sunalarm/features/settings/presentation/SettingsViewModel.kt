@@ -22,20 +22,10 @@ class SettingsViewModel @Inject constructor(
 
     init {
         getSnoozeLength()
-        getMinutesUntilSoundAlarm()
         viewModelScope.launch {
             getBrightnessSettings()
         }
         acquireFirstDayOfWeek()
-    }
-
-    private fun getMinutesUntilSoundAlarm() {
-        viewModelScope.launch {
-            val minutesUntilSoundAlarm = alarmRepository.getMinutesUntilSoundAlarm()
-            _state.update {
-                it.copy(minutesUntilSoundAlarm = minutesUntilSoundAlarm)
-            }
-        }
     }
 
     private fun acquireFirstDayOfWeek() {
@@ -89,21 +79,11 @@ class SettingsViewModel @Inject constructor(
             acquireFirstDayOfWeek()
         }
     }
-
-    fun setMinutesUntilSoundAlarm(minutes: Int) {
-        viewModelScope.launch {
-            alarmRepository.setMinutesUntilSoundAlarm(minutes)
-        }
-        _state.update {
-            it.copy(minutesUntilSoundAlarm = minutes)
-        }
-    }
 }
 
 
 data class SettingsViewState(
     val snoozeLength: Int = 0,
-    val minutesUntilSoundAlarm: Int = 0,
     val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI(),
     val firstDayOfWeek: FirstDayOfWeek = FirstDayOfWeek.MONDAY
 )
