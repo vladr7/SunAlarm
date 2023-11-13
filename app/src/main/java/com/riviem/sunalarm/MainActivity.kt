@@ -17,6 +17,7 @@ import com.riviem.sunalarm.core.presentation.CAMERA_REQUEST_CODE
 import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.light.LightScreen
+import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -62,11 +63,11 @@ class MainActivity : ComponentActivity() {
                             alarmType = alarmType
                         )
                     } else {
-                        LightScreen(
-                            createdTimestamp = createdTimestamp,
-                            alarmType = alarmType
-                        )
-//                        MainNavigation()
+//                        LightScreen(
+//                            createdTimestamp = createdTimestamp,
+//                            alarmType = alarmType
+//                        )
+                        MainNavigation()
                     }
                 }
             }

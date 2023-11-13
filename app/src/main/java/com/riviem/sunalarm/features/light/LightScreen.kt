@@ -74,12 +74,12 @@ fun LightScreen(
 
     if (alarmType == AlarmType.SOUND) {
         LaunchedEffect(key1 = Unit) {
-            playSound(context, mediaPlayer)
+            playSound(mediaPlayer)
         }
     }
 
     LaunchedEffect(key1 = Unit) {
-//        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType) // todo vlad uncomment
+        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType)
     }
 
     LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
@@ -130,18 +130,29 @@ fun LightScreen(
                     }
                     activity.finishAffinity()
                 },
-                onDismissClick = {
+                onDismissLightClick = {
+                    stopSound(mediaPlayer)
                     state.selectedAlarm?.let {
-                        viewModel.stopAlarm(
+                        viewModel.stopLightAlarm(
                             it,
                             context = context,
-                            alarmType = alarmType,
-                            mediaPlayer = mediaPlayer
+                            alarmType = alarmType
                         )
                     }
                     activity.finishAffinity()
                 },
-                snoozeLength = state.snoozeLength
+                snoozeLength = state.snoozeLength,
+                onDismissLightAndSoundClick = {
+                    stopSound(mediaPlayer)
+                    state.selectedAlarm?.let {
+                        viewModel.stopLightAndSoundAlarm(
+                            it,
+                            context = context,
+                            alarmType = alarmType
+                        )
+                    }
+                    activity.finishAffinity()
+                }
             )
         }
     }
@@ -171,7 +182,8 @@ private fun TimeText(
 @Composable
 private fun LightScreenContent(
     onSnoozeClick: () -> Unit,
-    onDismissClick: () -> Unit,
+    onDismissLightClick: () -> Unit,
+    onDismissLightAndSoundClick: () -> Unit,
     snoozeLength: Int,
 ) {
     Column(
@@ -204,7 +216,7 @@ private fun LightScreenContent(
             }
         }
         Button(
-            onClick = onDismissClick,
+            onClick = onDismissLightClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
@@ -218,8 +230,29 @@ private fun LightScreenContent(
             shape = RoundedCornerShape(5)
         ) {
             Text(
-                text = stringResource(R.string.dismiss),
-                fontSize = 65.sp,
+                text = stringResource(R.string.dismiss_light_alarm),
+                fontSize = 40.sp,
+                lineHeight = 40.sp
+            )
+        }
+        Button(
+            onClick = onDismissLightAndSoundClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
+                .weight(0.5f),
+            colors = ButtonColors(
+                containerColor = Color.Red.copy(alpha = 0.5f),
+                contentColor = Color.White,
+                disabledContentColor = Color.White,
+                disabledContainerColor = Color.Gray
+            ),
+            shape = RoundedCornerShape(5)
+        ) {
+            Text(
+                text = stringResource(R.string.dismiss_light_plus_sound_alarm),
+                fontSize = 40.sp,
+                lineHeight = 40.sp
             )
         }
     }
@@ -249,7 +282,7 @@ private fun handleFlashlight(context: Context, on: Boolean) {
     cameraManager.setTorchMode(cameraId, on)
 }
 
-private fun playSound(context: Context, mediaPlayer: MediaPlayer) {
+private fun playSound(mediaPlayer: MediaPlayer) {
     mediaPlayer.setOnPreparedListener { mp ->
         mp.start()
     }

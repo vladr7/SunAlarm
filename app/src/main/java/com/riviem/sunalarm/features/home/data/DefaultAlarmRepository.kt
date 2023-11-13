@@ -129,7 +129,7 @@ class DefaultAlarmRepository @Inject constructor(
     }
 
 
-    override fun cancelAlarm(alarm: AlarmUIModel, context: Context) {
+    override fun cancelLightAndSoundAlarm(alarm: AlarmUIModel, context: Context) {
         cancelLightAlarm(context, alarm)
         cancelSoundAlarm(context, alarm)
     }
@@ -150,7 +150,7 @@ class DefaultAlarmRepository @Inject constructor(
         alarmManager.cancel(pendingIntent)
     }
 
-    private fun cancelSoundAlarm(
+    override fun cancelSoundAlarm(
         context: Context,
         alarm: AlarmUIModel
     ) {

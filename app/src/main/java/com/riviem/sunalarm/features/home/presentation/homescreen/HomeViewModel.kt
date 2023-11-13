@@ -193,7 +193,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
         } else {
-            alarmRepository.cancelAlarm(newAlarm, context)
+            alarmRepository.cancelLightAndSoundAlarm(newAlarm, context)
         }
     }
 
