@@ -33,14 +33,6 @@ class LightViewModel @Inject constructor(
         getSnoozeTime()
     }
 
-    private fun initShowDismissSoundButton() {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(showDismissSoundButton = state.value.selectedAlarm?.soundAlarmEnabled == true)
-            }
-        }
-    }
-
     private fun getSnoozeTime() {
         viewModelScope.launch {
             val snoozeTime = alarmRepository.getSnoozeLength()
@@ -114,7 +106,20 @@ class LightViewModel @Inject constructor(
             _state.update {
                 it.copy(selectedAlarm = alarm.asUIModel())
             }
-            initShowDismissSoundButton()
+            initShowDismissSoundButton(alarmType)
+        }
+    }
+
+    fun initShowDismissSoundButton(alarmType: AlarmType) {
+        val showDismissSoundButton = if(alarmType == AlarmType.SOUND) {
+            false
+        } else {
+            state.value.selectedAlarm?.soundAlarmEnabled == true
+        }
+        viewModelScope.launch {
+            _state.update {
+                it.copy(showDismissSoundButton = showDismissSoundButton)
+            }
         }
     }
 

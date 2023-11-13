@@ -232,8 +232,7 @@ private fun LightScreenContent(
         ) {
             Text(
                 text = stringResource(R.string.dismiss_light_alarm),
-                fontSize = 40.sp,
-                lineHeight = 40.sp
+                fontSize = 65.sp,
             )
         }
         AnimatedVisibility(visible = showDismissSoundButton) {
@@ -254,7 +253,8 @@ private fun LightScreenContent(
                 Text(
                     text = stringResource(R.string.dismiss_sound_alarm),
                     fontSize = 40.sp,
-                    lineHeight = 40.sp
+                    lineHeight = 40.sp,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
             }
         }
