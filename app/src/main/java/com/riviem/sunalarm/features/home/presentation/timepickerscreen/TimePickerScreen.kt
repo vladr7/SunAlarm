@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -66,11 +67,13 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.presentation.hasCameraPermission
 import com.riviem.sunalarm.core.presentation.requestCameraPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
+import com.riviem.sunalarm.features.settings.presentation.ScrollOneItemDialog
 import com.riviem.sunalarm.ui.theme.SettingsActivateSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchBorderColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
@@ -92,10 +95,18 @@ fun TimePickerScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val activity = androidx.compose.ui.platform.LocalContext.current as MainActivity
     var showColorPicker by remember { mutableStateOf(false) }
+    var showSoundAlarmPicker by remember { mutableStateOf(false) }
     var newAlarm by remember { mutableStateOf(alarm) }
     var newColor by remember { mutableStateOf(alarm.color) }
+    val boxTransparency by animateFloatAsState(
+        targetValue = if (showSoundAlarmPicker) 0.07f else 1f, label = ""
+    )
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .graphicsLayer {
+            alpha = boxTransparency
+        }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -155,9 +166,14 @@ fun TimePickerScreen(
                     }
                 },
                 onSoundAlarmToggleClicked = {
-                    newAlarm = newAlarm.copy(
-                        soundAlarmEnabled = !newAlarm.soundAlarmEnabled
-                    )
+                    if(newAlarm.soundAlarmEnabled) {
+                        newAlarm = newAlarm.copy(
+                            soundAlarmEnabled = false
+                        )
+                        showSoundAlarmPicker = false
+                    } else {
+                        showSoundAlarmPicker = true
+                    }
                 },
                 firstDayOfWeek = firstDayOfWeek
             )
@@ -182,6 +198,28 @@ fun TimePickerScreen(
                 onCancelColorClicked = {
                     showColorPicker = false
                 },
+            )
+        }
+        AnimatedVisibility(visible = showSoundAlarmPicker) {
+            ScrollOneItemDialog(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                onDismissRequest = {
+                    newAlarm = newAlarm.copy(
+                        soundAlarmEnabled = false
+                    )
+                    showSoundAlarmPicker = false
+                },
+                onSaveClicked = {
+                    newAlarm = newAlarm.copy(
+                        minutesUntilSoundAlarm = it,
+                        soundAlarmEnabled = true
+                    )
+                    showSoundAlarmPicker = false
+                },
+                length = Constants.MINUTES_UNTIL_SOUND_ALARM_INTERVAL,
+                title = stringResource(R.string.sound_alarm_after),
+                startScrollIndex = newAlarm.minutesUntilSoundAlarm
             )
         }
     }
@@ -366,7 +404,7 @@ fun LightAlarmConfiguration(
             onChooseColorClicked = onChooseColorClicked,
             color = alarm.color
         )
-        FlashlightToggle(
+        SettingToggle(
             modifier = Modifier
                 .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 15.dp),
             activated = flashlightActivated,
@@ -376,14 +414,14 @@ fun LightAlarmConfiguration(
             startIcon = if (flashlightActivated) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
             startIconColor = Color.White,
         )
-        SoundAlarmToggle(
+        SettingToggle(
             modifier = Modifier
                 .padding(start = 10.dp, end = 15.dp, bottom = 25.dp),
             activated = alarm.soundAlarmEnabled,
             onClick = onSoundAlarmToggleClicked,
             title = stringResource(R.string.sound_alarm),
-            subtitle = stringResource (R.string.sound_alarm_after_set_minutes),
-            startIcon = if(alarm.soundAlarmEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+            subtitle = stringResource(R.string.sound_alarm_after_set_minutes, alarm.minutesUntilSoundAlarm),
+            startIcon = if (alarm.soundAlarmEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
             startIconColor = Color.White,
         )
     }
@@ -695,48 +733,6 @@ fun TimeScrollItem(
         fontSize = 50.sp,
         modifier = modifier
             .wrapContentSize(Alignment.Center)
-    )
-}
-
-@Composable
-fun SoundAlarmToggle(
-    modifier: Modifier = Modifier,
-    activated: Boolean,
-    onClick: () -> Unit,
-    title: String,
-    subtitle: String,
-    startIcon: ImageVector,
-    startIconColor: Color,
-) {
-    SettingToggle(
-        modifier,
-        startIcon,
-        startIconColor,
-        title,
-        subtitle,
-        activated,
-        onClick,
-    )
-}
-
-@Composable
-fun FlashlightToggle(
-    modifier: Modifier = Modifier,
-    activated: Boolean,
-    onClick: () -> Unit,
-    title: String,
-    subtitle: String,
-    startIcon: ImageVector,
-    startIconColor: Color,
-) {
-    SettingToggle(
-        modifier,
-        startIcon,
-        startIconColor,
-        title,
-        subtitle,
-        activated,
-        onClick,
     )
 }
 

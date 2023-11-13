@@ -394,7 +394,7 @@ fun SnoozeSettingDialog(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun ScrollOneItemDialog(
+fun ScrollOneItemDialog(
     modifier: Modifier,
     onDismissRequest: () -> Unit,
     title: String,
