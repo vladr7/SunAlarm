@@ -127,6 +127,8 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 subtitle = subtitle,
                 title = title,
+                showNextAlarmTimeToast = it.recentlyAddedOrCheckedAlarm,
+                recentlyAddedOrCheckedAlarm = false,
             )
         }
     }
@@ -149,7 +151,8 @@ class HomeViewModel @Inject constructor(
         _state.update {
             it.copy(
                 showTimePickerScreen = false,
-                selectedAlarm = newAlarm
+                selectedAlarm = newAlarm,
+                recentlyAddedOrCheckedAlarm = true,
             )
         }
         if (alarm.isOn) {
@@ -184,6 +187,11 @@ class HomeViewModel @Inject constructor(
         }
         if (checked) {
             alarmRepository.setLightAlarm(newAlarm, context)
+            _state.update {
+                it.copy(
+                    recentlyAddedOrCheckedAlarm = true,
+                )
+            }
         } else {
             alarmRepository.cancelAlarm(newAlarm, context)
         }
@@ -196,6 +204,14 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    fun onShowNextAlarmTimeToastDone() {
+        _state.update {
+            it.copy(
+                showNextAlarmTimeToast = false
+            )
+        }
+    }
 }
 
 data class HomeState(
@@ -204,6 +220,8 @@ data class HomeState(
     val alarms: List<AlarmUIModel> = emptyList(),
     val title: String,
     val subtitle: String,
-    val firstDayOfWeek: FirstDayOfWeek
+    val firstDayOfWeek: FirstDayOfWeek,
+    val showNextAlarmTimeToast: Boolean = false,
+    val recentlyAddedOrCheckedAlarm: Boolean = false,
 )
 

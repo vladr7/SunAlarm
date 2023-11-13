@@ -114,6 +114,12 @@ fun HomeRoute(
             firstDayOfWeek = state.firstDayOfWeek
         )
     }
+    LaunchedEffect(key1 = state.showNextAlarmTimeToast) {
+        if(state.showNextAlarmTimeToast) {
+            Toast.makeText(context, state.title, Toast.LENGTH_SHORT).show()
+            viewModel.onShowNextAlarmTimeToastDone()
+        }
+    }
 }
 
 @SuppressLint("ScheduleExactAlarm")
