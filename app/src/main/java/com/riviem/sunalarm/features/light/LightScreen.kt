@@ -79,7 +79,7 @@ fun LightScreen(
     }
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType)
+//        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType) // todo vlad uncomment
     }
 
     LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
@@ -140,7 +140,8 @@ fun LightScreen(
                         )
                     }
                     activity.finishAffinity()
-                }
+                },
+                snoozeLength = state.snoozeLength
             )
         }
     }
@@ -171,6 +172,7 @@ private fun TimeText(
 private fun LightScreenContent(
     onSnoozeClick: () -> Unit,
     onDismissClick: () -> Unit,
+    snoozeLength: Int,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -191,10 +193,15 @@ private fun LightScreenContent(
                 disabledContainerColor = Color.Gray
             )
         ) {
-            Text(
-                text = stringResource(id = R.string.snooze),
-                fontSize = 65.sp,
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(id = R.string.snooze),
+                    fontSize = 65.sp,
+                )
+                Text(text = stringResource(R.string.snooze_minutes, snoozeLength), fontSize = 35.sp)
+            }
         }
         Button(
             onClick = onDismissClick,

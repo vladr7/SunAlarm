@@ -31,6 +31,16 @@ class LightViewModel @Inject constructor(
     init {
         getBrightnessSettings()
         setCurrentTime()
+        getSnoozeTime()
+    }
+
+    private fun getSnoozeTime() {
+        viewModelScope.launch {
+            val snoozeTime = alarmRepository.getSnoozeLength()
+            _state.update {
+                it.copy(snoozeLength = snoozeTime)
+            }
+        }
     }
 
     private fun setCurrentTime() {
@@ -130,4 +140,5 @@ data class LightState(
     val selectedAlarm: AlarmUIModel? = null,
     val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI(),
     val currentTime: String = "",
+    val snoozeLength: Int = 0,
 )
