@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.data.database.asDatabaseModel
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.features.home.data.AlarmRepository
@@ -45,7 +46,7 @@ class HomeViewModel @Inject constructor(
                 flashlight = false,
                 days = weekDays,
                 soundAlarmEnabled = false,
-                minutesUntilSoundAlarm = 20,
+                minutesUntilSoundAlarm = Constants.MINUTES_UNTIL_SOUND_ALARM_INITIAL_VALUE,
             ),
             title = "",
             subtitle = "",
@@ -169,7 +170,7 @@ class HomeViewModel @Inject constructor(
                     flashlight = false,
                     days = weekDays,
                     soundAlarmEnabled = false,
-                    minutesUntilSoundAlarm = 1,
+                    minutesUntilSoundAlarm = Constants.MINUTES_UNTIL_SOUND_ALARM_INITIAL_VALUE,
                 )
             )
         }
