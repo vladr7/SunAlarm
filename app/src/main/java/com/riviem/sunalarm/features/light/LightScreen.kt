@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.presentation.createDismissSoundNotification
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.ui.theme.Purple40
 
@@ -84,6 +85,17 @@ fun LightScreen(
 
     LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
         setBrightness(context, state.brightnessSettingUI.brightness)
+    }
+
+    LaunchedEffect(key1 = state.shouldCreateDismissSoundNotification) {
+        if (state.shouldCreateDismissSoundNotification) {
+            state.selectedAlarm?.let { alarmUIModel ->
+                createDismissSoundNotification(
+                    context,
+                    alarmUIModel
+                )
+            }
+        }
     }
 
     LaunchedEffect(key1 = state.selectedAlarm?.flashlight) {
@@ -297,8 +309,9 @@ private fun playSound(mediaPlayer: MediaPlayer) {
 }
 
 fun stopSound(mediaPlayer: MediaPlayer) {
-    if(!mediaPlayer.isPlaying) return
+    if (!mediaPlayer.isPlaying) return
     mediaPlayer.stop()
     mediaPlayer.release()
 }
+
 

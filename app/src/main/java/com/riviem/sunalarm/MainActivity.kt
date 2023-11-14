@@ -1,5 +1,8 @@
 package com.riviem.sunalarm
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.app.NotificationCompat
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.presentation.CAMERA_REQUEST_CODE
 import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
@@ -36,11 +40,20 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 }
 
+class NotificationReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == "ACTION_DISMISS_ALARM") {
+            // Handle notification dismiss
+        }
+    }
+}
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         this.setTurnScreenOn(true)
         this.setShowWhenLocked(true)
         val startedFromAlarm = intent.getBooleanExtra(Constants.FROM_ALARM_ID, false)
@@ -92,6 +105,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
 

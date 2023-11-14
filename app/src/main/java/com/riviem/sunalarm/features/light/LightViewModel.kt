@@ -3,6 +3,7 @@ package com.riviem.sunalarm.features.light
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.home.data.AlarmRepository
@@ -106,11 +107,23 @@ class LightViewModel @Inject constructor(
             _state.update {
                 it.copy(selectedAlarm = alarm.asUIModel())
             }
+            checkShouldCreateDimissSoundAlarmNotification(alarm, alarmType)
             initShowDismissSoundButton(alarmType)
         }
     }
 
-    fun initShowDismissSoundButton(alarmType: AlarmType) {
+    private fun checkShouldCreateDimissSoundAlarmNotification(
+        alarm: DatabaseAlarm,
+        alarmType: AlarmType
+    ) {
+        if (alarm.soundEnabled && alarmType == AlarmType.LIGHT) {
+            _state.update {
+                it.copy(shouldCreateDismissSoundNotification = true)
+            }
+        }
+    }
+
+    private fun initShowDismissSoundButton(alarmType: AlarmType) {
         val showDismissSoundButton = if(alarmType == AlarmType.SOUND) {
             false
         } else {
@@ -167,4 +180,5 @@ data class LightState(
     val currentTime: String = "",
     val snoozeLength: Int = 0,
     val showDismissSoundButton: Boolean = false,
+    val shouldCreateDismissSoundNotification: Boolean = false,
 )

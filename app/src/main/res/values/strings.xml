@@ -40,5 +40,9 @@
     <string name="sound_alarm_after">Sound alarm after</string>
     <string name="the_sound_alarm_has_been_set">The sound alarm has been set.</string>
     <string name="snooze_minutes">%1$s minutes</string>
+    <string name="dismiss_next_sound_alarm">Dismiss next sound alarm</string>
+    <string name="dismiss_sound_alarm_notification_name">Dismiss Sound Alarm</string>
+    <string name="next_sound_alarm_in_minutes">Next sound alarm in %1$d minutes</string>
+    <string name="dismiss">Dismiss</string>
 
 </resources>
