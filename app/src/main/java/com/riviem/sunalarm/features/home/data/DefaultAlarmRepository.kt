@@ -131,7 +131,7 @@ class DefaultAlarmRepository @Inject constructor(
 
     override fun cancelLightAndSoundAlarm(alarm: AlarmUIModel, context: Context) {
         cancelLightAlarm(context, alarm)
-        cancelSoundAlarm(context, alarm)
+        cancelSoundAlarm(context, alarm.createdTimestamp + 1)
     }
 
     private fun cancelLightAlarm(
@@ -152,17 +152,17 @@ class DefaultAlarmRepository @Inject constructor(
 
     override fun cancelSoundAlarm(
         context: Context,
-        alarm: AlarmUIModel
+        soundAlarmId: Int
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
-            context, alarm.createdTimestamp + 1, intent,
+            context, soundAlarmId, intent,
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: cancelSoundAlarm: ${alarm.createdTimestamp + 1}")
+        println("vladlog: cancelSoundAlarm: ${soundAlarmId}")
         alarmManager.cancel(pendingIntent)
     }
 
@@ -191,6 +191,14 @@ class DefaultAlarmRepository @Inject constructor(
 
     override suspend fun setFirstDayOfWeek(firstDayOfWeek: String) {
         localStorage.putString(LocalStorageKeys.FIRST_DAY_OF_WEEK_KEY, firstDayOfWeek)
+    }
+
+    override suspend fun setCurrentSoundAlarmIdForNotification(soundAlarmId: Int) {
+        localStorage.putInt(LocalStorageKeys.CURRENT_SOUND_ALARM_ID_FOR_NOTIFICATION_KEY, soundAlarmId)
+    }
+
+    override suspend fun getCurrentSoundAlarmIdForNotification(): Int {
+        return localStorage.getInt(LocalStorageKeys.CURRENT_SOUND_ALARM_ID_FOR_NOTIFICATION_KEY, -1)
     }
 
 }

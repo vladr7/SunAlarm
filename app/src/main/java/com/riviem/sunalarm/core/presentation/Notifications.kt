@@ -8,6 +8,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.riviem.sunalarm.NotificationReceiver
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 
 const val ACTION_DISMISS_ALARM = "ACTION_DISMISS_ALARM"
@@ -27,6 +28,7 @@ fun createDismissSoundNotification(context: Context, alarmUIModel: AlarmUIModel)
     notificationManager.createNotificationChannel(channel)
 
     val dismissIntent = Intent(context, NotificationReceiver::class.java).apply {
+        putExtra(Constants.CREATED_TIMESTAMP_ID, alarmUIModel.createdTimestamp)
         action = ACTION_DISMISS_ALARM
     }
 

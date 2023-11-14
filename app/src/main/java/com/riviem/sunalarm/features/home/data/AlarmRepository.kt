@@ -29,7 +29,7 @@ interface AlarmRepository {
 
     fun cancelSoundAlarm(
         context: Context,
-        alarm: AlarmUIModel
+        soundAlarmId: Int
     )
 
     suspend fun setSnoozeLength(snoozeLength: Int)
@@ -43,5 +43,9 @@ interface AlarmRepository {
     suspend fun getFirstDayOfWeek(): String
 
     suspend fun setFirstDayOfWeek(firstDayOfWeek: String)
+
+    suspend fun setCurrentSoundAlarmIdForNotification(soundAlarmId: Int)
+
+    suspend fun getCurrentSoundAlarmIdForNotification(): Int
 
 }

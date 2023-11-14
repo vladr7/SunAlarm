@@ -134,6 +134,13 @@ class LightViewModel @Inject constructor(
                 it.copy(showDismissSoundButton = showDismissSoundButton)
             }
         }
+        if(showDismissSoundButton) {
+            viewModelScope.launch {
+                alarmRepository.setCurrentSoundAlarmIdForNotification(
+                    soundAlarmId = (state.value.selectedAlarm?.createdTimestamp?.plus(1)) ?: -1
+                )
+            }
+        }
     }
 
     fun stopLightAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
@@ -151,7 +158,7 @@ class LightViewModel @Inject constructor(
         if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
             alarmRepository.setLightAlarm(alarm = alarm, context = context)
         }
-        alarmRepository.cancelSoundAlarm(alarm = alarm, context = context)
+        alarmRepository.cancelSoundAlarm(soundAlarmId = alarm.createdTimestamp + 1, context = context)
         _state.update {
             it.copy(
                 selectedAlarm = alarm.copy(flashlight = false),
