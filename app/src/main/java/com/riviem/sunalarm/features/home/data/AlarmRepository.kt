@@ -2,6 +2,7 @@ package com.riviem.sunalarm.features.home.data
 
 import android.content.Context
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
+import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +24,7 @@ interface AlarmRepository {
 
     fun getNextAlarmDateTime(alarm: AlarmUIModel): ZonedDateTime
 
-    suspend fun snoozeAlarm(alarm: AlarmUIModel, context: Context)
+    suspend fun snoozeAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType)
 
     fun cancelLightAndSoundAlarm(alarm: AlarmUIModel, context: Context)
 

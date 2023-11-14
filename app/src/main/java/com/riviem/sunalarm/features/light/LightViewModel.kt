@@ -167,10 +167,10 @@ class LightViewModel @Inject constructor(
         }
     }
 
-    fun snoozeAlarm(alarm: AlarmUIModel, context: Context) {
+    fun snoozeAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
         if (alarm.isOn) {
             viewModelScope.launch {
-                alarmRepository.snoozeAlarm(alarm = alarm, context = context)
+                alarmRepository.snoozeAlarm(alarm = alarm, context = context, alarmType = alarmType)
             }
         }
         _state.update {

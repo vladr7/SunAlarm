@@ -137,8 +137,9 @@ fun LightScreen(
         ) {
             LightScreenContent(
                 onSnoozeClick = {
+                    stopSound(mediaPlayer)
                     state.selectedAlarm?.let {
-                        viewModel.snoozeAlarm(it, context = context)
+                        viewModel.snoozeAlarm(it, context = context, alarmType = alarmType)
                     }
                     activity.finishAffinity()
                 },
