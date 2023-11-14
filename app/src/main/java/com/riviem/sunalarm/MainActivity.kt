@@ -1,6 +1,5 @@
 package com.riviem.sunalarm
 
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -42,11 +41,8 @@ class AlarmReceiver : BroadcastReceiver() {
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == ACTION_DISMISS_ALARM) {
-            println("vladlog: NotificationReceiver: ACTION_DISMISS_ALARM")
-            val createdTimestamp = intent.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
             val mainActivityIntent = Intent(context, MainActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                putExtra(Constants.CREATED_TIMESTAMP_ID, createdTimestamp)
                 action = ACTION_DISMISS_ALARM
             }
             context.startActivity(mainActivityIntent)
@@ -73,10 +69,7 @@ class MainActivity : ComponentActivity() {
         if(intent.action == ACTION_DISMISS_ALARM) {
             mainViewModel.cancelSoundAlarm(
                 context = this,
-                soundAlarmId = createdTimestamp
             )
-            val notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.cancel(Constants.DISMISS_SOUND_ALARM_NOTIFICATION_ID)
             finish()
         } else {
             setContent {

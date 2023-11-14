@@ -28,7 +28,6 @@ fun createDismissSoundNotification(context: Context, alarmUIModel: AlarmUIModel)
     notificationManager.createNotificationChannel(channel)
 
     val dismissIntent = Intent(context, NotificationReceiver::class.java).apply {
-        putExtra(Constants.CREATED_TIMESTAMP_ID, alarmUIModel.createdTimestamp + 1)
         action = ACTION_DISMISS_ALARM
     }
 
