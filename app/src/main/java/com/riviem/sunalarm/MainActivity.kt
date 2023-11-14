@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
 import com.riviem.sunalarm.core.presentation.ACTION_DISMISS_ALARM
 import com.riviem.sunalarm.core.presentation.CAMERA_REQUEST_CODE
 import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
@@ -22,6 +23,9 @@ import com.riviem.sunalarm.features.light.LightScreen
 import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import retrofit2.await
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -65,6 +69,15 @@ class MainActivity : ComponentActivity() {
         val alarmTypeString = intent.getStringExtra(Constants.ALARM_TYPE_ID)
         val alarmType = if(alarmTypeString == null) AlarmType.LIGHT else AlarmType.valueOf(alarmTypeString)
         println("vladlog: MainActivity onCreate: createdTimestamp: $createdTimestamp")
+
+        GlobalScope.launch {
+            try {
+                val response = RetrofitInstance.sunriseApiService.getSunriseTime(38.907192, -77.036873).await()
+                println("vladlog: sunrise: ${response.results.sunrise}")
+            } catch (e: Exception) {
+                println("vladlog: sunrise error: ${e.message}")
+            }
+        }
 
         if(intent.action == ACTION_DISMISS_ALARM) {
             mainViewModel.cancelSoundAlarm(
