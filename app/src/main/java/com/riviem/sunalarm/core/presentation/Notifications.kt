@@ -28,12 +28,12 @@ fun createDismissSoundNotification(context: Context, alarmUIModel: AlarmUIModel)
     notificationManager.createNotificationChannel(channel)
 
     val dismissIntent = Intent(context, NotificationReceiver::class.java).apply {
-        putExtra(Constants.CREATED_TIMESTAMP_ID, alarmUIModel.createdTimestamp)
+        putExtra(Constants.CREATED_TIMESTAMP_ID, alarmUIModel.createdTimestamp + 1)
         action = ACTION_DISMISS_ALARM
     }
 
     val dismissPendingIntent: PendingIntent =
-        PendingIntent.getBroadcast(context, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE)
+        PendingIntent.getBroadcast(context, Constants.DISMISS_SOUND_ALARM_NOTIFICATION_ID, dismissIntent, PendingIntent.FLAG_MUTABLE)
 
     val notification = NotificationCompat.Builder(context, channelId)
         .setContentTitle(context.getString(R.string.dismiss_sound_alarm_notification_name))
@@ -48,5 +48,5 @@ fun createDismissSoundNotification(context: Context, alarmUIModel: AlarmUIModel)
             context.getString(R.string.dismiss), dismissPendingIntent)
         .build()
 
-    notificationManager.notify(123, notification)
+    notificationManager.notify(Constants.DISMISS_SOUND_ALARM_NOTIFICATION_ID, notification)
 }

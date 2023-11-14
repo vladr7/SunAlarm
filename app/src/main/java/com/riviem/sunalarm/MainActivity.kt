@@ -1,5 +1,6 @@
 package com.riviem.sunalarm
 
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -40,8 +42,10 @@ class AlarmReceiver : BroadcastReceiver() {
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == ACTION_DISMISS_ALARM) {
+            println("vladlog: NotificationReceiver: ACTION_DISMISS_ALARM")
             val createdTimestamp = intent.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
             val mainActivityIntent = Intent(context, MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 putExtra(Constants.CREATED_TIMESTAMP_ID, createdTimestamp)
                 action = ACTION_DISMISS_ALARM
             }
@@ -53,11 +57,11 @@ class NotificationReceiver : BroadcastReceiver() {
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // todo add mainViewModel
-
         this.setTurnScreenOn(true)
         this.setShowWhenLocked(true)
         val startedFromAlarm = intent.getBooleanExtra(Constants.FROM_ALARM_ID, false)
@@ -67,8 +71,13 @@ class MainActivity : ComponentActivity() {
         println("vladlog: MainActivity onCreate: createdTimestamp: $createdTimestamp")
 
         if(intent.action == ACTION_DISMISS_ALARM) {
-            // TODO: Cancel alarm and dismiss notification
-
+            mainViewModel.cancelSoundAlarm(
+                context = this,
+                soundAlarmId = createdTimestamp
+            )
+            val notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(Constants.DISMISS_SOUND_ALARM_NOTIFICATION_ID)
+            finish()
         } else {
             setContent {
                 SunAlarmTheme {
