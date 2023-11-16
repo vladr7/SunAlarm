@@ -675,7 +675,7 @@ fun ScrollableTimePicker(
     val hours = infiniteHours.take(480).map { if (it < 10) "0$it" else it.toString() }.toList()
     val minutes = infiniteMinutes.take(1200).map { if (it < 10) "0$it" else it.toString() }.toList()
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = selectedHour, selectedMinute) {
         hoursState.scrollToItem(index = 240 + selectedHour)
         minutesState.scrollToItem(index = 600 + selectedMinute)
         delay(50L)
