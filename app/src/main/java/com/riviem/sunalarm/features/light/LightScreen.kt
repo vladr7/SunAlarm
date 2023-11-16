@@ -125,8 +125,9 @@ fun LightScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AnimatedVisibility(visible = !showDismissSnoozeScreen) {
-            TimeText(
-                text = state.currentTime,
+            LightScreenStart(
+                time = state.currentTime,
+                alarmName = state.selectedAlarm?.name ?: ""
             )
         }
         AnimatedVisibility(
@@ -138,7 +139,7 @@ fun LightScreen(
                 tween(1000)
             )
         ) {
-            LightScreenContent(
+            LightScreenButtons(
                 onSnoozeClick = {
                     stopSound(mediaPlayer)
                     state.selectedAlarm?.let {
@@ -177,9 +178,30 @@ fun LightScreen(
 }
 
 @Composable
-private fun TimeText(
-    text: String,
+private fun LightScreenStart(
+    time: String,
+    alarmName: String,
 ) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 20.dp , end = 20.dp, bottom = 280.dp),
+            text = alarmName,
+            fontSize = 50.sp,
+            color = Color.Black,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            lineHeight = 50.sp,
+        )
+        TimeDisplay(time)
+    }
+
+}
+
+@Composable
+private fun TimeDisplay(time: String) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -190,7 +212,7 @@ private fun TimeText(
             .padding(16.dp)
     ) {
         Text(
-            text = text,
+            text = time,
             fontSize = 70.sp,
             color = Color.Black
         )
@@ -198,7 +220,7 @@ private fun TimeText(
 }
 
 @Composable
-private fun LightScreenContent(
+private fun LightScreenButtons(
     onSnoozeClick: () -> Unit,
     onDismissLightClick: () -> Unit,
     onDismissSoundClick: () -> Unit,

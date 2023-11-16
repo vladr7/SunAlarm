@@ -21,7 +21,6 @@ import com.riviem.sunalarm.core.presentation.ACTION_DISMISS_ALARM
 import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.light.LightScreen
-import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -89,11 +88,12 @@ class MainActivity : ComponentActivity() {
                                 wakeLock = wakeLock
                             )
                         } else {
-//                        LightScreen(
-//                            createdTimestamp = createdTimestamp,
-//                            alarmType = alarmType
-//                        )
-                            MainNavigation()
+                        LightScreen(
+                            createdTimestamp = createdTimestamp,
+                            alarmType = alarmType,
+                            wakeLock = wakeLock
+                        )
+//                            MainNavigation()
                         }
                     }
                 }

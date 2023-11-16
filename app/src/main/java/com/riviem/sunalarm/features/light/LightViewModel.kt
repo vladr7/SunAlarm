@@ -96,6 +96,9 @@ class LightViewModel @Inject constructor(
     }
 
     fun getAlarmById(createdTimestampId: Int, alarmType: AlarmType) {
+        if(createdTimestampId == -1) {
+            return
+        }
         viewModelScope.launch(Dispatchers.IO) {
             val id = if (alarmType == AlarmType.LIGHT) {
                 createdTimestampId
