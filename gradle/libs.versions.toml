@@ -161,6 +161,7 @@ lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" 
 
 #Image compressor
 image-compressor = { module = "id.zelory:compressor", version.ref = "image-compressor" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version = "21.0.1" }
 
 [bundles]
 compose = ["compose-ui", "compose-material3", "compose-preview", "icons-extended"]

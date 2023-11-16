@@ -1,6 +1,7 @@
 package com.riviem.sunalarm.core.presentation
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,6 +10,8 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.riviem.sunalarm.MainActivity
+import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.Constants.CAMERA_REQUEST_CODE
 
 fun hasCameraPermission(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(
@@ -17,7 +20,6 @@ fun hasCameraPermission(context: Context): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 
-const val CAMERA_REQUEST_CODE = 101
 
 fun requestCameraPermission(activity: MainActivity) {
     ActivityCompat.requestPermissions(
@@ -53,4 +55,26 @@ fun askPermissionDisplayOverOtherApps(
         context.startActivity(intent)
     }
 
+}
+
+fun hasLocationPermission(context: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+fun checkAndRequestLocationPermission(activity: Activity) {
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED
+    ) {
+        // Permission is not granted, request it
+        ActivityCompat.requestPermissions(
+            activity,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            Constants.LOCATION_PERMISSION_REQUEST_CODE
+        )
+    } else {
+        // Permission has already been granted
+    }
 }

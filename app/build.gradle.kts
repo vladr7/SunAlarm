@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.maps.playServices)
     implementation(libs.maps.compose)
     implementation(libs.playServiceCodeScanner)
+    implementation(libs.play.services.location)
     kapt(libs.google.hiltandroidcompiler)
     implementation(libs.lottie)
     implementation(libs.image.compressor)

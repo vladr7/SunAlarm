@@ -44,5 +44,7 @@
     <string name="dismiss_sound_alarm_notification_name">Dismiss Sound Alarm</string>
     <string name="next_sound_alarm_in_minutes">Next sound alarm in %1$d minutes</string>
     <string name="dismiss">Dismiss</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="set_alarm_to_sunrise">Set alarm to sunrise</string>
 
 </resources>

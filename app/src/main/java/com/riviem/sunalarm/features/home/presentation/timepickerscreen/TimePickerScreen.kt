@@ -36,6 +36,8 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
+import androidx.compose.material.icons.filled.RadioButtonChecked
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -46,8 +48,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +72,12 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
+import com.riviem.sunalarm.core.presentation.checkAndRequestLocationPermission
+import com.riviem.sunalarm.core.presentation.extractHourAndMinute
+import com.riviem.sunalarm.core.presentation.getCoordinates
 import com.riviem.sunalarm.core.presentation.hasCameraPermission
+import com.riviem.sunalarm.core.presentation.hasLocationPermission
 import com.riviem.sunalarm.core.presentation.requestCameraPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
@@ -84,6 +93,8 @@ import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchIconColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchTrackColor
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import retrofit2.await
 
 @Composable
 fun TimePickerScreen(
@@ -97,10 +108,13 @@ fun TimePickerScreen(
     var showColorPicker by remember { mutableStateOf(false) }
     var showSoundAlarmPicker by remember { mutableStateOf(false) }
     var newAlarm by remember { mutableStateOf(alarm) }
+    var selectedHour by remember { mutableIntStateOf(alarm.ringTime.hour) }
+    var selectedMinute by remember { mutableIntStateOf(alarm.ringTime.minute) }
     var newColor by remember { mutableStateOf(alarm.color) }
     val boxTransparency by animateFloatAsState(
         targetValue = if (showSoundAlarmPicker) 0.07f else 1f, label = ""
     )
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -124,8 +138,8 @@ fun TimePickerScreen(
                 },
                 modifier = Modifier
                     .height(300.dp),
-                selectedHour = alarm.ringTime.hour,
-                selectedMinute = alarm.ringTime.minute
+                selectedHour = selectedHour,
+                selectedMinute = selectedMinute
             )
             LightAlarmConfiguration(
                 modifier = Modifier
@@ -166,7 +180,7 @@ fun TimePickerScreen(
                     }
                 },
                 onSoundAlarmToggleClicked = {
-                    if(newAlarm.soundAlarmEnabled) {
+                    if (newAlarm.soundAlarmEnabled) {
                         newAlarm = newAlarm.copy(
                             soundAlarmEnabled = false
                         )
@@ -175,7 +189,37 @@ fun TimePickerScreen(
                         showSoundAlarmPicker = true
                     }
                 },
-                firstDayOfWeek = firstDayOfWeek
+                firstDayOfWeek = firstDayOfWeek,
+                onSunriseButtonClicked = {
+                    if (!hasLocationPermission(context = context)) {
+                        checkAndRequestLocationPermission(activity = activity)
+                    } else {
+                        coroutineScope.launch {
+                            val coordinates = getCoordinates(activity)
+                            if (coordinates != null) {
+                                try {
+                                    val response =
+                                        RetrofitInstance.sunriseApiService.getSunriseTime(
+                                            coordinates.latitude,
+                                            -coordinates.longitude
+                                        ).await()
+                                    val sunriseTime = extractHourAndMinute(response.results.sunrise)
+                                    newAlarm = newAlarm.copy(
+                                        ringTime = newAlarm.ringTime.withHour(sunriseTime.first)
+                                    )
+                                    selectedHour = sunriseTime.first
+                                    newAlarm = newAlarm.copy(
+                                        ringTime = newAlarm.ringTime.withMinute(sunriseTime.second)
+                                    )
+                                    selectedMinute = sunriseTime.second
+                                    println("vladlog: sunrise: ${sunriseTime}")
+                                } catch (e: Exception) {
+                                    println("vladlog: sunrise error: ${e.message}")
+                                }
+                            }
+                        }
+                    }
+                },
             )
             CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)
         }
@@ -362,7 +406,8 @@ fun LightAlarmConfiguration(
     flashlightActivated: Boolean,
     onFlashlightToggleClicked: () -> Unit,
     onSoundAlarmToggleClicked: () -> Unit,
-    firstDayOfWeek: FirstDayOfWeek
+    firstDayOfWeek: FirstDayOfWeek,
+    onSunriseButtonClicked: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -407,7 +452,7 @@ fun LightAlarmConfiguration(
         SettingToggle(
             modifier = Modifier
                 .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 15.dp),
-            activated = flashlightActivated,
+            checked = flashlightActivated,
             onClick = onFlashlightToggleClicked,
             title = stringResource(R.string.flashlight),
             subtitle = stringResource(R.string.alarm_rings_with_flashlight),
@@ -417,11 +462,23 @@ fun LightAlarmConfiguration(
         SettingToggle(
             modifier = Modifier
                 .padding(start = 10.dp, end = 15.dp, bottom = 25.dp),
-            activated = alarm.soundAlarmEnabled,
+            checked = alarm.soundAlarmEnabled,
             onClick = onSoundAlarmToggleClicked,
             title = stringResource(R.string.sound_alarm),
-            subtitle = stringResource(R.string.sound_alarm_after_set_minutes, alarm.minutesUntilSoundAlarm),
+            subtitle = stringResource(
+                R.string.sound_alarm_after_set_minutes,
+                alarm.minutesUntilSoundAlarm
+            ),
             startIcon = if (alarm.soundAlarmEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+            startIconColor = Color.White,
+        )
+        SettingButton(
+            modifier = Modifier
+                .padding(start = 10.dp, end = 15.dp, bottom = 25.dp),
+            onClick = onSunriseButtonClicked,
+            title = stringResource(R.string.sunrise),
+            subtitle = stringResource(R.string.set_alarm_to_sunrise),
+            startIcon = Icons.Filled.WbSunny,
             startIconColor = Color.White,
         )
     }
@@ -737,13 +794,13 @@ fun TimeScrollItem(
 }
 
 @Composable
-private fun SettingToggle(
+fun SettingToggle(
     modifier: Modifier,
     startIcon: ImageVector,
     startIconColor: Color,
     title: String,
     subtitle: String,
-    activated: Boolean,
+    checked: Boolean,
     onClick: () -> Unit,
 ) {
     Row(
@@ -786,7 +843,7 @@ private fun SettingToggle(
             modifier = modifier
                 .weight(0.15f)
                 .padding(end = 8.dp),
-            checked = activated,
+            checked = checked,
             onCheckedChange = { onClick() },
             colors = SwitchColors(
                 checkedThumbColor = SettingsActivateSwitchButtonColor,
@@ -809,3 +866,61 @@ private fun SettingToggle(
         )
     }
 }
+
+@Composable
+fun SettingButton(
+    modifier: Modifier,
+    startIcon: ImageVector,
+    startIconColor: Color,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(110.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Image(
+            imageVector = startIcon,
+            contentDescription = null,
+            modifier = modifier
+                .size(30.dp),
+            colorFilter = ColorFilter.tint(startIconColor)
+        )
+        Column(
+            modifier = modifier
+                .padding(start = 16.dp, end = 8.dp)
+                .weight(1f),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = subtitle,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2
+            )
+        }
+        Image(
+            imageVector = Icons.Filled.RadioButtonChecked,
+            contentDescription = null,
+            modifier = modifier
+                .clickable { onClick() }
+                .size(30.dp),
+            colorFilter = ColorFilter.tint(startIconColor)
+        )
+    }
+}
+
+
+
+

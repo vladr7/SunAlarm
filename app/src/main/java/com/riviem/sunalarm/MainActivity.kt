@@ -14,9 +14,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.Constants.CAMERA_REQUEST_CODE
+import com.riviem.sunalarm.core.Constants.LOCATION_PERMISSION_REQUEST_CODE
 import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
 import com.riviem.sunalarm.core.presentation.ACTION_DISMISS_ALARM
-import com.riviem.sunalarm.core.presentation.CAMERA_REQUEST_CODE
 import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.light.LightScreen
@@ -124,6 +125,14 @@ class MainActivity : ComponentActivity() {
                 } else {
                     // Permission was denied. Inform the user or take alternative actions.
                     Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted.
+                } else {
+                    // Permission was denied. Inform the user or take alternative actions.
+                    Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }
