@@ -378,7 +378,7 @@ fun AlarmItem(
         AnimatedVisibility(visible = alarm.isExpanded) {
             DeleteAlarmButton(
                 modifier = modifier
-                    .padding(end = 10.dp),
+                    .padding(end = 30.dp),
                 onClick = onDeleteAlarmClick
             )
         }
@@ -397,6 +397,7 @@ fun DeleteAlarmButton(
                 onClick()
             },
         imageVector = Icons.Filled.Delete, contentDescription = null,
+        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
     )
 }
 
