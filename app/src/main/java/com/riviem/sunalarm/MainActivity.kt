@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.PowerManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -56,11 +57,10 @@ class NotificationReceiver : BroadcastReceiver() {
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
+    private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.setTurnScreenOn(true)
-        this.setShowWhenLocked(true)
         val startedFromAlarm = intent.getBooleanExtra(Constants.FROM_ALARM_ID, false)
         val createdTimestamp = intent.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
         val alarmTypeString = intent.getStringExtra(Constants.ALARM_TYPE_ID)
@@ -73,6 +73,7 @@ class MainActivity : ComponentActivity() {
             )
             finish()
         } else {
+            turnOnScreen()
             setContent {
                 SunAlarmTheme {
                     // A surface container using the 'background' color from the theme
@@ -84,7 +85,8 @@ class MainActivity : ComponentActivity() {
                         if (startedFromAlarm) {
                             LightScreen(
                                 createdTimestamp = createdTimestamp,
-                                alarmType = alarmType
+                                alarmType = alarmType,
+                                wakeLock = wakeLock
                             )
                         } else {
 //                        LightScreen(
@@ -97,6 +99,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun turnOnScreen() {
+        this.setTurnScreenOn(true)
+        this.setShowWhenLocked(true)
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+        wakeLock =
+            powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SunAlarm::MyWakeLockTag")
+        wakeLock?.acquire(120 * 60 * 1000L /*120 minutes*/)
     }
 
     override fun onRequestPermissionsResult(
@@ -124,5 +135,15 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseWakeLock(wakeLock)
+    }
 }
 
+fun releaseWakeLock(wakeLock: PowerManager.WakeLock?) {
+    if (wakeLock?.isHeld == true) {
+        wakeLock.release()
+    }
+}

@@ -5,6 +5,7 @@ import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import android.media.MediaPlayer
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -39,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.createDismissSoundNotification
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
+import com.riviem.sunalarm.releaseWakeLock
 import com.riviem.sunalarm.ui.theme.Purple40
 
 
@@ -47,6 +49,7 @@ fun LightScreen(
     viewModel: LightViewModel = hiltViewModel(),
     createdTimestamp: Int,
     alarmType: AlarmType,
+    wakeLock: PowerManager.WakeLock?,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -145,6 +148,7 @@ fun LightScreen(
                 },
                 onDismissLightClick = {
                     stopSound(mediaPlayer)
+                    releaseWakeLock(wakeLock)
                     state.selectedAlarm?.let {
                         viewModel.stopLightAlarm(
                             it,
@@ -157,6 +161,7 @@ fun LightScreen(
                 snoozeLength = state.snoozeLength,
                 onDismissSoundClick = {
                     stopSound(mediaPlayer)
+                    releaseWakeLock(wakeLock)
                     state.selectedAlarm?.let {
                         viewModel.stopSoundAlarm(
                             it,
