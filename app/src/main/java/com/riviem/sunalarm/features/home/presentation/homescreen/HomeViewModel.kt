@@ -143,6 +143,15 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAlarmClick(alarm: AlarmUIModel) {
+        val isExpanded = state.value.alarms.find { it.createdTimestamp == alarm.createdTimestamp }?.isExpanded ?: false
+        if (isExpanded) {
+            _state.update { homeState ->
+                homeState.copy(
+                    alarms = homeState.alarms.map { it.copy(isExpanded = false) }
+                )
+            }
+            return
+        }
         _state.update {
             it.copy(
                 showTimePickerScreen = true,
@@ -223,9 +232,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAlarmLongPress(alarm: AlarmUIModel) {
+        val newAlarms = state.value.alarms.map { alarmUIModel ->
+            alarmUIModel.copy(isExpanded = alarmUIModel.createdTimestamp == alarm.createdTimestamp)
+        }
         _state.update { homeState ->
             homeState.copy(
-                alarms = homeState.alarms.map { it.copy(isExpanded = it.createdTimestamp == alarm.createdTimestamp) }
+                selectedAlarm = alarm.copy(isExpanded = true),
+                alarms = newAlarms
             )
         }
     }

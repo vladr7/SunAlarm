@@ -84,8 +84,12 @@ fun HomeRoute(
         HomeScreen(
             context = context,
             onAlarmClick = { alarm ->
-                viewModel.onAlarmClick(alarm)
-                onAlarmClick()
+                if(!alarm.isExpanded) {
+                    viewModel.onAlarmClick(alarm)
+                    onAlarmClick()
+                } else {
+                    viewModel.onAlarmClick(alarm)
+                }
             },
             alarms = state.alarms,
             onAddNewAlarmClick = {
@@ -297,10 +301,16 @@ fun AlarmsList(
     LazyColumn(
         modifier = modifier,
         content = {
-            items(alarms) { item ->
+            items(
+                items = alarms,
+                key = { alarm ->
+                    alarm.createdTimestamp
+                }
+            ) { item ->
                 AlarmItem(
                     alarm = item,
                     onAlarmClick = {
+                        println("vladlog: onAlarmClick: ${item.ringTime}")
                         onAlarmClick(item)
                     },
                     onCheckedChange = {
@@ -308,9 +318,11 @@ fun AlarmsList(
                     },
                     firstDayOfWeek = firstDayOfWeek,
                     onAlarmLongPress = {
+                        println("vladlog: onAlarmLongPress: ${item.ringTime}")
                         onAlarmLongPress(item)
                     },
                     onDeleteAlarmClick = {
+                        println("vladlog: onDeleteAlarmClick: ${item.ringTime}")
                         onDeleteAlarmClick(item)
                     }
                 )
@@ -350,12 +362,12 @@ fun AlarmItem(
     ) {
         AlarmNameAndTime(alarm.name, alarm.ringTime)
         Spacer(modifier = Modifier.weight(1f))
-        AlarmSelectedDays(
-            modifier = modifier,
-            days = alarm.days,
-            firstDayOfWeek = firstDayOfWeek
-        )
         if (!alarm.isExpanded) {
+            AlarmSelectedDays(
+                modifier = modifier,
+                days = alarm.days,
+                firstDayOfWeek = firstDayOfWeek
+            )
             AlarmSwitch(
                 modifier = modifier
                     .padding(end = 10.dp),
