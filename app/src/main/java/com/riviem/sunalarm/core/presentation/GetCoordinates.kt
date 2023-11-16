@@ -10,10 +10,8 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 suspend fun getCoordinates(activity: Activity): Coordinates? {
-    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
-        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-            activity, Manifest.permission.ACCESS_COARSE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
+    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED
     ) {
         return null
     }
@@ -30,6 +28,7 @@ suspend fun getCoordinates(activity: Activity): Coordinates? {
         null
     }
 }
+
 
 fun extractHourAndMinute(timeString: String): Pair<Int, Int> {
     val formatter = DateTimeFormatter.ofPattern("h:mm:ss a")

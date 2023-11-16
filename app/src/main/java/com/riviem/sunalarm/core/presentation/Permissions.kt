@@ -60,18 +60,18 @@ fun askPermissionDisplayOverOtherApps(
 fun hasLocationPermission(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(
         context,
-        Manifest.permission.ACCESS_FINE_LOCATION
+        Manifest.permission.ACCESS_COARSE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 }
 
 fun checkAndRequestLocationPermission(activity: Activity) {
-    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
+    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
         != PackageManager.PERMISSION_GRANTED
     ) {
         // Permission is not granted, request it
         ActivityCompat.requestPermissions(
             activity,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
             Constants.LOCATION_PERMISSION_REQUEST_CODE
         )
     } else {

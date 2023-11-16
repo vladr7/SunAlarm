@@ -132,13 +132,11 @@ fun TimePickerScreen(
                     newAlarm = newAlarm.copy(
                         ringTime = newAlarm.ringTime.withHour(it)
                     )
-                    selectedHour = it
                 },
                 onMinuteSelected = {
                     newAlarm = newAlarm.copy(
                         ringTime = newAlarm.ringTime.withMinute(it)
                     )
-                    selectedMinute = it
                 },
                 modifier = Modifier
                     .height(300.dp),
