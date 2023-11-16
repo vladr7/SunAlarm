@@ -46,5 +46,7 @@
     <string name="dismiss">Dismiss</string>
     <string name="sunrise">Sunrise</string>
     <string name="set_alarm_to_sunrise">Set alarm to sunrise</string>
+    <string name="error_getting_sunrise_time_maybe_internet_is_off">Error getting sunrise time\nMaybe internet is off</string>
+    <string name="location_is_disabled">Location is disabled</string>
 
 </resources>

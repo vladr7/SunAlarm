@@ -1,6 +1,7 @@
 package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -74,6 +75,7 @@ import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
 import com.riviem.sunalarm.core.presentation.checkAndRequestLocationPermission
+import com.riviem.sunalarm.core.presentation.checkLocationIsEnabled
 import com.riviem.sunalarm.core.presentation.extractHourAndMinute
 import com.riviem.sunalarm.core.presentation.getCoordinates
 import com.riviem.sunalarm.core.presentation.hasCameraPermission
@@ -130,11 +132,13 @@ fun TimePickerScreen(
                     newAlarm = newAlarm.copy(
                         ringTime = newAlarm.ringTime.withHour(it)
                     )
+                    selectedHour = it
                 },
                 onMinuteSelected = {
                     newAlarm = newAlarm.copy(
                         ringTime = newAlarm.ringTime.withMinute(it)
                     )
+                    selectedMinute = it
                 },
                 modifier = Modifier
                     .height(300.dp),
@@ -191,6 +195,14 @@ fun TimePickerScreen(
                 },
                 firstDayOfWeek = firstDayOfWeek,
                 onSunriseButtonClicked = {
+                    if (!checkLocationIsEnabled(context = context)) {
+                        Toast.makeText(
+                            context,
+                            context.resources.getString(R.string.location_is_disabled),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@LightAlarmConfiguration
+                    }
                     if (!hasLocationPermission(context = context)) {
                         checkAndRequestLocationPermission(activity = activity)
                     } else {
@@ -213,7 +225,11 @@ fun TimePickerScreen(
                                     )
                                     selectedMinute = sunriseTime.second
                                 } catch (e: Exception) {
-                                    println("vladlog: sunrise error: ${e.message}")
+                                    Toast.makeText(
+                                        context,
+                                        context.resources.getString(R.string.error_getting_sunrise_time_maybe_internet_is_off),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
