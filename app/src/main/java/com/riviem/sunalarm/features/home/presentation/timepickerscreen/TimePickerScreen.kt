@@ -212,7 +212,6 @@ fun TimePickerScreen(
                                         ringTime = newAlarm.ringTime.withMinute(sunriseTime.second)
                                     )
                                     selectedMinute = sunriseTime.second
-                                    println("vladlog: sunrise: ${sunriseTime}")
                                 } catch (e: Exception) {
                                     println("vladlog: sunrise error: ${e.message}")
                                 }
