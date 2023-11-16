@@ -16,6 +16,8 @@ interface AlarmRepository {
 
     fun insertAll(alarms: List<DatabaseAlarm>)
 
+    fun deleteAlarm(alarmId: Int)
+
     fun deleteAllAlarms()
 
     fun insert(alarm: DatabaseAlarm)

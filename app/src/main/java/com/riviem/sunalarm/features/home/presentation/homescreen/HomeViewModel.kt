@@ -63,7 +63,7 @@ class HomeViewModel @Inject constructor(
     fun getFirstDayOfWeek() {
         viewModelScope.launch {
             val firstDayOfWeek = alarmRepository.getFirstDayOfWeek()
-            if(firstDayOfWeek == FirstDayOfWeek.MONDAY.fullName) {
+            if (firstDayOfWeek == FirstDayOfWeek.MONDAY.fullName) {
                 _state.update {
                     it.copy(
                         firstDayOfWeek = FirstDayOfWeek.MONDAY
@@ -95,7 +95,7 @@ class HomeViewModel @Inject constructor(
     private fun updateTitleAndSubtitle(alarms: List<AlarmUIModel>) {
         val activeAlarms = alarms.filter { it.isOn }
         val nextAlarm = activeAlarms.minByOrNull { it.ringTime }
-        if(nextAlarm == null) {
+        if (nextAlarm == null) {
             _state.update {
                 it.copy(
                     title = context.resources.getString(R.string.no_alarms),
@@ -111,9 +111,18 @@ class HomeViewModel @Inject constructor(
         val days = duration.toDays()
         val hours = duration.minusDays(days).toHours()
         val minutes = duration.minusDays(days).minusHours(hours).toMinutes()
-        val daysString = if (days > 0) context.resources.getQuantityString(R.plurals.days_plural, days.toInt(), days) else ""
-        val hoursString = if (hours > 0) context.resources.getQuantityString(R.plurals.hours_plural, hours.toInt(), hours) else ""
-        val minutesString = context.resources.getQuantityString(R.plurals.minutes_plural, minutes.toInt(), minutes)
+        val daysString = if (days > 0) context.resources.getQuantityString(
+            R.plurals.days_plural,
+            days.toInt(),
+            days
+        ) else ""
+        val hoursString = if (hours > 0) context.resources.getQuantityString(
+            R.plurals.hours_plural,
+            hours.toInt(),
+            hours
+        ) else ""
+        val minutesString =
+            context.resources.getQuantityString(R.plurals.minutes_plural, minutes.toInt(), minutes)
         val titleBuilder = StringBuilder(context.resources.getString(R.string.next_alarm_in))
         if (days > 0) {
             titleBuilder.append("$days $daysString ")
@@ -210,6 +219,20 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 showNextAlarmTimeToast = false
             )
+        }
+    }
+
+    fun onAlarmLongPress(alarm: AlarmUIModel) {
+        _state.update { homeState ->
+            homeState.copy(
+                alarms = homeState.alarms.map { it.copy(isExpanded = it.createdTimestamp == alarm.createdTimestamp) }
+            )
+        }
+    }
+
+    fun onDeleteAlarmClick(alarm: AlarmUIModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            alarmRepository.deleteAlarm(alarm.createdTimestamp)
         }
     }
 }

@@ -21,6 +21,7 @@ import com.riviem.sunalarm.core.presentation.ACTION_DISMISS_ALARM
 import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.light.LightScreen
+import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -88,12 +89,12 @@ class MainActivity : ComponentActivity() {
                                 wakeLock = wakeLock
                             )
                         } else {
-                        LightScreen(
-                            createdTimestamp = createdTimestamp,
-                            alarmType = alarmType,
-                            wakeLock = wakeLock
-                        )
-//                            MainNavigation()
+//                        LightScreen(
+//                            createdTimestamp = createdTimestamp,
+//                            alarmType = alarmType,
+//                            wakeLock = wakeLock
+//                        )
+                            MainNavigation()
                         }
                     }
                 }
@@ -107,7 +108,7 @@ class MainActivity : ComponentActivity() {
         val powerManager = getSystemService(POWER_SERVICE) as PowerManager
         wakeLock =
             powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SunAlarm::MyWakeLockTag")
-        wakeLock?.acquire(120 * 60 * 1000L /*120 minutes*/)
+        wakeLock?.acquire(Constants.KEEP_LIGHT_SCREEN_ON_FOR_MINUTES)
     }
 
     override fun onRequestPermissionsResult(

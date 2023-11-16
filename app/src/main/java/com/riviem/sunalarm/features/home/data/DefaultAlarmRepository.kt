@@ -37,6 +37,10 @@ class DefaultAlarmRepository @Inject constructor(
         alarmDatabase.alarmDao.insertAll(alarms)
     }
 
+    override fun deleteAlarm(alarmId: Int) {
+        alarmDatabase.alarmDao.deleteAlarm(alarmId)
+    }
+
     override fun deleteAllAlarms() {
         alarmDatabase.alarmDao.deleteAllAlarms()
     }

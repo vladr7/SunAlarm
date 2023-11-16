@@ -10,8 +10,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
@@ -43,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -92,7 +96,13 @@ fun HomeRoute(
             },
             title = state.title,
             subtitle = state.subtitle,
-            firstDayOfWeek = state.firstDayOfWeek
+            firstDayOfWeek = state.firstDayOfWeek,
+            onAlarmLongPress = {
+                viewModel.onAlarmLongPress(it)
+            },
+            onDeleteAlarmClick = {
+                viewModel.onDeleteAlarmClick(it)
+            }
         )
     }
 
@@ -115,7 +125,7 @@ fun HomeRoute(
         )
     }
     LaunchedEffect(key1 = state.showNextAlarmTimeToast) {
-        if(state.showNextAlarmTimeToast) {
+        if (state.showNextAlarmTimeToast) {
             Toast.makeText(context, state.title, Toast.LENGTH_SHORT).show()
             viewModel.onShowNextAlarmTimeToastDone()
         }
@@ -133,7 +143,9 @@ fun HomeScreen(
     onAlarmCheckChanged: (Boolean, AlarmUIModel) -> Unit,
     title: String,
     subtitle: String,
-    firstDayOfWeek: FirstDayOfWeek
+    firstDayOfWeek: FirstDayOfWeek,
+    onAlarmLongPress: (AlarmUIModel) -> Unit,
+    onDeleteAlarmClick: (AlarmUIModel) -> Unit
 ) {
     val activity = context as MainActivity
 
@@ -175,7 +187,13 @@ fun HomeScreen(
                     },
                     modifier = modifier.fillMaxWidth(),
                     alarms = alarms,
-                    firstDayOfWeek = firstDayOfWeek
+                    firstDayOfWeek = firstDayOfWeek,
+                    onAlarmLongPress = {
+                        onAlarmLongPress(it)
+                    },
+                    onDeleteAlarmClick = {
+                        onDeleteAlarmClick(it)
+                    }
                 )
             }
         }
@@ -272,24 +290,29 @@ fun AlarmsList(
     onAlarmClick: (AlarmUIModel) -> Unit,
     onCheckedChange: (Boolean, AlarmUIModel) -> Unit,
     alarms: List<AlarmUIModel>,
-    firstDayOfWeek: FirstDayOfWeek
+    firstDayOfWeek: FirstDayOfWeek,
+    onAlarmLongPress: (AlarmUIModel) -> Unit,
+    onDeleteAlarmClick: (AlarmUIModel) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
         content = {
             items(alarms) { item ->
                 AlarmItem(
+                    alarm = item,
                     onAlarmClick = {
                         onAlarmClick(item)
                     },
                     onCheckedChange = {
                         onCheckedChange(it, item)
                     },
-                    days = item.days,
-                    time = item.ringTime,
-                    isOn = item.isOn,
-                    name = item.name,
-                    firstDayOfWeek = firstDayOfWeek
+                    firstDayOfWeek = firstDayOfWeek,
+                    onAlarmLongPress = {
+                        onAlarmLongPress(item)
+                    },
+                    onDeleteAlarmClick = {
+                        onDeleteAlarmClick(item)
+                    }
                 )
             }
         }
@@ -299,18 +322,22 @@ fun AlarmsList(
 @Composable
 fun AlarmItem(
     modifier: Modifier = Modifier,
-    time: ZonedDateTime,
-    name: String,
-    isOn: Boolean,
+    alarm: AlarmUIModel,
     onAlarmClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
-    days: List<Day>,
-    firstDayOfWeek: FirstDayOfWeek
+    firstDayOfWeek: FirstDayOfWeek,
+    onAlarmLongPress: () -> Unit,
+    onDeleteAlarmClick: () -> Unit
 ) {
     Row(
         modifier = modifier
-            .clickable {
-                onAlarmClick()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        onAlarmLongPress()
+                    },
+                    onTap = { onAlarmClick() }
+                )
             }
             .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
             .background(
@@ -321,20 +348,44 @@ fun AlarmItem(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AlarmNameAndTime(name, time)
+        AlarmNameAndTime(alarm.name, alarm.ringTime)
         Spacer(modifier = Modifier.weight(1f))
         AlarmSelectedDays(
             modifier = modifier,
-            days = days,
+            days = alarm.days,
             firstDayOfWeek = firstDayOfWeek
         )
-        AlarmSwitch(
-            modifier = modifier
-                .padding(end = 10.dp),
-            checked = isOn,
-            onCheckedChange = onCheckedChange
-        )
+        if (!alarm.isExpanded) {
+            AlarmSwitch(
+                modifier = modifier
+                    .padding(end = 10.dp),
+                checked = alarm.isOn,
+                onCheckedChange = onCheckedChange
+            )
+        }
+        AnimatedVisibility(visible = alarm.isExpanded) {
+            DeleteAlarmButton(
+                modifier = modifier
+                    .padding(end = 10.dp),
+                onClick = onDeleteAlarmClick
+            )
+        }
     }
+}
+
+@Composable
+fun DeleteAlarmButton(
+    modifier: Modifier,
+    onClick: () -> Unit
+) {
+    Image(
+        modifier = modifier
+            .size(30.dp)
+            .clickable {
+                onClick()
+            },
+        imageVector = Icons.Filled.Delete, contentDescription = null,
+    )
 }
 
 @Composable
