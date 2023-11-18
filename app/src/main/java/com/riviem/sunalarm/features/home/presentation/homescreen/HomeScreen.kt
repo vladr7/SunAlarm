@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color.rgb
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -27,13 +28,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AlarmOff
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,15 +49,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.firebase.annotations.concurrent.Background
 import com.riviem.sunalarm.AlarmReceiver
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
@@ -62,6 +73,9 @@ import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.allDoorsSelected
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePickerScreen
+import com.riviem.sunalarm.ui.theme.alarmColor
+import com.riviem.sunalarm.ui.theme.backgroundColor
+import com.riviem.sunalarm.ui.theme.textColor
 import kotlinx.coroutines.delay
 import java.time.ZonedDateTime
 import java.util.Calendar
@@ -73,6 +87,8 @@ fun HomeRoute(
     onAlarmClick: () -> Unit,
     onSaveOrDiscardClick: () -> Unit,
 ) {
+    Background()
+
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -84,7 +100,7 @@ fun HomeRoute(
         HomeScreen(
             context = context,
             onAlarmClick = { alarm ->
-                if(!alarm.isExpanded) {
+                if (!alarm.isExpanded) {
                     viewModel.onAlarmClick(alarm)
                     onAlarmClick()
                 } else {
@@ -153,53 +169,113 @@ fun HomeScreen(
 ) {
     val activity = context as MainActivity
 
+    GradientBackgroundScreen {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            Column(
+                modifier = modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (title == context.getString(R.string.no_alarms)) {
+                    NoAlarmContent(context,
+                        onAddNewAlarmClick = {
+                            onAddNewAlarmClick()
+                        })
+                } else {
+                    Box(
+                        modifier = modifier
+                            .padding(top = 50.dp)
+                            .weight(0.30f)
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        HomeScreenTitle(
+                            modifier = modifier.fillMaxWidth(),
+                            title = title,
+                            subtitle = subtitle
+                        )
+                    }
+                    Column(
+                        modifier = modifier.weight(0.70f)
+                    ) {
+                        AddNewAlarmButton(
+                            onClick = {
+                                onAddNewAlarmClick()
+                            }
+                        )
+                        AlarmsList(
+                            onAlarmClick = onAlarmClick,
+                            onCheckedChange = { checked, alarm ->
+                                onAlarmCheckChanged(checked, alarm)
+                            },
+                            modifier = modifier.fillMaxWidth(),
+                            alarms = alarms,
+                            firstDayOfWeek = firstDayOfWeek,
+                            onAlarmLongPress = {
+                                onAlarmLongPress(it)
+                            },
+                            onDeleteAlarmClick = {
+                                onDeleteAlarmClick(it)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NoAlarmContent(
+    context: Context,
+    onAddNewAlarmClick: () -> Unit
+) {
     Box(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.align(Alignment.Center)
         ) {
-            Box(
-                modifier = modifier
-                    .padding(top = 50.dp)
-                    .weight(0.30f)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+            Image(
+                imageVector = Icons.Filled.AlarmOff, contentDescription = null,
+                modifier = Modifier.size(80.dp)
+            )
+            Text(
+                text = context.getString(R.string.no_alarms),
+                fontSize = 30.sp,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.animateContentSize(),
+                lineHeight = 36.sp,
+            )
+        }
+        Column(
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            Button(
+                onClick = { onAddNewAlarmClick() },
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(
+                        color = alarmColor,
+                        shape = CircleShape
+                    ),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    contentColor = textColor,
+                    containerColor = alarmColor,
+                )
             ) {
-                HomeScreenTitle(
-                    modifier = modifier.fillMaxWidth(),
-                    title = title,
-                    subtitle = subtitle
+                Image(
+                    imageVector = Icons.Filled.Add, contentDescription = null,
+                    modifier = Modifier.size(30.dp)
                 )
             }
-            Column(
-                modifier = modifier.weight(0.70f)
-            ) {
-                AddNewAlarmButton(
-                    onClick = {
-                        onAddNewAlarmClick()
-                    }
-                )
-
-                AlarmsList(
-                    onAlarmClick = onAlarmClick,
-                    onCheckedChange = { checked, alarm ->
-                        onAlarmCheckChanged(checked, alarm)
-                    },
-                    modifier = modifier.fillMaxWidth(),
-                    alarms = alarms,
-                    firstDayOfWeek = firstDayOfWeek,
-                    onAlarmLongPress = {
-                        onAlarmLongPress(it)
-                    },
-                    onDeleteAlarmClick = {
-                        onDeleteAlarmClick(it)
-                    }
-                )
-            }
+            Spacer(modifier = Modifier.padding(15.dp))
         }
     }
 }
@@ -210,6 +286,7 @@ fun HomeScreenTitle(
     title: String,
     subtitle: String,
 ) {
+    val context = LocalContext.current
     var showContent by remember {
         mutableStateOf(false)
     }
@@ -237,13 +314,14 @@ fun HomeScreenTitle(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
+
             Text(
                 text = newTitle,
                 fontSize = 30.sp,
-                color = Color.White,
+                color = textColor,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.animateContentSize(),
-                lineHeight = 36.sp
+                lineHeight = 36.sp,
             )
         }
 
@@ -255,9 +333,10 @@ fun HomeScreenTitle(
             Text(
                 text = newSubtitle,
                 fontSize = 16.sp,
-                color = Color.White,
+                color = textColor,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.animateContentSize()
+                modifier = Modifier.animateContentSize(),
+                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -353,7 +432,7 @@ fun AlarmItem(
             }
             .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
             .background(
-                color = Color.DarkGray,
+                color = alarmColor,
                 shape = RoundedCornerShape(10.dp)
             )
             .height(120.dp)
@@ -409,7 +488,7 @@ private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
         Text(
             text = name,
             fontSize = 17.sp,
-            color = Color.White,
+            color = textColor,
             modifier = Modifier
                 .padding(start = 15.dp)
                 .offset(y = (-10).dp)
@@ -417,7 +496,7 @@ private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
         Text(
             text = "$hour:$minute",
             fontSize = 30.sp,
-            color = Color.White,
+            color = textColor,
             modifier = Modifier.padding(start = 18.dp, top = 10.dp)
         )
     }
@@ -431,7 +510,7 @@ fun AlarmSelectedDays(
 ) {
     if (days.allDoorsSelected()) {
         Text(
-            text = stringResource(R.string.every_day), fontSize = 16.sp, color = Color.White,
+            text = stringResource(R.string.every_day), fontSize = 16.sp, color = textColor,
             modifier = modifier
                 .padding(end = 10.dp)
         )
@@ -514,7 +593,8 @@ fun AlarmSwitch(
         checked = checked,
         onCheckedChange = {
             onCheckedChange(it)
-        })
+        },
+    )
 }
 
 @SuppressLint("ScheduleExactAlarm")
@@ -546,6 +626,60 @@ private fun SetAlarmButton(hour: Int, minute: Int, context: Context) {
         Text("Set Alarm")
     }
 
+}
+
+@Composable
+fun Background(
+    modifier: Modifier = Modifier
+) {
+    var sizeImage by remember { mutableStateOf(IntSize.Zero) }
+
+    val gradient = Brush.verticalGradient(
+        colors = listOf(MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.secondary),
+        startY = sizeImage.height.toFloat(),
+        endY = 0f
+    )
+
+    Box() {
+        Image(
+            painter = painterResource(id = R.drawable.background5),
+            contentDescription = null,
+            contentScale = ContentScale.FillHeight,
+            modifier = modifier
+                .onGloballyPositioned {
+                    sizeImage = it.size
+                }
+                .fillMaxSize()
+        )
+//        Box(
+//            modifier = Modifier
+//                .matchParentSize()
+//                .alpha(0.9f)
+//                .background(gradient)
+//        )
+    }
+}
+
+@Composable
+fun GradientBackgroundScreen(
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+//                color = backgroundColor,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        backgroundColor,
+                        Color(rgb(244, 240, 234)),
+                        Color.White,
+                    )
+                )
+            )
+    ) {
+        content()
+    }
 }
 
 

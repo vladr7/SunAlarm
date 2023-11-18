@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.riviem.sunalarm.ui.theme.containerColor
 
 @Composable
 fun MainNavigation(
@@ -35,9 +35,8 @@ fun MainNavigation(
             if (showBottomBar) {
                 NavigationBar(
                     modifier = Modifier
-                        .height(70.dp),
-                    containerColor = MaterialTheme.colorScheme.background,
-                    contentColor = Color.White,
+                        .height(60.dp),
+                    containerColor = Color(android.graphics.Color.rgb(244, 240, 234)),
                 ) {
                     items.forEach { destination ->
                         val selected =
@@ -50,7 +49,7 @@ fun MainNavigation(
                                     Icon(
                                         imageVector = destination.selectedIcon,
                                         contentDescription = null,
-                                        tint = Color.White,
+                                        tint = containerColor,
                                         modifier = Modifier
                                             .size(30.dp)
                                     )
