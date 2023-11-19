@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -610,10 +611,14 @@ fun CheckboxDay(
     val animatedAlpha by animateFloatAsState(
         targetValue = if (isSelected) 1f else 0.3f, label = ""
     )
+    val mutableInteractionSource = remember { MutableInteractionSource() }
 
     val newModifier = modifier
         .size(circleSize)
-        .clickable {
+        .clickable(
+            interactionSource = mutableInteractionSource,
+            indication = null
+        ) {
             onDayClicked(day)
         }
         .border(
