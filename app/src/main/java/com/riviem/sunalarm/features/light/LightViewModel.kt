@@ -148,7 +148,7 @@ class LightViewModel @Inject constructor(
 
     fun stopLightAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
         if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
-            alarmRepository.setLightAlarm(alarm = alarm, context = context)
+            alarmRepository.setAlarm(alarm = alarm, context = context)
         }
         _state.update {
             it.copy(
@@ -159,7 +159,7 @@ class LightViewModel @Inject constructor(
 
     fun stopSoundAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
         if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
-            alarmRepository.setLightAlarm(alarm = alarm, context = context)
+            alarmRepository.setAlarm(alarm = alarm, context = context)
         }
         alarmRepository.cancelAlarm(alarmId = alarm.createdTimestamp + 1, context = context)
         _state.update {

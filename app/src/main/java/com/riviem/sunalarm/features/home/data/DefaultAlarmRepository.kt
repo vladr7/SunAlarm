@@ -76,7 +76,7 @@ class DefaultAlarmRepository @Inject constructor(
             .plusDays(daysToNextAlarm)
     }
 
-    override fun setLightAlarm(alarm: AlarmUIModel, context: Context) {
+    override fun setAlarm(alarm: AlarmUIModel, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val alarmDateTime = getNextAlarmDateTime(alarm)

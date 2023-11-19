@@ -22,7 +22,7 @@ interface AlarmRepository {
 
     fun insert(alarm: DatabaseAlarm)
 
-    fun setLightAlarm(alarm: AlarmUIModel, context: Context)
+    fun setAlarm(alarm: AlarmUIModel, context: Context)
 
     fun getNextAlarmDateTime(alarm: AlarmUIModel): ZonedDateTime
 

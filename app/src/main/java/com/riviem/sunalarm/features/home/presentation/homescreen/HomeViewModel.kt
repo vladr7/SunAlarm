@@ -40,7 +40,7 @@ class HomeViewModel @Inject constructor(
             selectedAlarm = AlarmUIModel(
                 ringTime = ZonedDateTime.now(),
                 name = "Alarm",
-                isOn = false,
+                isOn = true,
                 color = Color.Yellow,
                 createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt(),
                 flashlight = false,
@@ -143,7 +143,9 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAlarmClick(alarm: AlarmUIModel) {
-        val isExpanded = state.value.alarms.find { it.createdTimestamp == alarm.createdTimestamp }?.isExpanded ?: false
+        val isExpanded =
+            state.value.alarms.find { it.createdTimestamp == alarm.createdTimestamp }?.isExpanded
+                ?: false
         if (isExpanded) {
             _state.update { homeState ->
                 homeState.copy(
@@ -162,7 +164,7 @@ class HomeViewModel @Inject constructor(
 
     fun onSaveAlarmClick(alarm: AlarmUIModel, context: Context) {
         val nextAlarmTime = alarmRepository.getNextAlarmDateTime(alarm)
-        val newAlarm = alarm.copy(ringTime = nextAlarmTime)
+        val newAlarm = alarm.copy(ringTime = nextAlarmTime, isOn = true)
         viewModelScope.launch(Dispatchers.IO) {
             alarmRepository.insert(newAlarm.asDatabaseModel())
         }
@@ -173,9 +175,7 @@ class HomeViewModel @Inject constructor(
                 recentlyAddedOrCheckedAlarm = true,
             )
         }
-        if (alarm.isOn) {
-            alarmRepository.setLightAlarm(newAlarm, context)
-        }
+        alarmRepository.setAlarm(newAlarm, context)
     }
 
     fun onAddNewAlarmClick() {
@@ -186,7 +186,7 @@ class HomeViewModel @Inject constructor(
                     createdTimestamp = ZonedDateTime.now().toEpochSecond().toInt(),
                     ringTime = ZonedDateTime.now(),
                     name = "Alarm",
-                    isOn = false,
+                    isOn = true,
                     color = Color.Yellow,
                     flashlight = false,
                     days = weekDays,
@@ -204,7 +204,7 @@ class HomeViewModel @Inject constructor(
             alarmRepository.insert(newAlarm.asDatabaseModel())
         }
         if (checked) {
-            alarmRepository.setLightAlarm(newAlarm, context)
+            alarmRepository.setAlarm(newAlarm, context)
             _state.update {
                 it.copy(
                     recentlyAddedOrCheckedAlarm = true,
