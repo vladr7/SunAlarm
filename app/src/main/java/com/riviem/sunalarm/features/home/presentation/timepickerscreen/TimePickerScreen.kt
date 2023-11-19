@@ -72,6 +72,7 @@ import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
+import com.riviem.sunalarm.core.presentation.ButtonCustom
 import com.riviem.sunalarm.core.presentation.SwitchCustom
 import com.riviem.sunalarm.core.presentation.checkAndRequestLocationPermission
 import com.riviem.sunalarm.core.presentation.checkLocationIsEnabled
@@ -298,12 +299,8 @@ private fun CancelAndSaveButtons(
         SaveButton(
             modifier = Modifier,
             onSaveClick = {
-                onSaveClick(
-                    newAlarm.copy(
-                        isOn = true
-                    )
-                )
-            },
+                onSaveClick(newAlarm)
+            }
         )
     }
 }
@@ -313,12 +310,9 @@ fun CancelButton(
     modifier: Modifier = Modifier,
     onCancelClick: () -> Unit,
 ) {
-    Button(
+    ButtonCustom(
+        onClick = { onCancelClick() },
         modifier = modifier
-            .padding(16.dp),
-        onClick = {
-            onCancelClick()
-        }
     ) {
         Text(text = stringResource(id = R.string.cancel))
     }
@@ -623,14 +617,11 @@ fun SaveButton(
     modifier: Modifier = Modifier,
     onSaveClick: () -> Unit,
 ) {
-    Button(
+    ButtonCustom(
+        onClick = { onSaveClick() },
         modifier = modifier
-            .padding(16.dp),
-        onClick = {
-            onSaveClick()
-        }
     ) {
-        Text(text = "Save")
+        Text(text = stringResource(id = R.string.save))
     }
 }
 
