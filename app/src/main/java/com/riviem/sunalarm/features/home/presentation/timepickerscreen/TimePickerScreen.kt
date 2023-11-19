@@ -231,6 +231,9 @@ fun TimePickerScreen(
                         }
                     }
                 },
+                onSoundAlarmModalClicked = {
+                    showSoundAlarmPicker = true
+                }
             )
             CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)
         }
@@ -273,7 +276,10 @@ fun TimePickerScreen(
                     showSoundAlarmPicker = false
                 },
                 length = Constants.MINUTES_UNTIL_SOUND_ALARM_INTERVAL,
-                title = stringResource(R.string.sound_alarm_after, selectedMinutesUntilSoundAlarmBeforeSaving),
+                title = stringResource(
+                    R.string.sound_alarm_after,
+                    selectedMinutesUntilSoundAlarmBeforeSaving
+                ),
                 startScrollIndex = newAlarm.minutesUntilSoundAlarm,
                 onSelectedValue = {
                     selectedMinutesUntilSoundAlarmBeforeSaving = it
@@ -413,6 +419,7 @@ fun LightAlarmConfiguration(
     flashlightActivated: Boolean,
     onFlashlightToggleClicked: () -> Unit,
     onSoundAlarmToggleClicked: () -> Unit,
+    onSoundAlarmModalClicked: () -> Unit,
     firstDayOfWeek: FirstDayOfWeek,
     onSunriseButtonClicked: () -> Unit,
 ) {
@@ -464,8 +471,16 @@ fun LightAlarmConfiguration(
             startIcon = if (flashlightActivated) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
             startIconColor = textColor,
         )
+        val soundAlarmModifier = if (alarm.soundAlarmEnabled) {
+            Modifier
+                .clickable {
+                    onSoundAlarmModalClicked()
+                }
+        } else {
+            Modifier
+        }
         SettingToggle(
-            modifier = Modifier,
+            modifier = soundAlarmModifier,
             checked = alarm.soundAlarmEnabled,
             onClick = onSoundAlarmToggleClicked,
             title = stringResource(R.string.sound_alarm),
