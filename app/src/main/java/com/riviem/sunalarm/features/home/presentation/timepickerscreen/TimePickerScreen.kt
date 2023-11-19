@@ -40,8 +40,6 @@ import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -73,6 +71,7 @@ import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
+import com.riviem.sunalarm.core.presentation.SwitchCustom
 import com.riviem.sunalarm.core.presentation.checkAndRequestLocationPermission
 import com.riviem.sunalarm.core.presentation.checkLocationIsEnabled
 import com.riviem.sunalarm.core.presentation.extractHourAndMinute
@@ -84,15 +83,6 @@ import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIM
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.settings.presentation.ScrollOneItemDialog
-import com.riviem.sunalarm.ui.theme.SettingsActivateSwitchButtonColor
-import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchBorderColor
-import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
-import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchIconColor
-import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchTrackColor
-import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchBorderColor
-import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchButtonColor
-import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchIconColor
-import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchTrackColor
 import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.textColor
 import kotlinx.coroutines.delay
@@ -852,29 +842,11 @@ fun SettingToggle(
         }
 
         Spacer(modifier = modifier.weight(0.05f))
-        Switch(
+        SwitchCustom(
             modifier = modifier
                 .padding(end = 8.dp),
             checked = checked,
             onCheckedChange = { onClick() },
-            colors = SwitchColors(
-                checkedThumbColor = SettingsActivateSwitchButtonColor,
-                checkedBorderColor = SettingsActivateSwitchButtonColor,
-                checkedTrackColor = SettingsActivateSwitchButtonColor.copy(alpha = 0.7f),
-                checkedIconColor = Color.White,
-                uncheckedThumbColor = SettingsInactiveSwitchButtonColor,
-                uncheckedTrackColor = SettingsInactiveSwitchTrackColor,
-                uncheckedBorderColor = SettingsInactiveSwitchBorderColor,
-                uncheckedIconColor = SettingsInactiveSwitchIconColor,
-                disabledCheckedThumbColor = SettingsDisabledSwitchButtonColor,
-                disabledCheckedTrackColor = SettingsDisabledSwitchTrackColor,
-                disabledCheckedBorderColor = SettingsDisabledSwitchBorderColor,
-                disabledCheckedIconColor = SettingsDisabledSwitchIconColor,
-                disabledUncheckedThumbColor = SettingsDisabledSwitchButtonColor,
-                disabledUncheckedTrackColor = SettingsDisabledSwitchTrackColor,
-                disabledUncheckedBorderColor = SettingsDisabledSwitchBorderColor,
-                disabledUncheckedIconColor = SettingsDisabledSwitchIconColor
-            )
         )
     }
 }

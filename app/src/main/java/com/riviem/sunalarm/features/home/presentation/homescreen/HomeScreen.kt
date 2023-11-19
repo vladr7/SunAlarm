@@ -38,8 +38,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,6 +67,7 @@ import com.google.firebase.annotations.concurrent.Background
 import com.riviem.sunalarm.AlarmReceiver
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.presentation.SwitchCustom
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
@@ -589,30 +588,12 @@ fun AlarmSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    Switch(
+    SwitchCustom(
         modifier = modifier,
         checked = checked,
         onCheckedChange = {
             onCheckedChange(it)
         },
-        colors = SwitchColors(
-            checkedThumbColor = Color.White,
-            checkedTrackColor = Color(0xFF4C625F),
-            uncheckedThumbColor = Color.White,
-            uncheckedTrackColor = Color.Gray,  
-            checkedBorderColor = Color.Transparent,  
-            uncheckedBorderColor = Color.Transparent,  
-            checkedIconColor = Color.Transparent,  
-            uncheckedIconColor = Color.Transparent,  
-            disabledCheckedThumbColor = Color.LightGray,  
-            disabledCheckedTrackColor = Color.Gray,  
-            disabledUncheckedThumbColor = Color.LightGray,  
-            disabledUncheckedTrackColor = Color.Gray,  
-            disabledCheckedBorderColor = Color.Gray,  
-            disabledUncheckedBorderColor = Color.Gray,  
-            disabledCheckedIconColor = Color.Gray,  
-            disabledUncheckedIconColor = Color.Gray  
-        )
     )
 }
 
