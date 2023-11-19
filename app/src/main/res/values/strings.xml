@@ -49,5 +49,13 @@
     <string name="error_getting_sunrise_time_maybe_internet_is_off">Error getting sunrise time\nMaybe internet is off</string>
     <string name="location_is_disabled">Location is disabled</string>
     <string name="color_of_the_light_alarm_screen">Color of the light alarm screen</string>
+    <string name="monday_short">Mon</string>
+    <string name="tuesday_short">Tue</string>
+    <string name="wednesday_short">Wed</string>
+    <string name="thursday_short">Thu</string>
+    <string name="friday_short">Fri</string>
+    <string name="saturday_short">Sat</string>
+    <string name="sunday_short">Sun</string>
+    <string name="every">Every %1$s</string>
 
 </resources>

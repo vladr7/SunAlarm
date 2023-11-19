@@ -424,6 +424,10 @@ fun LightAlarmConfiguration(
     onSunriseButtonClicked: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    var modalTitle by remember { mutableStateOf(context.getString(R.string.every_day)) }
+    modalTitle = updateModalTitle(alarm.days, context)
 
     Column(
         modifier = modifier
@@ -435,7 +439,7 @@ fun LightAlarmConfiguration(
             .fillMaxWidth()
     ) {
         Text(
-            text = alarm.name,
+            text = modalTitle,
             fontSize = 18.sp,
             color = textColor,
             modifier = Modifier
