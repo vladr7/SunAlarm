@@ -37,7 +37,6 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
-import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -94,6 +93,8 @@ import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchBorderColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchIconColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchTrackColor
+import com.riviem.sunalarm.ui.theme.alarmColor
+import com.riviem.sunalarm.ui.theme.textColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.await
@@ -385,7 +386,7 @@ fun CancelColorButton(
         Text(
             text = stringResource(R.string.cancel),
             fontSize = 18.sp,
-            color = Color.White
+            color = textColor
         )
     }
 }
@@ -404,7 +405,7 @@ fun SaveColorButton(
         Text(
             text = stringResource(R.string.save_color),
             fontSize = 18.sp,
-            color = Color.White
+            color = textColor
         )
     }
 }
@@ -428,7 +429,7 @@ fun LightAlarmConfiguration(
         modifier = modifier
             .verticalScroll(scrollState)
             .background(
-                color = Color.DarkGray.copy(alpha = 0.2f),
+                color = alarmColor,
                 shape = MaterialTheme.shapes.extraLarge
             )
             .fillMaxWidth()
@@ -436,7 +437,7 @@ fun LightAlarmConfiguration(
         Text(
             text = alarm.name,
             fontSize = 18.sp,
-            color = Color.White,
+            color = textColor,
             modifier = Modifier
                 .padding(start = 32.dp, top = 25.dp)
         )
@@ -463,18 +464,16 @@ fun LightAlarmConfiguration(
             color = alarm.color
         )
         SettingToggle(
-            modifier = Modifier
-                .padding(top = 10.dp, start = 10.dp, end = 15.dp, bottom = 15.dp),
+            modifier = Modifier,
             checked = flashlightActivated,
             onClick = onFlashlightToggleClicked,
             title = stringResource(R.string.flashlight),
             subtitle = stringResource(R.string.alarm_rings_with_flashlight),
             startIcon = if (flashlightActivated) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
-            startIconColor = Color.White,
+            startIconColor = textColor,
         )
         SettingToggle(
-            modifier = Modifier
-                .padding(start = 10.dp, end = 15.dp, bottom = 25.dp),
+            modifier = Modifier,
             checked = alarm.soundAlarmEnabled,
             onClick = onSoundAlarmToggleClicked,
             title = stringResource(R.string.sound_alarm),
@@ -483,16 +482,17 @@ fun LightAlarmConfiguration(
                 alarm.minutesUntilSoundAlarm
             ),
             startIcon = if (alarm.soundAlarmEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
-            startIconColor = Color.White,
+            startIconColor = textColor,
         )
-        SettingButton(
+        SettingToggle(
             modifier = Modifier
-                .padding(start = 10.dp, end = 15.dp, bottom = 25.dp),
+                .padding(bottom = 20.dp),
             onClick = onSunriseButtonClicked,
             title = stringResource(R.string.sunrise),
             subtitle = stringResource(R.string.set_alarm_to_sunrise),
             startIcon = Icons.Filled.WbSunny,
-            startIconColor = Color.White,
+            startIconColor = textColor,
+            checked = false
         )
     }
 }
@@ -512,9 +512,9 @@ fun ChooseScreenColor(
     ) {
         Text(
             text = stringResource(R.string.screen_color),
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color = textColor,
             modifier = Modifier
         )
         Box(
@@ -567,7 +567,7 @@ fun ChangeAlarmName(
         ),
         textStyle = TextStyle(
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
+            fontSize = 18.sp,
         ),
     )
 }
@@ -639,7 +639,7 @@ fun CheckboxDay(
         }
         .border(
             width = animatedBorderWidth,
-            color = Color.White.copy(alpha = animatedAlpha),
+            color = textColor.copy(alpha = animatedAlpha),
             shape = CircleShape
         )
 
@@ -650,7 +650,7 @@ fun CheckboxDay(
         Text(
             text = day.letter,
             fontSize = 14.sp,
-            color = Color.White
+            color = textColor
         )
     }
 }
@@ -750,7 +750,7 @@ fun ScrollableTimePicker(
             )
             Text(
                 text = ":",
-                color = Color.White,
+                color = textColor,
                 fontSize = 50.sp,
                 modifier = Modifier.padding(start = 5.dp, end = 5.dp)
             )
@@ -799,7 +799,7 @@ fun TimeScrollItem(
 ) {
     Text(
         text = time,
-        color = Color.White,
+        color = textColor,
         fontSize = 50.sp,
         modifier = modifier
             .wrapContentSize(Alignment.Center)
@@ -818,83 +818,10 @@ fun SettingToggle(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .height(110.dp),
+            .padding(top = 25.dp, start = 10.dp, end = 15.dp)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Image(
-            imageVector = startIcon,
-            contentDescription = null,
-            modifier = modifier
-                .size(30.dp),
-            colorFilter = ColorFilter.tint(startIconColor)
-        )
-        Column(
-            modifier = modifier
-                .padding(start = 8.dp, end = 8.dp)
-                .weight(0.8f, fill = false),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = title,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = subtitle,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Normal,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2
-            )
-        }
-
-        Spacer(modifier = modifier.weight(0.05f))
-        Switch(
-            modifier = modifier
-                .weight(0.15f)
-                .padding(end = 8.dp),
-            checked = checked,
-            onCheckedChange = { onClick() },
-            colors = SwitchColors(
-                checkedThumbColor = SettingsActivateSwitchButtonColor,
-                checkedBorderColor = SettingsActivateSwitchButtonColor,
-                checkedTrackColor = SettingsActivateSwitchButtonColor.copy(alpha = 0.7f),
-                checkedIconColor = Color.White,
-                uncheckedThumbColor = SettingsInactiveSwitchButtonColor,
-                uncheckedTrackColor = SettingsInactiveSwitchTrackColor,
-                uncheckedBorderColor = SettingsInactiveSwitchBorderColor,
-                uncheckedIconColor = SettingsInactiveSwitchIconColor,
-                disabledCheckedThumbColor = SettingsDisabledSwitchButtonColor,
-                disabledCheckedTrackColor = SettingsDisabledSwitchTrackColor,
-                disabledCheckedBorderColor = SettingsDisabledSwitchBorderColor,
-                disabledCheckedIconColor = SettingsDisabledSwitchIconColor,
-                disabledUncheckedThumbColor = SettingsDisabledSwitchButtonColor,
-                disabledUncheckedTrackColor = SettingsDisabledSwitchTrackColor,
-                disabledUncheckedBorderColor = SettingsDisabledSwitchBorderColor,
-                disabledUncheckedIconColor = SettingsDisabledSwitchIconColor
-            )
-        )
-    }
-}
-
-@Composable
-fun SettingButton(
-    modifier: Modifier,
-    startIcon: ImageVector,
-    startIconColor: Color,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(110.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
     ) {
         Image(
             imageVector = startIcon,
@@ -923,17 +850,34 @@ fun SettingButton(
                 maxLines = 2
             )
         }
-        Image(
-            imageVector = Icons.Filled.RadioButtonChecked,
-            contentDescription = null,
+
+        Spacer(modifier = modifier.weight(0.05f))
+        Switch(
             modifier = modifier
-                .clickable { onClick() }
-                .size(30.dp),
-            colorFilter = ColorFilter.tint(startIconColor)
+                .padding(end = 8.dp),
+            checked = checked,
+            onCheckedChange = { onClick() },
+            colors = SwitchColors(
+                checkedThumbColor = SettingsActivateSwitchButtonColor,
+                checkedBorderColor = SettingsActivateSwitchButtonColor,
+                checkedTrackColor = SettingsActivateSwitchButtonColor.copy(alpha = 0.7f),
+                checkedIconColor = Color.White,
+                uncheckedThumbColor = SettingsInactiveSwitchButtonColor,
+                uncheckedTrackColor = SettingsInactiveSwitchTrackColor,
+                uncheckedBorderColor = SettingsInactiveSwitchBorderColor,
+                uncheckedIconColor = SettingsInactiveSwitchIconColor,
+                disabledCheckedThumbColor = SettingsDisabledSwitchButtonColor,
+                disabledCheckedTrackColor = SettingsDisabledSwitchTrackColor,
+                disabledCheckedBorderColor = SettingsDisabledSwitchBorderColor,
+                disabledCheckedIconColor = SettingsDisabledSwitchIconColor,
+                disabledUncheckedThumbColor = SettingsDisabledSwitchButtonColor,
+                disabledUncheckedTrackColor = SettingsDisabledSwitchTrackColor,
+                disabledUncheckedBorderColor = SettingsDisabledSwitchBorderColor,
+                disabledUncheckedIconColor = SettingsDisabledSwitchIconColor
+            )
         )
     }
 }
-
 
 
 
