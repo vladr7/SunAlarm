@@ -161,7 +161,7 @@ class LightViewModel @Inject constructor(
         if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
             alarmRepository.setLightAlarm(alarm = alarm, context = context)
         }
-        alarmRepository.cancelSoundAlarm(soundAlarmId = alarm.createdTimestamp + 1, context = context)
+        alarmRepository.cancelAlarm(alarmId = alarm.createdTimestamp + 1, context = context)
         _state.update {
             it.copy(
                 selectedAlarm = alarm.copy(flashlight = false),

@@ -52,15 +52,15 @@ import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDay
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.SaveButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimeScrollItem
-import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TransparentRectangle
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TransparentRectangleModal
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import com.riviem.sunalarm.ui.theme.SettingsActivateSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchTrackColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchTrackColor
+import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.textColor
-import com.riviem.sunalarm.ui.theme.timePickerBackgroundColor
 import kotlinx.coroutines.delay
 
 @Composable
@@ -418,7 +418,7 @@ fun ScrollOneItemDialog(
     AlertDialog(
         modifier = modifier
             .background(
-                color = timePickerBackgroundColor,
+                color = alarmColor,
                 shape = RoundedCornerShape(8.dp)
             )
             .height(500.dp),
@@ -517,10 +517,10 @@ fun ScrollableValuePicker(
             state = valueState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState = valueState)
         )
-        TransparentRectangle(
+        TransparentRectangleModal(
             modifier = Modifier.align(Alignment.TopCenter)
         )
-        TransparentRectangle(
+        TransparentRectangleModal(
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }

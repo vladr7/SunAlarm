@@ -16,7 +16,7 @@ interface AlarmRepository {
 
     fun insertAll(alarms: List<DatabaseAlarm>)
 
-    fun deleteAlarm(alarmId: Int)
+    fun deleteAlarm(alarmId: Int, context: Context)
 
     fun deleteAllAlarms()
 
@@ -28,11 +28,11 @@ interface AlarmRepository {
 
     suspend fun snoozeAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType)
 
-    fun cancelLightAndSoundAlarm(alarm: AlarmUIModel, context: Context)
+    fun cancelLightAndSoundAlarm(alarmId: Int, context: Context)
 
-    fun cancelSoundAlarm(
+    fun cancelAlarm(
         context: Context,
-        soundAlarmId: Int
+        alarmId: Int
     )
 
     suspend fun setSnoozeLength(snoozeLength: Int)

@@ -19,10 +19,12 @@ class MainViewModel @Inject constructor(
         context: Context,
     ) {
         viewModelScope.launch {
-            alarmRepository.cancelSoundAlarm(
+            val alarmId = alarmRepository.getCurrentSoundAlarmIdForNotification()
+            alarmRepository.cancelAlarm(
                 context = context,
-                soundAlarmId = alarmRepository.getCurrentSoundAlarmIdForNotification()
+                alarmId = alarmId
             )
+            println("vladlog: cancelSoundAlarm: id: ${alarmId}")
             dismissNotification(context)
         }
     }

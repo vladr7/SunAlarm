@@ -211,7 +211,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
         } else {
-            alarmRepository.cancelLightAndSoundAlarm(newAlarm, context)
+            alarmRepository.cancelLightAndSoundAlarm(newAlarm.createdTimestamp, context)
         }
     }
 
@@ -243,9 +243,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteAlarmClick(alarm: AlarmUIModel) {
+    fun onDeleteAlarmClick(alarm: AlarmUIModel, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            alarmRepository.deleteAlarm(alarm.createdTimestamp)
+            alarmRepository.deleteAlarm(alarm.createdTimestamp, context)
         }
     }
 }

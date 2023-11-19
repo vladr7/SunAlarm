@@ -766,6 +766,20 @@ fun TransparentRectangle(
 }
 
 @Composable
+fun TransparentRectangleModal(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(120.dp)
+            .fillMaxWidth()
+            .background(
+                color = alarmColor.copy(alpha = 0.8f),
+            )
+    )
+}
+
+@Composable
 fun TimeScrollItem(
     modifier: Modifier = Modifier,
     time: String

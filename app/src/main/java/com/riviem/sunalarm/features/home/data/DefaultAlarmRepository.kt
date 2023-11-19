@@ -37,7 +37,8 @@ class DefaultAlarmRepository @Inject constructor(
         alarmDatabase.alarmDao.insertAll(alarms)
     }
 
-    override fun deleteAlarm(alarmId: Int) {
+    override fun deleteAlarm(alarmId: Int, context: Context) {
+        cancelLightAndSoundAlarm(alarmId, context)
         alarmDatabase.alarmDao.deleteAlarm(alarmId)
     }
 
@@ -153,40 +154,23 @@ class DefaultAlarmRepository @Inject constructor(
     }
 
 
-    override fun cancelLightAndSoundAlarm(alarm: AlarmUIModel, context: Context) {
-        cancelLightAlarm(context, alarm)
-        cancelSoundAlarm(context, alarm.createdTimestamp + 1)
+    override fun cancelLightAndSoundAlarm(alarmId: Int, context: Context) {
+        cancelAlarm(context, alarmId)
+        cancelAlarm(context, alarmId + 1)
     }
 
-    private fun cancelLightAlarm(
+    override fun cancelAlarm(
         context: Context,
-        alarm: AlarmUIModel
+        alarmId: Int
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
-            context, alarm.createdTimestamp, intent,
+            context, alarmId, intent,
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: cancelLightAlarm: ${alarm.createdTimestamp}")
-        alarmManager.cancel(pendingIntent)
-    }
-
-    override fun cancelSoundAlarm(
-        context: Context,
-        soundAlarmId: Int
-    ) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            context, soundAlarmId, intent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
-
-        println("vladlog: cancelSoundAlarm: ${soundAlarmId}")
         alarmManager.cancel(pendingIntent)
     }
 

@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.annotations.concurrent.Background
-import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.SwitchCustom
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
@@ -111,7 +110,7 @@ fun HomeRoute(
                 viewModel.onAlarmLongPress(it)
             },
             onDeleteAlarmClick = {
-                viewModel.onDeleteAlarmClick(it)
+                viewModel.onDeleteAlarmClick(it, context)
             }
         )
     }
@@ -157,8 +156,6 @@ fun HomeScreen(
     onAlarmLongPress: (AlarmUIModel) -> Unit,
     onDeleteAlarmClick: (AlarmUIModel) -> Unit
 ) {
-    val activity = context as MainActivity
-
     GradientBackgroundScreen {
         Box(
             modifier = modifier
@@ -169,7 +166,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (title == context.getString(R.string.no_alarms)) {
+                if (alarms.isEmpty()) {
                     NoAlarmContent(context,
                         onAddNewAlarmClick = {
                             onAddNewAlarmClick()
