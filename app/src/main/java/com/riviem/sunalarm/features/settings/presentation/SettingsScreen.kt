@@ -59,6 +59,7 @@ import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchTrackColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchTrackColor
+import com.riviem.sunalarm.ui.theme.textColor
 import com.riviem.sunalarm.ui.theme.timePickerBackgroundColor
 import kotlinx.coroutines.delay
 
@@ -437,7 +438,8 @@ fun ScrollOneItemDialog(
                     modifier = Modifier
                         .padding(bottom = 20.dp)
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = textColor
                 )
                 ScrollableValuePicker(
                     modifier = modifier
