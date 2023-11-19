@@ -1,10 +1,7 @@
 package com.riviem.sunalarm.features.home.presentation.homescreen
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -36,7 +33,6 @@ import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,20 +46,15 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.annotations.concurrent.Background
-import com.riviem.sunalarm.AlarmReceiver
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.SwitchCustom
@@ -78,7 +69,6 @@ import com.riviem.sunalarm.ui.theme.textColor
 import com.riviem.sunalarm.ui.theme.timePickerBackgroundColor
 import kotlinx.coroutines.delay
 import java.time.ZonedDateTime
-import java.util.Calendar
 
 
 @Composable
@@ -597,69 +587,6 @@ fun AlarmSwitch(
     )
 }
 
-@SuppressLint("ScheduleExactAlarm")
-@Composable
-private fun SetAlarmButton(hour: Int, minute: Int, context: Context) {
-    Button(onClick = {
-        // Get the AlarmManager
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        // Create a Calendar object for the alarm time
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, hour)
-        calendar.set(Calendar.MINUTE, minute)
-        calendar.set(Calendar.SECOND, 0)
-
-        // Create a PendingIntent object for the alarm receiver
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            context, 0, intent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
-
-        // Set the alarm
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-
-        println("vladlog: Alarm set! $hour:$minute")
-        Toast.makeText(context, "Alarm set!", Toast.LENGTH_SHORT).show()
-    }) {
-        Text("Set Alarm")
-    }
-
-}
-
-@Composable
-fun Background(
-    modifier: Modifier = Modifier
-) {
-    var sizeImage by remember { mutableStateOf(IntSize.Zero) }
-
-    val gradient = Brush.verticalGradient(
-        colors = listOf(MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.secondary),
-        startY = sizeImage.height.toFloat(),
-        endY = 0f
-    )
-
-    Box() {
-        Image(
-            painter = painterResource(id = R.drawable.background5),
-            contentDescription = null,
-            contentScale = ContentScale.FillHeight,
-            modifier = modifier
-                .onGloballyPositioned {
-                    sizeImage = it.size
-                }
-                .fillMaxSize()
-        )
-//        Box(
-//            modifier = Modifier
-//                .matchParentSize()
-//                .alpha(0.9f)
-//                .background(gradient)
-//        )
-    }
-}
-
 @Composable
 fun GradientBackgroundScreen(
     content: @Composable () -> Unit,
@@ -668,7 +595,6 @@ fun GradientBackgroundScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-//                color = backgroundColor,
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         backgroundColor,

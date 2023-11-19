@@ -111,6 +111,7 @@ fun TimePickerScreen(
         targetValue = if (showSoundAlarmPicker) 0.07f else 1f, label = ""
     )
     val coroutineScope = rememberCoroutineScope()
+    var selectedMinutesUntilSoundAlarmBeforeSaving by remember { mutableIntStateOf(alarm.minutesUntilSoundAlarm) }
 
     Box(modifier = Modifier
         .background(
@@ -272,8 +273,11 @@ fun TimePickerScreen(
                     showSoundAlarmPicker = false
                 },
                 length = Constants.MINUTES_UNTIL_SOUND_ALARM_INTERVAL,
-                title = stringResource(R.string.sound_alarm_after),
-                startScrollIndex = newAlarm.minutesUntilSoundAlarm
+                title = stringResource(R.string.sound_alarm_after, selectedMinutesUntilSoundAlarmBeforeSaving),
+                startScrollIndex = newAlarm.minutesUntilSoundAlarm,
+                onSelectedValue = {
+                    selectedMinutesUntilSoundAlarmBeforeSaving = it
+                }
             )
         }
     }

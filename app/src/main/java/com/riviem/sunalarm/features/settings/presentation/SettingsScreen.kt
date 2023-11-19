@@ -3,6 +3,7 @@ package com.riviem.sunalarm.features.settings.presentation
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -36,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -56,6 +59,7 @@ import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsDisabledSwitchTrackColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchButtonColor
 import com.riviem.sunalarm.ui.theme.SettingsInactiveSwitchTrackColor
+import com.riviem.sunalarm.ui.theme.timePickerBackgroundColor
 import kotlinx.coroutines.delay
 
 @Composable
@@ -388,7 +392,8 @@ fun SnoozeSettingDialog(
         title,
         length,
         onSaveClicked,
-        startScrollIndex = initialSnoozeLength
+        startScrollIndex = initialSnoozeLength,
+        onSelectedValue = {}
     )
 }
 
@@ -400,7 +405,8 @@ fun ScrollOneItemDialog(
     title: String,
     length: Int,
     onSaveClicked: (Int) -> Unit,
-    startScrollIndex: Int
+    startScrollIndex: Int,
+    onSelectedValue: (Int) -> Unit
 ) {
     var selectedValue by remember { mutableIntStateOf(startScrollIndex) }
 
@@ -410,6 +416,10 @@ fun ScrollOneItemDialog(
 
     AlertDialog(
         modifier = modifier
+            .background(
+                color = timePickerBackgroundColor,
+                shape = RoundedCornerShape(8.dp)
+            )
             .height(500.dp),
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(
@@ -423,14 +433,18 @@ fun ScrollOneItemDialog(
             ) {
                 Text(
                     text = title,
-                    fontSize = 36.sp,
-                    modifier = Modifier.padding(bottom = 20.dp)
+                    fontSize = 24.sp,
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
                 ScrollableValuePicker(
                     modifier = modifier
                         .fillMaxWidth()
                         .height(300.dp),
                     onValueSelected = {
+                        onSelectedValue(it)
                         selectedValue = it
                     },
                     startScrollIndex = selectedValue,
@@ -441,24 +455,10 @@ fun ScrollOneItemDialog(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(
-                        onClick = {
-                            onDismissRequest()
-                        },
-                        modifier = Modifier.padding(top = 30.dp)
-                    ) {
-                        Text(text = stringResource(R.string.cancel))
-                    }
-                    Button(
-                        onClick = {
-                            onSaveClicked(selectedValue)
-                        },
-                        modifier = Modifier.padding(top = 30.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.save),
-                        )
-                    }
+                    CancelSaveButtons(
+                        onSaveClicked = { onSaveClicked(selectedValue) },
+                        onCancelClicked = { onDismissRequest() }
+                    )
                 }
             }
         }
