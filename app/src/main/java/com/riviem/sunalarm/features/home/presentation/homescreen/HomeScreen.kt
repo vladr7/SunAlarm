@@ -5,7 +5,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color.rgb
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -76,6 +75,7 @@ import com.riviem.sunalarm.features.home.presentation.timepickerscreen.TimePicke
 import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.backgroundColor
 import com.riviem.sunalarm.ui.theme.textColor
+import com.riviem.sunalarm.ui.theme.timePickerBackgroundColor
 import kotlinx.coroutines.delay
 import java.time.ZonedDateTime
 import java.util.Calendar
@@ -672,7 +672,7 @@ fun GradientBackgroundScreen(
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         backgroundColor,
-                        Color(rgb(244, 240, 234)),
+                        timePickerBackgroundColor,
                         Color.White,
                     )
                 )

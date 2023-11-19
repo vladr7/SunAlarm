@@ -86,6 +86,7 @@ import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDay
 import com.riviem.sunalarm.features.settings.presentation.ScrollOneItemDialog
 import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.textColor
+import com.riviem.sunalarm.ui.theme.timePickerBackgroundColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.await
@@ -111,6 +112,9 @@ fun TimePickerScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier
+        .background(
+            color = timePickerBackgroundColor.copy(alpha = 0.9f)
+        )
         .fillMaxSize()
         .graphicsLayer {
             alpha = boxTransparency
@@ -745,7 +749,9 @@ fun TransparentRectangle(
         modifier = modifier
             .height(120.dp)
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f)),
+            .background(
+                color = timePickerBackgroundColor.copy(alpha = 0.8f),
+            )
     )
 }
 

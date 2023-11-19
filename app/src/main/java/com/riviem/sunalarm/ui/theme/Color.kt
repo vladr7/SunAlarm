@@ -93,5 +93,6 @@ val textColor = Color(0xFF212A3E)
 val alarmColor = Color(0xFFE5D7C8)
 val backgroundColor = Color(0xFFEEDFCD)
 val containerColor = Color(0xFF4C625F)
+val timePickerBackgroundColor = Color(244, 240, 234)
 
 
