@@ -37,6 +37,7 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -448,8 +449,7 @@ fun LightAlarmConfiguration(
             }
         )
         ChooseScreenColor(
-            modifier = Modifier
-                .padding(top = 25.dp, start = 25.dp, end = 15.dp),
+            modifier = Modifier,
             onChooseColorClicked = onChooseColorClicked,
             color = alarm.color
         )
@@ -483,38 +483,6 @@ fun LightAlarmConfiguration(
             startIcon = Icons.Filled.WbSunny,
             startIconColor = textColor,
             checked = false
-        )
-    }
-}
-
-@Composable
-fun ChooseScreenColor(
-    modifier: Modifier = Modifier,
-    onChooseColorClicked: () -> Unit,
-    color: Color
-) {
-    Row(
-        modifier = modifier
-            .clickable {
-                onChooseColorClicked()
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(R.string.screen_color),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = textColor,
-            modifier = Modifier
-        )
-        Box(
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .size(25.dp)
-                .background(
-                    shape = CircleShape,
-                    color = color
-                )
         )
     }
 }
@@ -711,7 +679,6 @@ fun ScrollableTimePicker(
         onMinuteSelected((minute.toInt() + 1) % 60)
     }
 
-
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -808,7 +775,7 @@ fun SettingToggle(
 ) {
     Row(
         modifier = modifier
-            .padding(top = 25.dp, start = 10.dp, end = 15.dp)
+            .padding(top = 25.dp, start = 15.dp, end = 15.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -851,5 +818,57 @@ fun SettingToggle(
     }
 }
 
-
+@Composable
+fun ChooseScreenColor(
+    modifier: Modifier = Modifier,
+    onChooseColorClicked: () -> Unit,
+    color: Color
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    Row(
+        modifier = modifier
+            .padding(top = 25.dp, start = 15.dp, end = 15.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Image(
+            imageVector = Icons.Filled.Palette,
+            contentDescription = null,
+            modifier = modifier
+                .size(30.dp),
+            colorFilter = ColorFilter.tint(textColor)
+        )
+        Column(
+            modifier = modifier
+                .padding(start = 16.dp, end = 8.dp)
+                .weight(1f),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = context.getString(R.string.screen_color),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = stringResource(R.string.color_of_the_light_alarm_screen),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2
+            )
+        }
+        Box(
+            modifier = Modifier
+                .clickable { onChooseColorClicked() }
+                .padding(start = 10.dp, end = 22.dp)
+                .size(25.dp)
+                .background(
+                    shape = CircleShape,
+                    color = color
+                )
+        )
+    }
+}
 

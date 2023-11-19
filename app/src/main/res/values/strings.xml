@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SunAlarm</string>
-    <string name="screen_color">Light color</string>
+    <string name="screen_color">Light Alarm color</string>
     <string name="save_color">Save color</string>
     <string name="cancel">Cancel</string>
     <string name="snooze">Snooze</string>
@@ -48,5 +48,6 @@
     <string name="set_alarm_to_sunrise">Set alarm to sunrise</string>
     <string name="error_getting_sunrise_time_maybe_internet_is_off">Error getting sunrise time\nMaybe internet is off</string>
     <string name="location_is_disabled">Location is disabled</string>
+    <string name="color_of_the_light_alarm_screen">Color of the light alarm screen</string>
 
 </resources>
