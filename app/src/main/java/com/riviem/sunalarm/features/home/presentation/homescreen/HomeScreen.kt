@@ -427,48 +427,51 @@ fun AlarmItem(
     onAlarmLongPress: () -> Unit,
     onDeleteAlarmClick: () -> Unit
 ) {
-    Row(
-        modifier = modifier
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onLongPress = {
-                        onAlarmLongPress()
-                    },
-                    onTap = { onAlarmClick() }
+
+        Row(
+            modifier = modifier
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = {
+                            onAlarmLongPress()
+                        },
+                        onTap = { onAlarmClick() }
+                    )
+                }
+                .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
+                .background(
+                    color = alarmColor,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .height(120.dp)
+                .fillMaxWidth()
+                ,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AlarmNameAndTime(alarm.name, alarm.ringTime)
+            Spacer(modifier = Modifier.weight(1f))
+            if (!alarm.isExpanded) {
+                AlarmSelectedDays(
+                    modifier = modifier,
+                    days = alarm.days,
+                    firstDayOfWeek = firstDayOfWeek
+                )
+                AlarmSwitch(
+                    modifier = modifier
+                        .padding(end = 10.dp),
+                    checked = alarm.isOn,
+                    onCheckedChange = onCheckedChange
                 )
             }
-            .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
-            .background(
-                color = alarmColor,
-                shape = RoundedCornerShape(10.dp)
-            )
-            .height(120.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AlarmNameAndTime(alarm.name, alarm.ringTime)
-        Spacer(modifier = Modifier.weight(1f))
-        if (!alarm.isExpanded) {
-            AlarmSelectedDays(
-                modifier = modifier,
-                days = alarm.days,
-                firstDayOfWeek = firstDayOfWeek
-            )
-            AlarmSwitch(
-                modifier = modifier
-                    .padding(end = 10.dp),
-                checked = alarm.isOn,
-                onCheckedChange = onCheckedChange
-            )
-        }
-        AnimatedVisibility(visible = alarm.isExpanded) {
-            DeleteAlarmButton(
-                modifier = modifier
-                    .padding(end = 30.dp),
-                onClick = onDeleteAlarmClick
-            )
-        }
+            AnimatedVisibility(visible = alarm.isExpanded) {
+                DeleteAlarmButton(
+                    modifier = modifier
+                        .padding(end = 30.dp),
+                    onClick = onDeleteAlarmClick
+                )
+            }
     }
+
 }
 
 @Composable

@@ -48,6 +48,7 @@ import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.askBrightnessPermission
 import com.riviem.sunalarm.core.presentation.hasBrightnessPermission
+import com.riviem.sunalarm.features.home.presentation.homescreen.GradientBackgroundScreen
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.SaveButton
@@ -101,35 +102,42 @@ fun SettingsScreen(
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     var showBrightnessSettingDialog by remember { mutableStateOf(false) }
     var showFirstDayOfWeekDropdown by remember { mutableStateOf(false) }
-    var showSoundAlarmMinutesDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        SnoozeSettingButton(
-            modifier = modifier.padding(top = 30.dp),
-            onClick = {
-                showSnoozeSettingDialog = true
-            }
-        )
-        BrightnessSettingButton(
-            modifier = modifier.padding(top = 30.dp),
-            onClick = {
-                if (hasBrightnessPermission(activity)) {
-                    showBrightnessSettingDialog = true
-                } else {
-                    askBrightnessPermission(activity)
+    GradientBackgroundScreen {
+        Column(
+            modifier = modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(R.string.settings),
+                fontSize = 36.sp,
+                modifier = modifier.padding(top = 30.dp),
+                color = textColor
+            )
+            SnoozeSettingButton(
+                modifier = modifier.padding(top = 30.dp),
+                onClick = {
+                    showSnoozeSettingDialog = true
                 }
-            }
-        )
-        FirstDayOfTheWeek(
-            modifier = modifier.padding(top = 30.dp),
-            onClick = {
-                showFirstDayOfWeekDropdown = true
-            },
-            firstDay = firstDayOfWeek.fullName
-        )
+            )
+            BrightnessSettingButton(
+                modifier = modifier.padding(top = 30.dp),
+                onClick = {
+                    if (hasBrightnessPermission(activity)) {
+                        showBrightnessSettingDialog = true
+                    } else {
+                        askBrightnessPermission(activity)
+                    }
+                }
+            )
+            FirstDayOfTheWeek(
+                modifier = modifier.padding(top = 30.dp),
+                onClick = {
+                    showFirstDayOfWeekDropdown = true
+                },
+                firstDay = firstDayOfWeek.fullName
+            )
+        }
     }
     AnimatedVisibility(visible = showSnoozeSettingDialog) {
         SnoozeSettingDialog(

@@ -58,5 +58,6 @@
     <string name="sunday_short">Sun</string>
     <string name="every">Every %1$s</string>
     <string name="ok">OK</string>
+    <string name="settings">Settings</string>
 
 </resources>
