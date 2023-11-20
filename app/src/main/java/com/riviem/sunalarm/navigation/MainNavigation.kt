@@ -15,12 +15,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.riviem.sunalarm.ui.theme.containerColor
+import com.riviem.sunalarm.ui.theme.timePickerBackgroundColor
 
 @Composable
 fun MainNavigation(
@@ -36,7 +36,7 @@ fun MainNavigation(
                 NavigationBar(
                     modifier = Modifier
                         .height(60.dp),
-                    containerColor = Color(android.graphics.Color.rgb(244, 240, 234)),
+                    containerColor = timePickerBackgroundColor,
                 ) {
                     items.forEach { destination ->
                         val selected =

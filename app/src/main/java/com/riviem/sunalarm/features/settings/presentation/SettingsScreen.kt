@@ -296,7 +296,7 @@ fun BrightnessSettingDialog(
 }
 
 @Composable
-private fun CancelSaveButtons(
+fun CancelSaveButtons(
     onSaveClicked: () -> Unit,
     onCancelClicked: () -> Unit
 ) {

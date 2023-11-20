@@ -56,6 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.annotations.concurrent.Background
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.presentation.NormalPermissionDialog
 import com.riviem.sunalarm.core.presentation.SwitchCustom
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
@@ -85,6 +86,18 @@ fun HomeRoute(
         viewModel.getFirstDayOfWeek()
     }
 
+    var showPermissionDialog by remember {
+        mutableStateOf(false)
+    }
+    if (showPermissionDialog) {
+        NormalPermissionDialog(
+            title = "Flashlight requires camera permission",
+            description = "Please allow camera permission to use flashlight",
+            onDismissRequest = { showPermissionDialog = false },
+            onConfirmClicked = { showPermissionDialog = false },
+        )
+    }
+
     if (!state.showTimePickerScreen && state.alarms != null) {
         HomeScreen(
             context = context,
@@ -108,6 +121,7 @@ fun HomeRoute(
             firstDayOfWeek = state.firstDayOfWeek,
             onAlarmLongPress = {
                 viewModel.onAlarmLongPress(it)
+                showPermissionDialog = !showPermissionDialog
             },
             onDeleteAlarmClick = {
                 viewModel.onDeleteAlarmClick(it, context)

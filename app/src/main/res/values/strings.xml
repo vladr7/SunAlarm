@@ -57,5 +57,6 @@
     <string name="saturday_short">Sat</string>
     <string name="sunday_short">Sun</string>
     <string name="every">Every %1$s</string>
+    <string name="ok">OK</string>
 
 </resources>
