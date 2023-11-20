@@ -139,7 +139,7 @@ fun SettingsScreen(
                 }
             )
             SettingSlider(
-                title = stringResource(R.string.brightness),
+                title = stringResource(R.string.wake_up_screen_brightness),
                 value = brightnessValue,
                 onValueChange = {
                     brightnessValue = it
@@ -253,7 +253,7 @@ fun SettingButton(
 ) {
     Row(
         modifier = modifier
-            .padding(16.dp)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
             .clickable { onClick() }
             .fillMaxWidth()
             .heightIn(min = 90.dp, max = 160.dp)
@@ -318,7 +318,7 @@ fun SettingSlider(
 ) {
     Row(
         modifier = modifier
-            .padding(16.dp)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
             .fillMaxWidth()
             .heightIn(min = 90.dp, max = 160.dp)
             .border(
