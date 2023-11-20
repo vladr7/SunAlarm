@@ -196,7 +196,7 @@ fun TimePickerScreen(
                 },
                 firstDayOfWeek = firstDayOfWeek,
                 onSunriseButtonClicked = {
-                    if(timeMatchesSunrise) {
+                    if (timeMatchesSunrise) {
                         timeMatchesSunrise = false
                         return@LightAlarmConfiguration
                     }
@@ -696,7 +696,7 @@ fun ScrollableTimePicker(
     }
 
     LaunchedEffect(key1 = timeMatchesSunrise) {
-        if(timeMatchesSunrise) {
+        if (timeMatchesSunrise) {
             hoursState.scrollToItem(index = 240 + sunRiseTime.first)
             minutesState.scrollToItem(index = 600 + sunRiseTime.second)
             delay(50L)
@@ -929,11 +929,16 @@ fun ChooseScreenColor(
         Box(
             modifier = Modifier
                 .clickable { onChooseColorClicked() }
-                .padding(start = 10.dp, end = 22.dp)
-                .size(25.dp)
+                .padding(start = 10.dp, end = 20.dp)
+                .size(30.dp)
                 .background(
                     shape = CircleShape,
-                    color = color
+                    color = color,
+                )
+                .border(
+                    width = 1.dp,
+                    color = textColor.copy(alpha = 0.5f),
+                    shape = CircleShape
                 )
         )
     }
