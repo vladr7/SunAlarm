@@ -331,23 +331,23 @@ fun SettingSlider(
         Column(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround,
         ) {
             Text(
+                modifier = Modifier.padding(top = 4.dp),
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 color = textColor
             )
+            Spacer(modifier = Modifier.height(6.dp))
             SliderCustom(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp),
                 value = value,
                 onValueChange = onValueChange,
-                startInterval = startInterval,
-                endInterval = endInterval,
-                steps = steps
+                steps = steps,
+                valueRange = startInterval.toFloat()..endInterval.toFloat(),
             )
         }
     }
