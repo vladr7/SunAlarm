@@ -60,6 +60,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.presentation.RadioButtonCustom
 import com.riviem.sunalarm.core.presentation.SliderCustom
 import com.riviem.sunalarm.features.home.presentation.homescreen.GradientBackgroundScreen
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
@@ -153,27 +154,27 @@ fun SettingsScreen(
                 startIcon = Icons.Filled.LightMode,
                 startIconColor = textColor,
                 title = stringResource(R.string.morning_light_graduation),
-                subtitle = stringResource(R.string.choose_how_quickly_the_screen_reaches_maximum_brightness, brightnessSettingUI.brightnessGraduallyMinutes),
+                subtitle = stringResource(
+                    R.string.choose_how_quickly_the_screen_reaches_maximum_brightness,
+                    brightnessSettingUI.brightnessGraduallyMinutes
+                ),
                 onClick = {
                     showBrightnessOverTimeDialog = true
                 }
             )
-//            BrightnessSettingButton(
-//                modifier = modifier.padding(top = 30.dp),
-//                onClick = {
-//                    if (hasBrightnessPermission(activity)) {
-//                        showBrightnessSettingDialog = true
-//                    } else {
-//                        askBrightnessPermission(activity)
-//                    }
-//                }
-//            )
-//            FirstDayOfTheWeek(
-//                modifier = modifier.padding(top = 30.dp),
+            SettingTwoOptions(
+                title = stringResource(id = R.string.first_day_of_the_week),
+                value = 1,
+                onValueChange = { }
+            )
+//            SettingButton(
+//                startIcon = Icons.Filled.Today,
+//                startIconColor = textColor,
+//                title = stringResource(R.string.first_day_of_the_week),
+//                subtitle = firstDayOfWeek.fullName,
 //                onClick = {
 //                    showFirstDayOfWeekDropdown = true
-//                },
-//                firstDay = firstDayOfWeek.fullName
+//                }
 //            )
         }
     }
@@ -204,7 +205,10 @@ fun SettingsScreen(
             onDismissRequest = {
                 showBrightnessOverTimeDialog = false
             },
-            title = stringResource(id = R.string.choose_how_quickly_the_screen_reaches_maximum_brightness_no_newline, selectedBrightnessOverTimeBeforeSaving),
+            title = stringResource(
+                id = R.string.choose_how_quickly_the_screen_reaches_maximum_brightness_no_newline,
+                selectedBrightnessOverTimeBeforeSaving
+            ),
             length = Constants.INCREASE_BRIGHTNESS_OVER_TIME_INTERVAL,
             onSaveClicked = {
                 onBrightnessSaveClicked(
@@ -362,6 +366,80 @@ fun SettingSlider(
 }
 
 @Composable
+fun SettingTwoOptions(
+    title: String,
+    modifier: Modifier = Modifier,
+    value: Int,
+    onValueChange: (Int) -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .fillMaxWidth()
+            .heightIn(min = 90.dp, max = 160.dp)
+            .border(
+                1.dp,
+                Color.Gray.copy(alpha = 0.7f),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Column(
+            modifier = Modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                modifier = Modifier.padding(top = 4.dp),
+                text = title,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                color = textColor,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { onValueChange(0) }
+                ) {
+                    RadioButtonCustom(
+                        selected = value == 0,
+                        onSelected = { onValueChange(0) },
+                    )
+                    Text(
+                        text = stringResource(R.string.monday),
+                        color = textColor,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable { onValueChange(0) }
+                        .padding(end = 6.dp)
+                ) {
+                    RadioButtonCustom(
+                        selected = value == 1,
+                        onSelected = { onValueChange(0) },
+                    )
+                    Text(
+                        text = stringResource(R.string.sunday),
+                        color = textColor,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun FirstDayOfTheWeek(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -380,86 +458,6 @@ fun FirstDayOfTheWeek(
         Text(text = firstDay)
     }
 
-}
-
-@Composable
-fun BrightnessSettingButton(modifier: Modifier, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Text(text = stringResource(R.string.brightness))
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BrightnessSettingDialog(
-    modifier: Modifier,
-    onDismissRequest: () -> Unit,
-    onSaveClicked: (BrightnessSettingUI) -> Unit,
-    brightnessSettingUI: BrightnessSettingUI
-) {
-    var brightnessSliderValue by remember { mutableIntStateOf(brightnessSettingUI.brightness) }
-    var brightnessGraduallySliderValue by remember { mutableIntStateOf(brightnessSettingUI.brightnessGraduallyMinutes) }
-
-    AlertDialog(
-        modifier = modifier
-            .background(
-                color = alarmColor,
-                shape = RoundedCornerShape(8.dp)
-            ),
-        onDismissRequest = onDismissRequest,
-        properties = DialogProperties(
-            dismissOnClickOutside = false,
-        ),
-        content = {
-            Column(
-                modifier = modifier,
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(R.string.brightness),
-                    fontSize = 36.sp,
-                    modifier = Modifier.padding(bottom = 20.dp),
-                    color = textColor
-                )
-                Spacer(modifier = Modifier.height(50.dp))
-                BrightnessSlider(
-                    text = stringResource(R.string.brightness, brightnessSliderValue),
-                    sliderValue = brightnessSliderValue,
-                    onSliderValueChanged = {
-                        brightnessSliderValue = it
-                    }
-                )
-                Spacer(modifier = Modifier.height(50.dp))
-                BrightnessGraduallySlider(
-                    text = stringResource(
-                        R.string.increase_brightness_gradually_over_time,
-                        brightnessGraduallySliderValue
-                    ),
-                    sliderValue = brightnessGraduallySliderValue,
-                    onSliderValueChanged = {
-                        brightnessGraduallySliderValue = it
-                    }
-                )
-                CancelSaveButtons(
-                    onCancelClicked = {
-                        onDismissRequest()
-                    },
-                    onSaveClicked = {
-                        onSaveClicked(
-                            BrightnessSettingUI(
-                                brightness = brightnessSliderValue,
-                                brightnessGraduallyMinutes = brightnessGraduallySliderValue
-                            )
-                        )
-                    }
-                )
-            }
-        }
-    )
 }
 
 @Composable

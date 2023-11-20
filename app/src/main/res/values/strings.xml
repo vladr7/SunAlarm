@@ -66,5 +66,7 @@
     <string name="choose_how_quickly_the_screen_reaches_maximum_brightness_no_newline">Maximum brightness reached in %1$d minutes</string>
     <string name="morning_light_graduation">Morning Light Graduation</string>
     <string name="morning_light_graduation_new_line">Morning Light\nGraduation</string>
+    <string name="monday">Monday</string>
+    <string name="sunday">Sunday</string>
 
 </resources>
