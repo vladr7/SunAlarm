@@ -32,6 +32,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
@@ -40,7 +41,8 @@ import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -66,6 +68,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
@@ -85,6 +88,7 @@ import com.riviem.sunalarm.core.presentation.requestCameraPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
+import com.riviem.sunalarm.features.settings.presentation.CancelSaveButtons
 import com.riviem.sunalarm.features.settings.presentation.ScrollOneItemDialog
 import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.textColor
@@ -270,6 +274,7 @@ fun TimePickerScreen(
                 onCancelColorClicked = {
                     showColorPicker = false
                 },
+                selectedColor = newColor
             )
         }
         AnimatedVisibility(visible = showSoundAlarmPicker) {
@@ -342,85 +347,60 @@ fun CancelButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorPickerDialog(
     modifier: Modifier = Modifier,
     onColorChanged: (Color) -> Unit,
     onSaveColorClicked: () -> Unit,
-    onCancelColorClicked: () -> Unit
+    onCancelColorClicked: () -> Unit,
+    selectedColor: Color
 ) {
-    Box(
+    AlertDialog(
         modifier = modifier
-            .fillMaxSize()
             .background(
-                shape = MaterialTheme.shapes.large,
-                color = Color.Black.copy(alpha = 0.9f)
-            )
-    ) {
-        ColorPicker(
-            onColorChanged = onColorChanged,
-            modifier = Modifier
-                .align(Alignment.Center)
-        )
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(
-                    bottom = 100.dp
+                color = alarmColor,
+                shape = RoundedCornerShape(8.dp)
+            ),
+        onDismissRequest = onCancelColorClicked,
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+        ),
+        content = {
+            Column(
+                modifier = modifier
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ColorPicker(onColorChanged = onColorChanged)
+                Box(
+                    modifier = Modifier
+                        .border(
+                            width = 1.dp,
+                            color = textColor.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .background(
+                            color = selectedColor,
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .height(20.dp)
+                        .width(70.dp)
                 )
-        ) {
-            CancelColorButton(
-                modifier = Modifier
-                    .padding(bottom = 20.dp, start = 20.dp),
-                onCancelClick = onCancelColorClicked
-            )
-            SaveColorButton(
-                modifier = Modifier
-                    .padding(bottom = 20.dp, end = 20.dp),
-                onSaveClick = onSaveColorClicked
-            )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    CancelSaveButtons(
+                        onSaveClicked = { onSaveColorClicked() },
+                        onCancelClicked = { onCancelColorClicked() }
+                    )
+                }
+            }
         }
-    }
-}
-
-@Composable
-fun CancelColorButton(
-    modifier: Modifier,
-    onCancelClick: () -> Unit
-) {
-    Button(
-        onClick = onCancelClick,
-        modifier = modifier
-            .width(150.dp)
-            .height(50.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.cancel),
-            fontSize = 18.sp,
-            color = textColor
-        )
-    }
-}
-
-@Composable
-fun SaveColorButton(
-    modifier: Modifier = Modifier,
-    onSaveClick: () -> Unit
-) {
-    Button(
-        onClick = onSaveClick,
-        modifier = modifier
-            .width(150.dp)
-            .height(50.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.save_color),
-            fontSize = 18.sp,
-            color = textColor
-        )
-    }
+    )
 }
 
 @Composable
@@ -563,7 +543,7 @@ fun ChangeAlarmName(
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
             color = textColor,
-            ),
+        ),
     )
 }
 
