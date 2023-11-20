@@ -144,12 +144,12 @@ class HomeViewModel @Inject constructor(
 
     fun onAlarmClick(alarm: AlarmUIModel) {
         val isExpanded =
-            state.value.alarms.find { it.createdTimestamp == alarm.createdTimestamp }?.isExpanded
+            state.value.alarms?.find { it.createdTimestamp == alarm.createdTimestamp }?.isExpanded
                 ?: false
         if (isExpanded) {
             _state.update { homeState ->
                 homeState.copy(
-                    alarms = homeState.alarms.map { it.copy(isExpanded = false) }
+                    alarms = homeState.alarms?.map { it.copy(isExpanded = false) }
                 )
             }
             return
@@ -232,7 +232,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAlarmLongPress(alarm: AlarmUIModel) {
-        val newAlarms = state.value.alarms.map { alarmUIModel ->
+        val newAlarms = state.value.alarms?.map { alarmUIModel ->
             alarmUIModel.copy(isExpanded = alarmUIModel.createdTimestamp == alarm.createdTimestamp)
         }
         _state.update { homeState ->
@@ -253,7 +253,7 @@ class HomeViewModel @Inject constructor(
 data class HomeState(
     val showTimePickerScreen: Boolean = false,
     val selectedAlarm: AlarmUIModel,
-    val alarms: List<AlarmUIModel> = emptyList(),
+    val alarms: List<AlarmUIModel>? = null,
     val title: String,
     val subtitle: String,
     val firstDayOfWeek: FirstDayOfWeek,

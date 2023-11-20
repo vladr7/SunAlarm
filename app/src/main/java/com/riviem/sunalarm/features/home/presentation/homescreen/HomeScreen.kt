@@ -85,7 +85,7 @@ fun HomeRoute(
         viewModel.getFirstDayOfWeek()
     }
 
-    if (!state.showTimePickerScreen) {
+    if (!state.showTimePickerScreen && state.alarms != null) {
         HomeScreen(
             context = context,
             onAlarmClick = { alarm ->
@@ -96,7 +96,7 @@ fun HomeRoute(
                     viewModel.onAlarmClick(alarm)
                 }
             },
-            alarms = state.alarms,
+            alarms = state.alarms ?: emptyList(),
             onAddNewAlarmClick = {
                 viewModel.onAddNewAlarmClick()
             },
@@ -167,10 +167,12 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (alarms.isEmpty()) {
-                    NoAlarmContent(context,
+                    NoAlarmContent(
+                        context = context,
                         onAddNewAlarmClick = {
                             onAddNewAlarmClick()
-                        })
+                        }
+                    )
                 } else {
                     Box(
                         modifier = modifier
