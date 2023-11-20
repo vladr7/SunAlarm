@@ -56,7 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.annotations.concurrent.Background
 import com.riviem.sunalarm.R
-import com.riviem.sunalarm.core.presentation.NormalPermissionDialog
+import com.riviem.sunalarm.core.presentation.PermissionDialog
 import com.riviem.sunalarm.core.presentation.SwitchCustom
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
@@ -90,11 +90,12 @@ fun HomeRoute(
         mutableStateOf(false)
     }
     if (showPermissionDialog) {
-        NormalPermissionDialog(
+        PermissionDialog(
             title = "Flashlight requires camera permission",
             description = "Please allow camera permission to use flashlight",
             onDismissRequest = { showPermissionDialog = false },
             onConfirmClicked = { showPermissionDialog = false },
+            confirmTextButton = context.getString(R.string.ok)
         )
     }
 

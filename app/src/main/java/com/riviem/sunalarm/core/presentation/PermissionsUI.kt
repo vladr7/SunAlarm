@@ -26,10 +26,11 @@ import com.riviem.sunalarm.ui.theme.textColor
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun NormalPermissionDialog(
+fun PermissionDialog(
     modifier: Modifier = Modifier,
     title: String,
     description: String,
+    confirmTextButton: String,
     onDismissRequest: () -> Unit,
     onConfirmClicked: () -> Unit,
 ) {
@@ -83,7 +84,7 @@ fun NormalPermissionDialog(
                             .clickable { onDismissRequest() }
                     )
                     Text(
-                        text = stringResource(R.string.ok), color = textColor, fontSize = 20.sp,
+                        text = confirmTextButton, color = textColor, fontSize = 20.sp,
                         modifier = Modifier
                             .padding(end = 3.dp)
                             .clickable { onConfirmClicked() }
