@@ -118,7 +118,7 @@ fun TimePickerScreen(
 
     Box(modifier = Modifier
         .background(
-            color = timePickerBackgroundColor.copy(alpha = 0.9f)
+            color = timePickerBackgroundColor
         )
         .fillMaxSize()
         .graphicsLayer {
@@ -562,7 +562,8 @@ fun ChangeAlarmName(
         textStyle = TextStyle(
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-        ),
+            color = textColor,
+            ),
     )
 }
 
@@ -865,13 +866,15 @@ fun SettingToggle(
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
+                color = textColor,
             )
             Text(
                 text = subtitle,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 2
+                maxLines = 2,
+                color = textColor
             )
         }
 
@@ -917,13 +920,15 @@ fun ChooseScreenColor(
                 text = context.getString(R.string.screen_color),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
+                color = textColor
             )
             Text(
                 text = stringResource(R.string.color_of_the_light_alarm_screen),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 2
+                maxLines = 2,
+                color = textColor
             )
         }
         Box(
