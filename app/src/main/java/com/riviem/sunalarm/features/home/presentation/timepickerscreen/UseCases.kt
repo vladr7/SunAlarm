@@ -25,3 +25,4 @@ fun updateModalTitle(days: List<Day>, context: Context): String {
 
     return context.getString(R.string.every, selectedDaysShortNames.joinToString(", "))
 }
+

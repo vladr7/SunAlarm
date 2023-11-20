@@ -105,14 +105,16 @@ fun TimePickerScreen(
     var showColorPicker by remember { mutableStateOf(false) }
     var showSoundAlarmPicker by remember { mutableStateOf(false) }
     var newAlarm by remember { mutableStateOf(alarm) }
-    var selectedHour by remember { mutableIntStateOf(alarm.ringTime.hour) }
-    var selectedMinute by remember { mutableIntStateOf(alarm.ringTime.minute) }
+    val selectedHour by remember { mutableIntStateOf(alarm.ringTime.hour) }
+    val selectedMinute by remember { mutableIntStateOf(alarm.ringTime.minute) }
     var newColor by remember { mutableStateOf(alarm.color) }
     val boxTransparency by animateFloatAsState(
         targetValue = if (showSoundAlarmPicker) 0.07f else 1f, label = ""
     )
     val coroutineScope = rememberCoroutineScope()
     var selectedMinutesUntilSoundAlarmBeforeSaving by remember { mutableIntStateOf(alarm.minutesUntilSoundAlarm) }
+    var timeMatchesSunrise by remember { mutableStateOf(false) }
+    var sunriseTime by remember { mutableStateOf(Pair(0, 0)) }
 
     Box(modifier = Modifier
         .background(
@@ -140,7 +142,9 @@ fun TimePickerScreen(
                 modifier = Modifier
                     .height(300.dp),
                 selectedHour = selectedHour,
-                selectedMinute = selectedMinute
+                selectedMinute = selectedMinute,
+                timeMatchesSunrise = timeMatchesSunrise,
+                sunRiseTime = sunriseTime
             )
             LightAlarmConfiguration(
                 modifier = Modifier
@@ -192,16 +196,22 @@ fun TimePickerScreen(
                 },
                 firstDayOfWeek = firstDayOfWeek,
                 onSunriseButtonClicked = {
+                    if(timeMatchesSunrise) {
+                        timeMatchesSunrise = false
+                        return@LightAlarmConfiguration
+                    }
                     if (!checkLocationIsEnabled(context = context)) {
                         Toast.makeText(
                             context,
                             context.resources.getString(R.string.location_is_disabled),
                             Toast.LENGTH_SHORT
                         ).show()
+                        timeMatchesSunrise = false
                         return@LightAlarmConfiguration
                     }
                     if (!hasLocationPermission(context = context)) {
                         checkAndRequestLocationPermission(activity = activity)
+                        timeMatchesSunrise = false
                     } else {
                         coroutineScope.launch {
                             val coordinates = getCoordinates(activity)
@@ -212,29 +222,32 @@ fun TimePickerScreen(
                                             coordinates.latitude,
                                             -coordinates.longitude
                                         ).await()
-                                    val sunriseTime = extractHourAndMinute(response.results.sunrise)
+                                    sunriseTime = extractHourAndMinute(response.results.sunrise)
                                     newAlarm = newAlarm.copy(
                                         ringTime = newAlarm.ringTime.withHour(sunriseTime.first)
                                     )
-                                    selectedHour = sunriseTime.first
                                     newAlarm = newAlarm.copy(
                                         ringTime = newAlarm.ringTime.withMinute(sunriseTime.second)
                                     )
-                                    selectedMinute = sunriseTime.second
+                                    timeMatchesSunrise = true
                                 } catch (e: Exception) {
+                                    timeMatchesSunrise = false
                                     Toast.makeText(
                                         context,
                                         context.resources.getString(R.string.error_getting_sunrise_time_maybe_internet_is_off),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
+                            } else {
+                                timeMatchesSunrise = false
                             }
                         }
                     }
                 },
                 onSoundAlarmModalClicked = {
                     showSoundAlarmPicker = true
-                }
+                },
+                timeMatchesSunrise = timeMatchesSunrise
             )
             CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)
         }
@@ -423,6 +436,7 @@ fun LightAlarmConfiguration(
     onSoundAlarmModalClicked: () -> Unit,
     firstDayOfWeek: FirstDayOfWeek,
     onSunriseButtonClicked: () -> Unit,
+    timeMatchesSunrise: Boolean
 ) {
     val scrollState = rememberScrollState()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -504,7 +518,7 @@ fun LightAlarmConfiguration(
             subtitle = stringResource(R.string.set_alarm_to_sunrise),
             startIcon = Icons.Filled.WbSunny,
             startIconColor = textColor,
-            checked = false
+            checked = timeMatchesSunrise
         )
     }
 }
@@ -662,6 +676,8 @@ fun ScrollableTimePicker(
     selectedMinute: Int,
     onHourSelected: (Int) -> Unit,
     onMinuteSelected: (Int) -> Unit,
+    timeMatchesSunrise: Boolean,
+    sunRiseTime: Pair<Int, Int>,
 ) {
     val hoursState = rememberLazyListState()
     val minutesState = rememberLazyListState()
@@ -669,12 +685,24 @@ fun ScrollableTimePicker(
     val hours = infiniteHours.take(480).map { if (it < 10) "0$it" else it.toString() }.toList()
     val minutes = infiniteMinutes.take(1200).map { if (it < 10) "0$it" else it.toString() }.toList()
 
+    println("vladlog: selectedHour on picker: $selectedHour")
+
     LaunchedEffect(key1 = selectedHour, selectedMinute) {
         hoursState.scrollToItem(index = 240 + selectedHour)
         minutesState.scrollToItem(index = 600 + selectedMinute)
         delay(50L)
         hoursState.animateScrollToItem(index = 240 + selectedHour - 2)
         minutesState.animateScrollToItem(index = 600 + selectedMinute - 1)
+    }
+
+    LaunchedEffect(key1 = timeMatchesSunrise) {
+        if(timeMatchesSunrise) {
+            hoursState.scrollToItem(index = 240 + sunRiseTime.first)
+            minutesState.scrollToItem(index = 600 + sunRiseTime.second)
+            delay(50L)
+            hoursState.animateScrollToItem(index = 240 + sunRiseTime.first - 2)
+            minutesState.animateScrollToItem(index = 600 + sunRiseTime.second - 1)
+        }
     }
 
     val localDensity = LocalDensity.current
