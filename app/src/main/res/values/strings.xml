@@ -63,6 +63,8 @@
     <string name="minutes">%1$s minutes</string>
     <string name="wake_up_screen_brightness">Wake-up Screen Brightness</string>
     <string name="choose_how_quickly_the_screen_reaches_maximum_brightness">Maximum brightness reached\nin %1$d minutes</string>
+    <string name="choose_how_quickly_the_screen_reaches_maximum_brightness_no_newline">Maximum brightness reached in %1$d minutes</string>
     <string name="morning_light_graduation">Morning Light Graduation</string>
+    <string name="morning_light_graduation_new_line">Morning Light\nGraduation</string>
 
 </resources>

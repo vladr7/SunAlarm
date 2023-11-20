@@ -115,6 +115,7 @@ fun SettingsScreen(
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     var showFirstDayOfWeekDropdown by remember { mutableStateOf(false) }
     var selectedSnoozeLengthBeforeSaving by remember { mutableIntStateOf(snoozeLength) }
+    var selectedBrightnessOverTimeBeforeSaving by remember { mutableIntStateOf(brightnessSettingUI.brightnessGraduallyMinutes) }
     var brightnessValue by remember { mutableIntStateOf(brightnessSettingUI.brightness) }
     var showBrightnessOverTimeDialog by remember { mutableStateOf(false) }
 
@@ -152,9 +153,9 @@ fun SettingsScreen(
                 startIcon = Icons.Filled.LightMode,
                 startIconColor = textColor,
                 title = stringResource(R.string.morning_light_graduation),
-                subtitle = stringResource(R.string.choose_how_quickly_the_screen_reaches_maximum_brightness, 10),
+                subtitle = stringResource(R.string.choose_how_quickly_the_screen_reaches_maximum_brightness, brightnessSettingUI.brightnessGraduallyMinutes),
                 onClick = {
-
+                    showBrightnessOverTimeDialog = true
                 }
             )
 //            BrightnessSettingButton(
@@ -200,12 +201,23 @@ fun SettingsScreen(
     AnimatedVisibility(visible = showBrightnessOverTimeDialog) {
         ScrollOneItemDialog(
             modifier = Modifier,
-            onDismissRequest = { /*TODO*/ },
-            title = "",
+            onDismissRequest = {
+                showBrightnessOverTimeDialog = false
+            },
+            title = stringResource(id = R.string.choose_how_quickly_the_screen_reaches_maximum_brightness_no_newline, selectedBrightnessOverTimeBeforeSaving),
             length = Constants.INCREASE_BRIGHTNESS_OVER_TIME_INTERVAL,
-            onSaveClicked = { /*TODO*/ },
-            startScrollIndex = 0,
-            onSelectedValue = { /*TODO*/ }
+            onSaveClicked = {
+                onBrightnessSaveClicked(
+                    brightnessSettingUI.copy(
+                        brightnessGraduallyMinutes = it
+                    )
+                )
+                showBrightnessOverTimeDialog = false
+            },
+            startScrollIndex = brightnessSettingUI.brightnessGraduallyMinutes,
+            onSelectedValue = {
+                selectedBrightnessOverTimeBeforeSaving = it
+            }
         )
     }
     AnimatedVisibility(visible = showFirstDayOfWeekDropdown) {

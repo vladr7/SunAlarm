@@ -435,7 +435,7 @@ fun LightAlarmConfiguration(
     ) {
         Text(
             text = modalTitle,
-            fontSize = 18.sp,
+            fontSize = 17.sp,
             color = textColor,
             modifier = Modifier
                 .padding(start = 32.dp, top = 25.dp)
