@@ -28,7 +28,7 @@
     <string name="snooze_length_after_minutes">Snooze after\n%1$d minutes</string>
     <string name="snooze_length">Snooze length</string>
     <string name="save">Save</string>
-    <string name="brightness">Brigthness %1$d</string>
+    <string name="brightness">Brigthness</string>
     <string name="dynamic">Dynamic</string>
     <string name="static_text">Static</string>
     <string name="increase_brightness_gradually_over_time">Increase brightness gradually over %1$d minutes</string>

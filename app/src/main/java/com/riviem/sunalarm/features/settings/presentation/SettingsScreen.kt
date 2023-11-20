@@ -60,6 +60,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.presentation.SliderCustom
 import com.riviem.sunalarm.features.home.presentation.homescreen.GradientBackgroundScreen
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
@@ -115,6 +116,7 @@ fun SettingsScreen(
     var showBrightnessSettingDialog by remember { mutableStateOf(false) }
     var showFirstDayOfWeekDropdown by remember { mutableStateOf(false) }
     var selectedSnoozeLengthBeforeSaving by remember { mutableIntStateOf(snoozeLength) }
+    var brightnessValue by remember { mutableIntStateOf(brightnessSettingUI.brightness) }
 
     GradientBackgroundScreen {
         Column(
@@ -135,6 +137,16 @@ fun SettingsScreen(
                 onClick = {
                     showSnoozeSettingDialog = true
                 }
+            )
+            SettingSlider(
+                title = stringResource(R.string.brightness),
+                value = brightnessValue,
+                onValueChange = {
+                    brightnessValue = it
+                },
+                startInterval = 0,
+                endInterval = 100,
+                steps = 0
             )
 //            BrightnessSettingButton(
 //                modifier = modifier.padding(top = 30.dp),
@@ -166,7 +178,10 @@ fun SettingsScreen(
                 showSnoozeSettingDialog = false
             },
             length = Constants.SNOOZE_MAX_LENGTH_MINUTES,
-            title = stringResource(R.string.snooze_length_after_minutes, selectedSnoozeLengthBeforeSaving),
+            title = stringResource(
+                R.string.snooze_length_after_minutes,
+                selectedSnoozeLengthBeforeSaving
+            ),
             startScrollIndex = snoozeLength,
             onSelectedValue = {
                 selectedSnoozeLengthBeforeSaving = it
@@ -288,6 +303,53 @@ fun SettingButton(
             colorFilter = ColorFilter.tint(startIconColor)
         )
 
+    }
+}
+
+@Composable
+fun SettingSlider(
+    title: String,
+    modifier: Modifier = Modifier,
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    startInterval: Int,
+    endInterval: Int,
+    steps: Int
+) {
+    Row(
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .heightIn(min = 90.dp, max = 160.dp)
+            .border(
+                1.dp,
+                Color.Gray.copy(alpha = 0.7f),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround,
+        ) {
+            Text(
+                text = title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                color = textColor
+            )
+            SliderCustom(
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp),
+                value = value,
+                onValueChange = onValueChange,
+                startInterval = startInterval,
+                endInterval = endInterval,
+                steps = steps
+            )
+        }
     }
 }
 
