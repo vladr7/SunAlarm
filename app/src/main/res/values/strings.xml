@@ -25,7 +25,7 @@
     <string name="no_alarms">No alarms</string>
     <string name="dismiss_light_alarm">Dismiss</string>
     <string name="dismiss_sound_alarm">Dismiss Next Sound Alarm</string>
-    <string name="snooze_length">Snooze length</string>
+    <string name="snooze_length">Snooze after\n%1$d minutes</string>
     <string name="save">Save</string>
     <string name="brightness">Brigthness</string>
     <string name="dynamic">Dynamic</string>

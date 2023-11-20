@@ -11,5 +11,6 @@ object Constants {
     // Config values
     const val MINUTES_UNTIL_SOUND_ALARM_INITIAL_VALUE = 1
     const val MINUTES_UNTIL_SOUND_ALARM_INTERVAL = 121
+    const val SNOOZE_MAX_LENGTH_MINUTES = 61
     const val KEEP_LIGHT_SCREEN_ON_FOR_MINUTES  = 120 * 60 * 1000L
 }

@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
+import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.presentation.askBrightnessPermission
 import com.riviem.sunalarm.core.presentation.hasBrightnessPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.GradientBackgroundScreen
@@ -102,6 +103,7 @@ fun SettingsScreen(
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
     var showBrightnessSettingDialog by remember { mutableStateOf(false) }
     var showFirstDayOfWeekDropdown by remember { mutableStateOf(false) }
+    var selectedSnoozeLengthBeforeSaving by remember { mutableIntStateOf(snoozeLength) }
 
     GradientBackgroundScreen {
         Column(
@@ -140,9 +142,8 @@ fun SettingsScreen(
         }
     }
     AnimatedVisibility(visible = showSnoozeSettingDialog) {
-        SnoozeSettingDialog(
-            modifier = modifier
-                .fillMaxWidth(),
+        ScrollOneItemDialog(
+            modifier,
             onDismissRequest = {
                 showSnoozeSettingDialog = false
             },
@@ -150,9 +151,12 @@ fun SettingsScreen(
                 onSnoozeSavedClicked(it)
                 showSnoozeSettingDialog = false
             },
-            length = 61,
-            title = stringResource(R.string.snooze_length),
-            initialSnoozeLength = snoozeLength
+            length = Constants.SNOOZE_MAX_LENGTH_MINUTES,
+            title = stringResource(R.string.snooze_length, selectedSnoozeLengthBeforeSaving),
+            startScrollIndex = snoozeLength,
+            onSelectedValue = {
+                selectedSnoozeLengthBeforeSaving = it
+            }
         )
     }
     AnimatedVisibility(visible = showBrightnessSettingDialog) {
@@ -383,26 +387,6 @@ private fun BrightnessGraduallySlider(
             disabledInactiveTrackColor = SettingsDisabledSwitchButtonColor,
             disabledInactiveTickColor = SettingsDisabledSwitchTrackColor
         ),
-    )
-}
-
-@Composable
-fun SnoozeSettingDialog(
-    modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit,
-    onSaveClicked: (Int) -> Unit,
-    length: Int,
-    title: String,
-    initialSnoozeLength: Int
-) {
-    ScrollOneItemDialog(
-        modifier,
-        onDismissRequest,
-        title,
-        length,
-        onSaveClicked,
-        startScrollIndex = initialSnoozeLength,
-        onSelectedValue = {}
     )
 }
 
