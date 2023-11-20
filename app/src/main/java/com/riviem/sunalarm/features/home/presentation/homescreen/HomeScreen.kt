@@ -99,7 +99,11 @@ fun HomeRoute(
         )
     }
 
-    if (!state.showTimePickerScreen && state.alarms != null) {
+    AnimatedVisibility(
+        visible = !state.showTimePickerScreen && state.alarms != null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
         HomeScreen(
             context = context,
             onAlarmClick = { alarm ->
@@ -129,7 +133,6 @@ fun HomeRoute(
             }
         )
     }
-
     AnimatedVisibility(
         visible = state.showTimePickerScreen,
         enter = fadeIn(),
