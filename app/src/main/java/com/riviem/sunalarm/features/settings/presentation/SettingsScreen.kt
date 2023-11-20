@@ -141,7 +141,7 @@ fun SettingsScreen(
                 }
             )
             SettingSlider(
-                title = stringResource(R.string.wake_up_screen_brightness),
+                title = stringResource(R.string.morning_light_intensity),
                 value = brightnessValue,
                 onValueChange = {
                     brightnessValue = it
@@ -164,8 +164,14 @@ fun SettingsScreen(
             )
             SettingTwoOptions(
                 title = stringResource(id = R.string.first_day_of_the_week),
-                value = 1,
-                onValueChange = { }
+                value = if (firstDayOfWeek == FirstDayOfWeek.MONDAY) 0 else 1,
+                onValueChange = {
+                    onSelectFirstDayOfWeek(
+                        if (
+                            it == 0
+                        ) FirstDayOfWeek.MONDAY else FirstDayOfWeek.SUNDAY
+                    )
+                }
             )
 //            SettingButton(
 //                startIcon = Icons.Filled.Today,
@@ -406,7 +412,7 @@ fun SettingTwoOptions(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onValueChange(0) }
+                    modifier = Modifier
                 ) {
                     RadioButtonCustom(
                         selected = value == 0,
@@ -421,12 +427,11 @@ fun SettingTwoOptions(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .clickable { onValueChange(0) }
                         .padding(end = 6.dp)
                 ) {
                     RadioButtonCustom(
                         selected = value == 1,
-                        onSelected = { onValueChange(0) },
+                        onSelected = { onValueChange(1) },
                     )
                     Text(
                         text = stringResource(R.string.sunday),

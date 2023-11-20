@@ -68,5 +68,6 @@
     <string name="morning_light_graduation_new_line">Morning Light\nGraduation</string>
     <string name="monday">Monday</string>
     <string name="sunday">Sunday</string>
+    <string name="morning_light_intensity">Morning Light Intensity</string>
 
 </resources>
