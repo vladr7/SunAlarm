@@ -24,7 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -113,10 +113,10 @@ fun SettingsScreen(
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
-    var showBrightnessSettingDialog by remember { mutableStateOf(false) }
     var showFirstDayOfWeekDropdown by remember { mutableStateOf(false) }
     var selectedSnoozeLengthBeforeSaving by remember { mutableIntStateOf(snoozeLength) }
     var brightnessValue by remember { mutableIntStateOf(brightnessSettingUI.brightness) }
+    var showBrightnessOverTimeDialog by remember { mutableStateOf(false) }
 
     GradientBackgroundScreen {
         Column(
@@ -147,6 +147,15 @@ fun SettingsScreen(
                 startInterval = 0,
                 endInterval = 100,
                 steps = 0
+            )
+            SettingButton(
+                startIcon = Icons.Filled.LightMode,
+                startIconColor = textColor,
+                title = stringResource(R.string.morning_light_graduation),
+                subtitle = stringResource(R.string.choose_how_quickly_the_screen_reaches_maximum_brightness, 10),
+                onClick = {
+
+                }
             )
 //            BrightnessSettingButton(
 //                modifier = modifier.padding(top = 30.dp),
@@ -188,18 +197,15 @@ fun SettingsScreen(
             }
         )
     }
-    AnimatedVisibility(visible = showBrightnessSettingDialog) {
-        BrightnessSettingDialog(
-            modifier = modifier
-                .fillMaxWidth(),
-            onDismissRequest = {
-                showBrightnessSettingDialog = false
-            },
-            onSaveClicked = {
-                onBrightnessSaveClicked(it)
-                showBrightnessSettingDialog = false
-            },
-            brightnessSettingUI = brightnessSettingUI,
+    AnimatedVisibility(visible = showBrightnessOverTimeDialog) {
+        ScrollOneItemDialog(
+            modifier = Modifier,
+            onDismissRequest = { /*TODO*/ },
+            title = "",
+            length = Constants.INCREASE_BRIGHTNESS_OVER_TIME_INTERVAL,
+            onSaveClicked = { /*TODO*/ },
+            startScrollIndex = 0,
+            onSelectedValue = { /*TODO*/ }
         )
     }
     AnimatedVisibility(visible = showFirstDayOfWeekDropdown) {
@@ -269,7 +275,7 @@ fun SettingButton(
             contentDescription = null,
             modifier = modifier
                 .padding(start = 20.dp)
-                .size(40.dp),
+                .size(30.dp),
             colorFilter = ColorFilter.tint(startIconColor)
         )
         Column(
@@ -280,7 +286,7 @@ fun SettingButton(
         ) {
             Text(
                 text = title,
-                fontSize = 18.sp,
+                fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
                 color = textColor
             )
@@ -293,16 +299,6 @@ fun SettingButton(
                 color = textColor
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
-        Image(
-            imageVector = Icons.Filled.Edit,
-            contentDescription = null,
-            modifier = modifier
-                .padding(end = 20.dp)
-                .size(30.dp),
-            colorFilter = ColorFilter.tint(startIconColor)
-        )
-
     }
 }
 
@@ -335,7 +331,7 @@ fun SettingSlider(
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = title,
-                fontSize = 18.sp,
+                fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 color = textColor
