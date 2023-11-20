@@ -51,7 +51,7 @@ fun MainNavigation(
                                         contentDescription = null,
                                         tint = containerColor,
                                         modifier = Modifier
-                                            .size(30.dp)
+                                            .size(34.dp)
                                     )
                                 } else {
                                     Icon(
