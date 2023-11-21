@@ -69,19 +69,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
-import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
 import com.riviem.sunalarm.core.presentation.ButtonCustom
 import com.riviem.sunalarm.core.presentation.SwitchCustom
 import com.riviem.sunalarm.core.presentation.checkAndRequestLocationPermission
 import com.riviem.sunalarm.core.presentation.checkLocationIsEnabled
-import com.riviem.sunalarm.core.presentation.extractHourAndMinute
-import com.riviem.sunalarm.core.presentation.getCoordinates
 import com.riviem.sunalarm.core.presentation.hasCameraPermission
 import com.riviem.sunalarm.core.presentation.hasLocationPermission
 import com.riviem.sunalarm.core.presentation.requestCameraPermission
@@ -96,17 +95,18 @@ import com.riviem.sunalarm.ui.theme.textColor
 import com.riviem.sunalarm.ui.theme.timePickerBackgroundColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import retrofit2.await
 
 @Composable
 fun TimePickerScreen(
     alarm: AlarmUIModel,
     onSaveClick: (AlarmUIModel) -> Unit,
     onCancelClick: () -> Unit,
-    firstDayOfWeek: FirstDayOfWeek
+    firstDayOfWeek: FirstDayOfWeek,
+    viewModel: TimePickerViewModel = hiltViewModel()
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val activity = androidx.compose.ui.platform.LocalContext.current as MainActivity
+    val state by viewModel.state.collectAsStateWithLifecycle()
     var showColorPicker by remember { mutableStateOf(false) }
     var showSoundAlarmPicker by remember { mutableStateOf(false) }
     var newAlarm by remember { mutableStateOf(alarm) }
@@ -118,7 +118,10 @@ fun TimePickerScreen(
     )
     val coroutineScope = rememberCoroutineScope()
     var selectedMinutesUntilSoundAlarmBeforeSaving by remember { mutableIntStateOf(alarm.minutesUntilSoundAlarm) }
-    var sunriseTime: HourMinute? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.initSunriseTime(alarm, activity)
+    }
 
     Box(modifier = Modifier
         .background(
@@ -148,7 +151,7 @@ fun TimePickerScreen(
                 selectedHour = selectedHour,
                 selectedMinute = selectedMinute,
                 isAutoSunriseEnabled = newAlarm.isAutoSunriseEnabled,
-                hourMinute = sunriseTime
+                hourMinute = state.sunriseTime
             )
             LightAlarmConfiguration(
                 modifier = Modifier
@@ -224,36 +227,13 @@ fun TimePickerScreen(
                         )
                     } else {
                         coroutineScope.launch {
-                            val coordinates = getCoordinates(activity)
-                            if (coordinates != null) {
-                                try {
-                                    val response =
-                                        RetrofitInstance.sunriseApiService.getSunriseTime(
-                                            coordinates.latitude,
-                                            -coordinates.longitude
-                                        ).await()
-                                    sunriseTime = extractHourAndMinute(response.results.sunrise)
-                                    sunriseTime?.let {
-                                        newAlarm = newAlarm.copy(
-                                            ringTime = newAlarm.ringTime
-                                                .withHour(it.hour)
-                                                .withMinute(it.minute),
-                                            isAutoSunriseEnabled = true
-                                        )
-                                    }
-                                } catch (e: Exception) {
-                                    newAlarm = newAlarm.copy(
-                                        isAutoSunriseEnabled = false
-                                    )
-                                    Toast.makeText(
-                                        context,
-                                        context.resources.getString(R.string.error_getting_sunrise_time_maybe_internet_is_off),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            } else {
+                            viewModel.getSunriseTime(activity)
+                            state.sunriseTime?.let {
                                 newAlarm = newAlarm.copy(
-                                    isAutoSunriseEnabled = false
+                                    ringTime = newAlarm.ringTime
+                                        .withHour(it.hour)
+                                        .withMinute(it.minute),
+                                    isAutoSunriseEnabled = true
                                 )
                             }
                         }
@@ -315,6 +295,27 @@ fun TimePickerScreen(
                     selectedMinutesUntilSoundAlarmBeforeSaving = it
                 }
             )
+        }
+    }
+
+    LaunchedEffect(key1 = state.showInternetOffError) {
+        if (state.showInternetOffError == true) {
+            Toast.makeText(
+                context,
+                context.resources.getString(R.string.error_getting_sunrise_time_maybe_internet_is_off),
+                Toast.LENGTH_SHORT
+            ).show()
+            viewModel.resetToasts()
+        }
+    }
+    LaunchedEffect(key1 = state.showGeneralError) {
+        if (state.showGeneralError == true) {
+            Toast.makeText(
+                context,
+                context.resources.getString(R.string.error_getting_sunrise_time),
+                Toast.LENGTH_SHORT
+            ).show()
+            viewModel.resetToasts()
         }
     }
 }

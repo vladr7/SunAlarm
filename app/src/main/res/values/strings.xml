@@ -70,5 +70,6 @@
     <string name="monday">Monday</string>
     <string name="sunday">Sunday</string>
     <string name="morning_light_intensity">Morning Light Intensity</string>
+    <string name="error_getting_sunrise_time">Error getting sunrise time</string>
 
 </resources>
