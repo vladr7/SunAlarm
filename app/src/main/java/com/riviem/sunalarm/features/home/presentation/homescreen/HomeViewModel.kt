@@ -144,12 +144,12 @@ class HomeViewModel @Inject constructor(
 
     fun onAlarmClick(alarm: AlarmUIModel) {
         val isExpanded =
-            state.value.alarms?.find { it.createdTimestamp == alarm.createdTimestamp }?.isExpanded
+            state.value.alarms?.find { it.createdTimestamp == alarm.createdTimestamp }?.isExpandedForEdit
                 ?: false
         if (isExpanded) {
             _state.update { homeState ->
                 homeState.copy(
-                    alarms = homeState.alarms?.map { it.copy(isExpanded = false) }
+                    alarms = homeState.alarms?.map { it.copy(isExpandedForEdit = false) }
                 )
             }
             return
@@ -233,11 +233,11 @@ class HomeViewModel @Inject constructor(
 
     fun onAlarmLongPress(alarm: AlarmUIModel) {
         val newAlarms = state.value.alarms?.map { alarmUIModel ->
-            alarmUIModel.copy(isExpanded = alarmUIModel.createdTimestamp == alarm.createdTimestamp)
+            alarmUIModel.copy(isExpandedForEdit = alarmUIModel.createdTimestamp == alarm.createdTimestamp)
         }
         _state.update { homeState ->
             homeState.copy(
-                selectedAlarm = alarm.copy(isExpanded = true),
+                selectedAlarm = alarm.copy(isExpandedForEdit = true),
                 alarms = newAlarms
             )
         }

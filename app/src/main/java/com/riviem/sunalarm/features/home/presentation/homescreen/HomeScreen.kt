@@ -107,7 +107,7 @@ fun HomeRoute(
         HomeScreen(
             context = context,
             onAlarmClick = { alarm ->
-                if (!alarm.isExpanded) {
+                if (!alarm.isExpandedForEdit) {
                     viewModel.onAlarmClick(alarm)
                     onAlarmClick()
                 } else {
@@ -450,7 +450,7 @@ fun AlarmItem(
         ) {
             AlarmNameAndTime(alarm.name, alarm.ringTime)
             Spacer(modifier = Modifier.weight(1f))
-            if (!alarm.isExpanded) {
+            if (!alarm.isExpandedForEdit) {
                 AlarmSelectedDays(
                     modifier = modifier,
                     days = alarm.days,
@@ -463,7 +463,7 @@ fun AlarmItem(
                     onCheckedChange = onCheckedChange
                 )
             }
-            AnimatedVisibility(visible = alarm.isExpanded) {
+            AnimatedVisibility(visible = alarm.isExpandedForEdit) {
                 DeleteAlarmButton(
                     modifier = modifier
                         .padding(end = 30.dp),
