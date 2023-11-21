@@ -561,10 +561,14 @@ fun ScrollOneItemDialog(
     startScrollIndex: Int,
     onSelectedValue: (Int) -> Unit
 ) {
-    var selectedValue by remember { mutableIntStateOf(startScrollIndex) }
-
-    LaunchedEffect(key1 = startScrollIndex) {
-        selectedValue = startScrollIndex
+    var selectedValue by remember {
+        mutableIntStateOf(
+            if (startScrollIndex <= 0) {
+                1
+            } else {
+                startScrollIndex
+            }
+        )
     }
 
     AlertDialog(
