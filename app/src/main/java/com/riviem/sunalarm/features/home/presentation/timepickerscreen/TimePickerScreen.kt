@@ -88,6 +88,7 @@ import com.riviem.sunalarm.core.presentation.requestCameraPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.models.HourMinute
 import com.riviem.sunalarm.features.settings.presentation.CancelSaveButtons
 import com.riviem.sunalarm.features.settings.presentation.ScrollOneItemDialog
 import com.riviem.sunalarm.ui.theme.alarmColor
@@ -117,8 +118,7 @@ fun TimePickerScreen(
     )
     val coroutineScope = rememberCoroutineScope()
     var selectedMinutesUntilSoundAlarmBeforeSaving by remember { mutableIntStateOf(alarm.minutesUntilSoundAlarm) }
-    var timeMatchesSunrise by remember { mutableStateOf(false) }
-    var sunriseTime by remember { mutableStateOf(Pair(0, 0)) }
+    var sunriseTime: HourMinute? by remember { mutableStateOf(null) }
 
     Box(modifier = Modifier
         .background(
@@ -147,8 +147,8 @@ fun TimePickerScreen(
                     .height(300.dp),
                 selectedHour = selectedHour,
                 selectedMinute = selectedMinute,
-                timeMatchesSunrise = timeMatchesSunrise,
-                sunRiseTime = sunriseTime
+                isAutoSunriseEnabled = newAlarm.isAutoSunriseEnabled,
+                hourMinute = sunriseTime
             )
             LightAlarmConfiguration(
                 modifier = Modifier
@@ -200,8 +200,10 @@ fun TimePickerScreen(
                 },
                 firstDayOfWeek = firstDayOfWeek,
                 onSunriseButtonClicked = {
-                    if (timeMatchesSunrise) {
-                        timeMatchesSunrise = false
+                    if (newAlarm.isAutoSunriseEnabled) {
+                        newAlarm = newAlarm.copy(
+                            isAutoSunriseEnabled = false
+                        )
                         return@LightAlarmConfiguration
                     }
                     if (!checkLocationIsEnabled(context = context)) {
@@ -210,12 +212,16 @@ fun TimePickerScreen(
                             context.resources.getString(R.string.location_is_disabled),
                             Toast.LENGTH_SHORT
                         ).show()
-                        timeMatchesSunrise = false
+                        newAlarm = newAlarm.copy(
+                            isAutoSunriseEnabled = false
+                        )
                         return@LightAlarmConfiguration
                     }
                     if (!hasLocationPermission(context = context)) {
                         checkAndRequestLocationPermission(activity = activity)
-                        timeMatchesSunrise = false
+                        newAlarm = newAlarm.copy(
+                            isAutoSunriseEnabled = false
+                        )
                     } else {
                         coroutineScope.launch {
                             val coordinates = getCoordinates(activity)
@@ -227,15 +233,18 @@ fun TimePickerScreen(
                                             -coordinates.longitude
                                         ).await()
                                     sunriseTime = extractHourAndMinute(response.results.sunrise)
-                                    newAlarm = newAlarm.copy(
-                                        ringTime = newAlarm.ringTime.withHour(sunriseTime.first)
-                                    )
-                                    newAlarm = newAlarm.copy(
-                                        ringTime = newAlarm.ringTime.withMinute(sunriseTime.second)
-                                    )
-                                    timeMatchesSunrise = true
+                                    sunriseTime?.let {
+                                        newAlarm = newAlarm.copy(
+                                            ringTime = newAlarm.ringTime
+                                                .withHour(it.hour)
+                                                .withMinute(it.minute),
+                                            isAutoSunriseEnabled = true
+                                        )
+                                    }
                                 } catch (e: Exception) {
-                                    timeMatchesSunrise = false
+                                    newAlarm = newAlarm.copy(
+                                        isAutoSunriseEnabled = false
+                                    )
                                     Toast.makeText(
                                         context,
                                         context.resources.getString(R.string.error_getting_sunrise_time_maybe_internet_is_off),
@@ -243,7 +252,9 @@ fun TimePickerScreen(
                                     ).show()
                                 }
                             } else {
-                                timeMatchesSunrise = false
+                                newAlarm = newAlarm.copy(
+                                    isAutoSunriseEnabled = false
+                                )
                             }
                         }
                     }
@@ -251,7 +262,7 @@ fun TimePickerScreen(
                 onSoundAlarmModalClicked = {
                     showSoundAlarmPicker = true
                 },
-                timeMatchesSunrise = timeMatchesSunrise
+                isAutoSunriseEnabled = newAlarm.isAutoSunriseEnabled
             )
             CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)
         }
@@ -416,7 +427,7 @@ fun LightAlarmConfiguration(
     onSoundAlarmModalClicked: () -> Unit,
     firstDayOfWeek: FirstDayOfWeek,
     onSunriseButtonClicked: () -> Unit,
-    timeMatchesSunrise: Boolean
+    isAutoSunriseEnabled: Boolean
 ) {
     val scrollState = rememberScrollState()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -498,7 +509,7 @@ fun LightAlarmConfiguration(
             subtitle = stringResource(R.string.set_alarm_to_sunrise),
             startIcon = Icons.Filled.WbSunny,
             startIconColor = textColor,
-            checked = timeMatchesSunrise
+            checked = isAutoSunriseEnabled
         )
     }
 }
@@ -657,16 +668,14 @@ fun ScrollableTimePicker(
     selectedMinute: Int,
     onHourSelected: (Int) -> Unit,
     onMinuteSelected: (Int) -> Unit,
-    timeMatchesSunrise: Boolean,
-    sunRiseTime: Pair<Int, Int>,
+    isAutoSunriseEnabled: Boolean,
+    hourMinute: HourMinute?,
 ) {
     val hoursState = rememberLazyListState()
     val minutesState = rememberLazyListState()
 
     val hours = infiniteHours.take(480).map { if (it < 10) "0$it" else it.toString() }.toList()
     val minutes = infiniteMinutes.take(1200).map { if (it < 10) "0$it" else it.toString() }.toList()
-
-    println("vladlog: selectedHour on picker: $selectedHour")
 
     LaunchedEffect(key1 = selectedHour, selectedMinute) {
         hoursState.scrollToItem(index = 240 + selectedHour)
@@ -676,13 +685,13 @@ fun ScrollableTimePicker(
         minutesState.animateScrollToItem(index = 600 + selectedMinute - 1)
     }
 
-    LaunchedEffect(key1 = timeMatchesSunrise) {
-        if (timeMatchesSunrise) {
-            hoursState.scrollToItem(index = 240 + sunRiseTime.first)
-            minutesState.scrollToItem(index = 600 + sunRiseTime.second)
+    LaunchedEffect(key1 = isAutoSunriseEnabled) {
+        if (isAutoSunriseEnabled && hourMinute != null) {
+            hoursState.scrollToItem(index = 240 + hourMinute.hour)
+            minutesState.scrollToItem(index = 600 + hourMinute.minute)
             delay(50L)
-            hoursState.animateScrollToItem(index = 240 + sunRiseTime.first - 2)
-            minutesState.animateScrollToItem(index = 600 + sunRiseTime.second - 1)
+            hoursState.animateScrollToItem(index = 240 + hourMinute.hour - 2)
+            minutesState.animateScrollToItem(index = 600 + hourMinute.minute - 1)
         }
     }
 

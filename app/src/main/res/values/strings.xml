@@ -22,7 +22,8 @@
 
     <string name="next_alarm_format">Next alarm in %1$d %2$s %3$d %4$s %5$d %6$s</string>
     <string name="next_alarm_in">"Next alarm in "</string>
-    <string name="no_alarms">All alarms are off</string>
+    <string name="no_alarms">No Alarms</string>
+    <string name="all_alarms_are_off">All alarms are off</string>
     <string name="dismiss_light_alarm">Dismiss</string>
     <string name="dismiss_sound_alarm">Dismiss Next Sound Alarm</string>
     <string name="snooze_length_after_minutes">Snooze after\n%1$d minutes</string>

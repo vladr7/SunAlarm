@@ -13,6 +13,7 @@ data class AlarmUIModel(
     val flashlight: Boolean,
     val soundAlarmEnabled: Boolean,
     val minutesUntilSoundAlarm: Int,
+    val isAutoSunriseEnabled: Boolean,
     val isExpandedForEdit: Boolean = false,
 )
 

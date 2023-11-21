@@ -396,7 +396,6 @@ fun AlarmsList(
                 AlarmItem(
                     alarm = item,
                     onAlarmClick = {
-                        println("vladlog: onAlarmClick: ${item.ringTime}")
                         onAlarmClick(item)
                     },
                     onCheckedChange = {
@@ -404,11 +403,9 @@ fun AlarmsList(
                     },
                     firstDayOfWeek = firstDayOfWeek,
                     onAlarmLongPress = {
-                        println("vladlog: onAlarmLongPress: ${item.ringTime}")
                         onAlarmLongPress(item)
                     },
                     onDeleteAlarmClick = {
-                        println("vladlog: onDeleteAlarmClick: ${item.ringTime}")
                         onDeleteAlarmClick(item)
                     }
                 )

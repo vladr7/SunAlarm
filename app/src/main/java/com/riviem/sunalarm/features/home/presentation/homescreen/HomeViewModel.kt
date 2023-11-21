@@ -47,6 +47,7 @@ class HomeViewModel @Inject constructor(
                 days = weekDays,
                 soundAlarmEnabled = false,
                 minutesUntilSoundAlarm = Constants.MINUTES_UNTIL_SOUND_ALARM_INITIAL_VALUE,
+                isAutoSunriseEnabled = false,
             ),
             title = "",
             subtitle = "",
@@ -82,8 +83,8 @@ class HomeViewModel @Inject constructor(
     private fun getAlarms() {
         viewModelScope.launch {
             alarmRepository.getAlarms().collectLatest { databaseAlarms ->
-//                println("vladlog: ------------------------------------")
-//                println("vladlog: ${databaseAlarms.asUIModel()}")
+                println("vladlog: ------------------------------------")
+                println("vladlog: ${databaseAlarms.asUIModel()}")
                 _state.update {
                     it.copy(alarms = databaseAlarms.asUIModel())
                 }
@@ -98,7 +99,7 @@ class HomeViewModel @Inject constructor(
         if (nextAlarm == null) {
             _state.update {
                 it.copy(
-                    title = context.resources.getString(R.string.no_alarms),
+                    title = context.resources.getString(R.string.all_alarms_are_off),
                     subtitle = "",
                 )
             }
@@ -143,6 +144,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAlarmClick(alarm: AlarmUIModel) {
+        println("vladlog: onAlarmClick time: ${alarm.ringTime}")
+        _state.update {
+            it.copy(
+                showTimePickerScreen = true,
+                selectedAlarm = alarm
+            )
+        }
         val isExpanded =
             state.value.alarms?.find { it.createdTimestamp == alarm.createdTimestamp }?.isExpandedForEdit
                 ?: false
@@ -154,17 +162,12 @@ class HomeViewModel @Inject constructor(
             }
             return
         }
-        _state.update {
-            it.copy(
-                showTimePickerScreen = true,
-                selectedAlarm = alarm
-            )
-        }
     }
 
     fun onSaveAlarmClick(alarm: AlarmUIModel, context: Context) {
         val nextAlarmTime = alarmRepository.getNextAlarmDateTime(alarm)
         val newAlarm = alarm.copy(ringTime = nextAlarmTime, isOn = true)
+        println("vladlog: newAlarm sunrise: ${newAlarm.isAutoSunriseEnabled}")
         viewModelScope.launch(Dispatchers.IO) {
             alarmRepository.insert(newAlarm.asDatabaseModel())
         }
@@ -173,6 +176,13 @@ class HomeViewModel @Inject constructor(
                 showTimePickerScreen = false,
                 selectedAlarm = newAlarm,
                 recentlyAddedOrCheckedAlarm = true,
+                alarms = it.alarms?.map { alarmUIModel ->
+                    if (alarmUIModel.createdTimestamp == newAlarm.createdTimestamp) {
+                        newAlarm
+                    } else {
+                        alarmUIModel
+                    }
+                }
             )
         }
         alarmRepository.setAlarm(newAlarm, context)
@@ -192,6 +202,7 @@ class HomeViewModel @Inject constructor(
                     days = weekDays,
                     soundAlarmEnabled = false,
                     minutesUntilSoundAlarm = Constants.MINUTES_UNTIL_SOUND_ALARM_INITIAL_VALUE,
+                    isAutoSunriseEnabled = false,
                 )
             )
         }

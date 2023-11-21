@@ -24,7 +24,6 @@ class MainViewModel @Inject constructor(
                 context = context,
                 alarmId = alarmId
             )
-            println("vladlog: cancelSoundAlarm: id: ${alarmId}")
             dismissNotification(context)
         }
     }

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.models.HourMinute
 import kotlinx.coroutines.tasks.await
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -30,10 +31,13 @@ suspend fun getCoordinates(activity: Activity): Coordinates? {
 }
 
 
-fun extractHourAndMinute(timeString: String): Pair<Int, Int> {
+fun extractHourAndMinute(timeString: String): HourMinute {
     val formatter = DateTimeFormatter.ofPattern("h:mm:ss a")
     val time = LocalTime.parse(timeString, formatter)
-    return Pair(time.hour, time.minute)
+    return HourMinute(
+        hour = time.hour,
+        minute = time.minute
+    )
 }
 
 data class Coordinates(

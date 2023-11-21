@@ -29,7 +29,6 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val createdTimestamp = intent?.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
         val alarmType = intent?.getStringExtra(Constants.ALARM_TYPE_ID)
-        println("vladlog: AlarmReceiver Alarm Triggered! createdTimestamp: $createdTimestamp")
 
         val mainActivityIntent = Intent(context, MainActivity::class.java)
         mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -65,7 +64,6 @@ class MainActivity : ComponentActivity() {
         val createdTimestamp = intent.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
         val alarmTypeString = intent.getStringExtra(Constants.ALARM_TYPE_ID)
         val alarmType = if(alarmTypeString == null) AlarmType.LIGHT else AlarmType.valueOf(alarmTypeString)
-        println("vladlog: MainActivity onCreate: createdTimestamp: $createdTimestamp")
 
         if(intent.action == ACTION_DISMISS_ALARM) {
             mainViewModel.cancelSoundAlarm(

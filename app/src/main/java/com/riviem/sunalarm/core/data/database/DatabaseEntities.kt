@@ -20,6 +20,7 @@ data class DatabaseAlarm(
     val flashlight: Boolean,
     val soundEnabled: Boolean,
     val minutesUntilSound: Int,
+    val isAutoSunriseEnabled: Boolean
 )
 
 fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
@@ -33,6 +34,7 @@ fun AlarmUIModel.asDatabaseModel(): DatabaseAlarm {
         flashlight = flashlight,
         soundEnabled = soundAlarmEnabled,
         minutesUntilSound = minutesUntilSoundAlarm,
+        isAutoSunriseEnabled = isAutoSunriseEnabled
     )
 }
 
@@ -47,6 +49,7 @@ fun DatabaseAlarm.asUIModel(): AlarmUIModel {
         flashlight = flashlight,
         soundAlarmEnabled = soundEnabled,
         minutesUntilSoundAlarm = minutesUntilSound,
+        isAutoSunriseEnabled = isAutoSunriseEnabled
     )
 }
 

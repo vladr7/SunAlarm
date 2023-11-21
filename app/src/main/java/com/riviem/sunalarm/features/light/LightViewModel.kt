@@ -106,7 +106,6 @@ class LightViewModel @Inject constructor(
                 createdTimestampId - 1
             }
             val alarm = alarmRepository.getAlarmById(createdTimestampId = id)
-            println("vladlog: getAlarmById: $alarm")
             _state.update {
                 it.copy(selectedAlarm = alarm.asUIModel())
             }
