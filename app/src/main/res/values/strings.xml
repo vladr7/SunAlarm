@@ -47,7 +47,7 @@
     <string name="next_sound_alarm_in_minutes">Next sound alarm in %1$d minutes</string>
     <string name="dismiss">Dismiss</string>
     <string name="sunrise">Sunrise</string>
-    <string name="set_alarm_to_sunrise">Set alarm to sunrise</string>
+    <string name="auto_set_alarm_to_sunrise_time">Auto-set alarm to sunrise time</string>
     <string name="error_getting_sunrise_time_maybe_internet_is_off">Error getting sunrise time\nMaybe internet is off</string>
     <string name="location_is_disabled">Location is disabled</string>
     <string name="color_of_the_light_alarm_screen">Color of the light alarm screen</string>
@@ -71,5 +71,7 @@
     <string name="sunday">Sunday</string>
     <string name="morning_light_intensity">Morning Light Intensity</string>
     <string name="error_getting_sunrise_time">Error getting sunrise time</string>
+    <string name="sun_rises_at">Auto-Set Sunrise time: Enabled\nSun rises at %1$d:%2$d</string>
+    <string name="sunrise_auto_set_disabled">Auto-Set Sunrise time: Disabled</string>
 
 </resources>

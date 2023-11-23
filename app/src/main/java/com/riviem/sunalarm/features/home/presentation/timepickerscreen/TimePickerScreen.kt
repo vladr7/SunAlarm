@@ -1,6 +1,7 @@
 package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -207,6 +208,7 @@ fun TimePickerScreen(
                         newAlarm = newAlarm.copy(
                             isAutoSunriseEnabled = false
                         )
+                        viewModel.showSunriseFeatureDisabledToast()
                         return@LightAlarmConfiguration
                     }
                     if (!checkLocationIsEnabled(context = context)) {
@@ -235,6 +237,7 @@ fun TimePickerScreen(
                                         .withMinute(it.minute),
                                     isAutoSunriseEnabled = true
                                 )
+                                viewModel.showSunriseFeatureEnabledToast()
                             }
                         }
                     }
@@ -298,12 +301,21 @@ fun TimePickerScreen(
         }
     }
 
+    DisplayToasts(state, context, viewModel)
+}
+
+@Composable
+private fun DisplayToasts(
+    state: TimePickerState,
+    context: Context,
+    viewModel: TimePickerViewModel
+) {
     LaunchedEffect(key1 = state.showInternetOffError) {
         if (state.showInternetOffError == true) {
             Toast.makeText(
                 context,
                 context.resources.getString(R.string.error_getting_sunrise_time_maybe_internet_is_off),
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_LONG
             ).show()
             viewModel.resetToasts()
         }
@@ -313,7 +325,29 @@ fun TimePickerScreen(
             Toast.makeText(
                 context,
                 context.resources.getString(R.string.error_getting_sunrise_time),
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_LONG
+            ).show()
+            viewModel.resetToasts()
+        }
+    }
+    LaunchedEffect(key1 = state.showSunriseFeatureEnabledToast) {
+        val hour = state.sunriseTime?.hour ?: return@LaunchedEffect
+        val minute = state.sunriseTime.minute
+        if (state.showSunriseFeatureEnabledToast) {
+            Toast.makeText(
+                context,
+                context.resources.getString(R.string.sun_rises_at, hour, minute),
+                Toast.LENGTH_LONG
+            ).show()
+            viewModel.resetToasts()
+        }
+    }
+    LaunchedEffect(key1 = state.showSunriseFeatureDisabledToast) {
+        if (state.showSunriseFeatureDisabledToast) {
+            Toast.makeText(
+                context,
+                context.resources.getString(R.string.sunrise_auto_set_disabled),
+                Toast.LENGTH_LONG
             ).show()
             viewModel.resetToasts()
         }
@@ -507,7 +541,7 @@ fun LightAlarmConfiguration(
                 .padding(bottom = 20.dp),
             onClick = onSunriseButtonClicked,
             title = stringResource(R.string.sunrise),
-            subtitle = stringResource(R.string.set_alarm_to_sunrise),
+            subtitle = stringResource(R.string.auto_set_alarm_to_sunrise_time),
             startIcon = Icons.Filled.WbSunny,
             startIconColor = textColor,
             checked = isAutoSunriseEnabled

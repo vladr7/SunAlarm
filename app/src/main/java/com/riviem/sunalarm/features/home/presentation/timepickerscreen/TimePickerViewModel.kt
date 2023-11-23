@@ -70,15 +70,34 @@ class TimePickerViewModel @Inject constructor(
         _state.update {
             it.copy(
                 showInternetOffError = null,
-                showGeneralError = null
+                showGeneralError = null,
+                showSunriseFeatureDisabledToast = false,
+                showSunriseFeatureEnabledToast = false,
             )
         }
     }
 
+    fun showSunriseFeatureEnabledToast() {
+        _state.update {
+            it.copy(
+                showSunriseFeatureEnabledToast = true
+            )
+        }
+    }
+
+    fun showSunriseFeatureDisabledToast() {
+        _state.update {
+            it.copy(
+                showSunriseFeatureDisabledToast = true
+            )
+        }
+    }
 }
 
 data class TimePickerState(
     val sunriseTime: HourMinute? = null,
     val showInternetOffError: Boolean? = null,
     val showGeneralError: Boolean? = null,
+    val showSunriseFeatureEnabledToast: Boolean = false,
+    val showSunriseFeatureDisabledToast: Boolean = false,
 )
