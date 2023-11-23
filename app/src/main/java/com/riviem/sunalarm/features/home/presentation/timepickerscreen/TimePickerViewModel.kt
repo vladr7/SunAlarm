@@ -45,7 +45,7 @@ class TimePickerViewModel @Inject constructor(
                         coordinates.latitude,
                         -coordinates.longitude
                     ).await()
-                _state.update {
+                _state.update {// bug not updating in time
                     it.copy(
                         sunriseTime = extractHourAndMinute(response.results.sunrise)
                     )
