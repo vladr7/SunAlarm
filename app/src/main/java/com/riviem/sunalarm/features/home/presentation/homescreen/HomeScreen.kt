@@ -95,7 +95,6 @@ fun HomeRoute(
             description = "Please allow camera permission to use flashlight",
             onDismissRequest = { showPermissionDialog = false },
             onConfirmClicked = { showPermissionDialog = false },
-            confirmTextButton = context.getString(R.string.ok)
         )
     }
 

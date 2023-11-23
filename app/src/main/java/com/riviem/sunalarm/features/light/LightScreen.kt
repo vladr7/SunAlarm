@@ -11,15 +11,24 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
@@ -31,8 +40,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,7 +52,8 @@ import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.createDismissSoundNotification
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.releaseWakeLock
-import com.riviem.sunalarm.ui.theme.Purple40
+import com.riviem.sunalarm.ui.theme.alarmColor
+import com.riviem.sunalarm.ui.theme.textColor
 
 
 @Composable
@@ -62,18 +74,30 @@ fun LightScreen(
             )
         )
     }
+    val userChosenColor = state.selectedAlarm?.color ?: Color.Yellow
 
     var showDismissSnoozeScreen by remember { mutableStateOf(false) }
     val lightModifier = if (showDismissSnoozeScreen) Modifier
         .background(
-            color = state.selectedAlarm?.color ?: Color.DarkGray
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    alarmColor,
+                    Color.LightGray
+                ),
+
+                )
         )
     else Modifier
         .clickable {
             showDismissSnoozeScreen = true
         }
         .background(
-            color = state.selectedAlarm?.color ?: Color.Yellow
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    userChosenColor,
+                    Color.LightGray
+                ),
+            )
         )
 
     if (alarmType == AlarmType.SOUND) {
@@ -182,22 +206,42 @@ private fun LightScreenStart(
     time: String,
     alarmName: String,
 ) {
-    Box(
+    Column(
         modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+            .fillMaxSize()
+            .padding(top = 50.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            modifier = Modifier.padding(start = 20.dp , end = 20.dp, bottom = 280.dp),
-            text = alarmName,
-            fontSize = 50.sp,
-            color = Color.Black,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            lineHeight = 50.sp,
-        )
+        AlarmName(alarmName)
+        Spacer(modifier = Modifier.size(20.dp))
         TimeDisplay(time)
     }
 
+}
+
+@Composable
+private fun AlarmName(
+    alarmName: String
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .padding(start = 20.dp, end = 20.dp)
+            .background(
+                color = Color.LightGray,
+                shape = RoundedCornerShape(25),
+            )
+    ) {
+        Text(
+            modifier =Modifier.padding(10.dp),
+            text = alarmName,
+            fontSize = 50.sp,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            lineHeight = 50.sp,
+        )
+    }
 }
 
 @Composable
@@ -214,7 +258,7 @@ private fun TimeDisplay(time: String) {
         Text(
             text = time,
             fontSize = 70.sp,
-            color = Color.Black
+            color = textColor
         )
     }
 }
@@ -240,7 +284,7 @@ private fun LightScreenButtons(
                 .weight(0.5f),
             shape = RoundedCornerShape(5),
             colors = ButtonColors(
-                containerColor = Purple40,
+                containerColor = Color(0xFF723fb5),
                 contentColor = Color.White,
                 disabledContentColor = Color.White,
                 disabledContainerColor = Color.Gray
@@ -249,9 +293,15 @@ private fun LightScreenButtons(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Image(
+                    imageVector = Icons.Filled.Snooze, contentDescription = null,
+                    modifier = Modifier
+                        .size(60.dp),
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
+                )
                 Text(
                     text = stringResource(id = R.string.snooze),
-                    fontSize = 65.sp,
+                    fontSize = 55.sp,
                 )
                 Text(text = stringResource(R.string.snooze_minutes, snoozeLength), fontSize = 35.sp)
             }
@@ -263,17 +313,32 @@ private fun LightScreenButtons(
                 .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
                 .weight(0.5f),
             colors = ButtonColors(
-                containerColor = Color.Red,
+                containerColor = Color(0xFFf55656),
                 contentColor = Color.White,
                 disabledContentColor = Color.White,
                 disabledContainerColor = Color.Gray
             ),
             shape = RoundedCornerShape(5)
         ) {
-            Text(
-                text = stringResource(R.string.dismiss_light_alarm),
-                fontSize = 65.sp,
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+
+            ) {
+                Image(
+                    imageVector = Icons.Filled.Close, contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 30.dp)
+                        .size(70.dp),
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
+                )
+                Text(
+                    text = stringResource(id = R.string.dismiss),
+                    fontSize = 55.sp,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
         AnimatedVisibility(visible = showDismissSoundButton) {
             Button(
@@ -283,19 +348,33 @@ private fun LightScreenButtons(
                     .padding(top = 10.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
                     .weight(0.5f),
                 colors = ButtonColors(
-                    containerColor = Color.Red.copy(alpha = 0.5f),
+                    containerColor = Color(0xFFba4e47),
                     contentColor = Color.White,
                     disabledContentColor = Color.White,
                     disabledContainerColor = Color.Gray
                 ),
                 shape = RoundedCornerShape(5)
             ) {
-                Text(
-                    text = stringResource(R.string.dismiss_sound_alarm),
-                    fontSize = 40.sp,
-                    lineHeight = 40.sp,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(start = 15.dp),
+                        text = stringResource(R.string.dismiss_sound_alarm),
+                        fontSize = 30.sp,
+                        lineHeight = 35.sp,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Image(
+                        imageVector = Icons.AutoMirrored.Filled.VolumeOff,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(40.dp),
+                        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
+                    )
+                }
             }
         }
     }

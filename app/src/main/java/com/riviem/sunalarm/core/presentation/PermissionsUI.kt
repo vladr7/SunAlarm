@@ -30,7 +30,7 @@ fun PermissionDialog(
     modifier: Modifier = Modifier,
     title: String,
     description: String,
-    confirmTextButton: String,
+    confirmTextButton: String = stringResource(id = R.string.ok),
     onDismissRequest: () -> Unit,
     onConfirmClicked: () -> Unit,
 ) {
