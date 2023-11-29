@@ -65,6 +65,7 @@ import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.presentation.RadioButtonCustom
 import com.riviem.sunalarm.core.presentation.SliderCustom
+import com.riviem.sunalarm.core.presentation.hasNotificationPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.GradientBackgroundScreen
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
@@ -103,7 +104,15 @@ fun SettingsRoute(
             viewModel.setSnoozeLength(it)
         },
         onSoundNotificationSwitchClicked = { enabled ->
-            viewModel.setSoundNotificationEnabled(enabled)
+            if(enabled) {
+                if(hasNotificationPermission(context)) {
+                    viewModel.setSoundNotificationEnabled(true)
+                } else {
+                    activity.askNotificationPermission(context)
+                }
+            } else {
+                viewModel.setSoundNotificationEnabled(false)
+            }
         },
         soundNotificationEnabled = state.soundNotificationEnabled
     )

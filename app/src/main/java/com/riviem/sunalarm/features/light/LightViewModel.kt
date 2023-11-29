@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.database.asUIModel
+import com.riviem.sunalarm.core.presentation.hasNotificationPermission
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.core.presentation.extractHourAndMinute
 import com.riviem.sunalarm.core.presentation.getCoordinates
@@ -101,7 +102,7 @@ class LightViewModel @Inject constructor(
         }
     }
 
-    fun getAlarmById(createdTimestampId: Int, alarmType: AlarmType) {
+    fun getAlarmById(createdTimestampId: Int, alarmType: AlarmType, context: Context) {
         if (createdTimestampId == -1) {
             return
         }
@@ -115,18 +116,21 @@ class LightViewModel @Inject constructor(
             _state.update {
                 it.copy(selectedAlarm = alarm.asUIModel())
             }
-            checkShouldCreateDimissSoundAlarmNotification(alarm, alarmType)
+            checkShouldCreateDimissSoundAlarmNotification(alarm, alarmType, context = context)
             initShowDismissSoundButton(alarmType)
         }
     }
 
     private fun checkShouldCreateDimissSoundAlarmNotification(
         alarm: DatabaseAlarm,
-        alarmType: AlarmType
+        alarmType: AlarmType,
+        context: Context
     ) {
         if (alarm.soundEnabled && alarmType == AlarmType.LIGHT) {
-            _state.update {
-                it.copy(shouldCreateDismissSoundNotification = true)
+            if(hasNotificationPermission(context = context)) {
+                _state.update {
+                    it.copy(shouldCreateDismissSoundNotification = true)
+                }
             }
         }
     }

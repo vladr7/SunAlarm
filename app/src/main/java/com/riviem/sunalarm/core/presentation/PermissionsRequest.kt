@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -84,3 +85,21 @@ fun checkLocationIsEnabled(context: Context): Boolean {
         context.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
     return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
 }
+
+fun hasNotificationPermission(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                context, android.Manifest.permission.POST_NOTIFICATIONS
+            ) -> {
+                true
+            }
+            else -> {
+                false
+            }
+        }
+    } else {
+        true
+    }
+}
+

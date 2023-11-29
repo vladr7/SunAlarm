@@ -4,16 +4,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.Constants.CAMERA_REQUEST_CODE
 import com.riviem.sunalarm.core.Constants.LOCATION_PERMISSION_REQUEST_CODE
@@ -109,6 +112,35 @@ class MainActivity : ComponentActivity() {
         wakeLock =
             powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SunAlarm::MyWakeLockTag")
         wakeLock?.acquire(Constants.KEEP_LIGHT_SCREEN_ON_FOR_MINUTES)
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted. Continue with notification functionality.
+        } else {
+            // Permission is denied.
+        }
+    }
+
+    fun askNotificationPermission(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when (PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(
+                    context, android.Manifest.permission.POST_NOTIFICATIONS
+                ) -> {
+// You can use the API that requires the permission.
+                }
+                else -> {
+                    requestPermissionLauncher.launch(
+                        android.Manifest.permission.POST_NOTIFICATIONS
+                    )
+                }
+            }
+        } else {
+            // For OS versions below Android 12, proceed with normal notification setup.
+        }
     }
 
     override fun onRequestPermissionsResult(

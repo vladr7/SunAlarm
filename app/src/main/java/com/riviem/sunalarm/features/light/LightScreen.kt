@@ -109,7 +109,10 @@ fun LightScreen(
     }
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getAlarmById(createdTimestampId = createdTimestamp, alarmType = alarmType)
+        viewModel.getAlarmById(
+            createdTimestampId = createdTimestamp, alarmType = alarmType,
+            context = context
+        )
     }
 
     LaunchedEffect(key1 = state.brightnessSettingUI.brightness) {
@@ -239,7 +242,7 @@ private fun AlarmName(
             )
     ) {
         Text(
-            modifier =Modifier.padding(10.dp),
+            modifier = Modifier.padding(10.dp),
             text = alarmName,
             fontSize = 50.sp,
             color = textColor,
