@@ -1,13 +1,18 @@
 package com.riviem.sunalarm.features.light
 
+import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
+import com.riviem.sunalarm.core.presentation.extractHourAndMinute
+import com.riviem.sunalarm.core.presentation.getCoordinates
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.models.HourMinute
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.await
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -96,7 +102,7 @@ class LightViewModel @Inject constructor(
     }
 
     fun getAlarmById(createdTimestampId: Int, alarmType: AlarmType) {
-        if(createdTimestampId == -1) {
+        if (createdTimestampId == -1) {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
@@ -126,7 +132,7 @@ class LightViewModel @Inject constructor(
     }
 
     private fun initShowDismissSoundButton(alarmType: AlarmType) {
-        val showDismissSoundButton = if(alarmType == AlarmType.SOUND) {
+        val showDismissSoundButton = if (alarmType == AlarmType.SOUND) {
             false
         } else {
             state.value.selectedAlarm?.soundAlarmEnabled == true
@@ -136,7 +142,7 @@ class LightViewModel @Inject constructor(
                 it.copy(showDismissSoundButton = showDismissSoundButton)
             }
         }
-        if(showDismissSoundButton) {
+        if (showDismissSoundButton) {
             viewModelScope.launch {
                 alarmRepository.setCurrentSoundAlarmIdForNotification(
                     soundAlarmId = (state.value.selectedAlarm?.createdTimestamp?.plus(1)) ?: -1
@@ -145,9 +151,25 @@ class LightViewModel @Inject constructor(
         }
     }
 
-    fun stopLightAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
+    suspend fun setNextLightAlarm(
+        alarm: AlarmUIModel,
+        context: Context,
+        alarmType: AlarmType,
+        activity: Activity
+    ) {
         if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
-            alarmRepository.setAlarm(alarm = alarm, context = context)
+            if (!alarm.isAutoSunriseEnabled) {
+                alarmRepository.setAlarm(alarm = alarm, context = context)
+            } else {
+                val sunriseTime =
+                    getSunriseTime(activity) ?: alarmRepository.getSunriseTime()
+                alarmRepository.setAlarm(
+                    alarm = alarm.copy(
+                        ringTime = ZonedDateTime.now().withHour(sunriseTime.hour)
+                            .withMinute(sunriseTime.minute)
+                    ), context = context
+                )
+            }
         }
         _state.update {
             it.copy(
@@ -156,10 +178,30 @@ class LightViewModel @Inject constructor(
         }
     }
 
-    fun stopSoundAlarm(alarm: AlarmUIModel, context: Context, alarmType: AlarmType) {
-        if (alarm.isOn && (!alarm.soundAlarmEnabled || alarmType == AlarmType.SOUND)) {
-            alarmRepository.setAlarm(alarm = alarm, context = context)
+    private suspend fun getSunriseTime(activity: Activity): HourMinute? {
+        return try {
+            val coordinates = getCoordinates(activity)
+            return if (coordinates != null) {
+                try {
+                    val response =
+                        RetrofitInstance.sunriseApiService.getSunriseTime(
+                            coordinates.latitude,
+                            -coordinates.longitude
+                        ).await()
+                    val sunriseTime = extractHourAndMinute(response.results.sunrise)
+                    sunriseTime
+                } catch (e: Exception) {
+                    null
+                }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
         }
+    }
+
+    fun stopSoundAlarm(alarm: AlarmUIModel, context: Context) {
         alarmRepository.cancelAlarm(alarmId = alarm.createdTimestamp + 1, context = context)
         _state.update {
             it.copy(

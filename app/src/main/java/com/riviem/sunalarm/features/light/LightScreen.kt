@@ -54,6 +54,7 @@ import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.releaseWakeLock
 import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.textColor
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -75,6 +76,7 @@ fun LightScreen(
         )
     }
     val userChosenColor = state.selectedAlarm?.color ?: Color.Yellow
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
 
     var showDismissSnoozeScreen by remember { mutableStateOf(false) }
     val lightModifier = if (showDismissSnoozeScreen) Modifier
@@ -175,13 +177,17 @@ fun LightScreen(
                     stopSound(mediaPlayer)
                     releaseWakeLock(wakeLock)
                     state.selectedAlarm?.let {
-                        viewModel.stopLightAlarm(
-                            it,
-                            context = context,
-                            alarmType = alarmType
-                        )
+                        coroutineScope.launch {
+                            viewModel.setNextLightAlarm(
+                                it,
+                                context = context,
+                                alarmType = alarmType,
+                                activity = activity
+                            )
+                            activity.finishAffinity()
+                        }
+
                     }
-                    activity.finishAffinity()
                 },
                 snoozeLength = state.snoozeLength,
                 onDismissSoundClick = {
@@ -191,7 +197,6 @@ fun LightScreen(
                         viewModel.stopSoundAlarm(
                             it,
                             context = context,
-                            alarmType = alarmType
                         )
                     }
                 },

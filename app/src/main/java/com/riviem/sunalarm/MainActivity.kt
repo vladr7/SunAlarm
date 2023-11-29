@@ -18,10 +18,10 @@ import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.Constants.CAMERA_REQUEST_CODE
 import com.riviem.sunalarm.core.Constants.LOCATION_PERMISSION_REQUEST_CODE
 import com.riviem.sunalarm.core.presentation.ACTION_DISMISS_ALARM
+import com.riviem.sunalarm.core.presentation.askBrightnessPermission
 import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.light.LightScreen
-import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -80,6 +80,7 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         askPermissionDisplayOverOtherApps(this)
+                        askBrightnessPermission(this)
                         if (startedFromAlarm) {
                             LightScreen(
                                 createdTimestamp = createdTimestamp,
@@ -87,12 +88,12 @@ class MainActivity : ComponentActivity() {
                                 wakeLock = wakeLock
                             )
                         } else {
-//                        LightScreen(
-//                            createdTimestamp = createdTimestamp,
-//                            alarmType = alarmType,
-//                            wakeLock = wakeLock
-//                        )
-                            MainNavigation()
+                        LightScreen(
+                            createdTimestamp = 1701259076,
+                            alarmType = alarmType,
+                            wakeLock = wakeLock
+                        )
+//                            MainNavigation()
                         }
                     }
                 }
