@@ -247,7 +247,18 @@ fun TimePickerScreen(
                 },
                 isAutoSunriseEnabled = newAlarm.isAutoSunriseEnabled
             )
-            CancelAndSaveButtons(onCancelClick, onSaveClick, newAlarm)
+            CancelAndSaveButtons(
+                onCancelClick,
+                onSaveClick = {
+                    if (it.isAutoSunriseEnabled && state.sunriseTime?.hour != it.ringTime.hour && state.sunriseTime?.minute != it.ringTime.minute) {
+                        viewModel.showSunriseFeatureDisabledToast()
+                        onSaveClick(it.copy(isAutoSunriseEnabled = false))
+                    } else {
+                        onSaveClick(it)
+                    }
+                },
+                newAlarm
+            )
         }
 
         AnimatedVisibility(

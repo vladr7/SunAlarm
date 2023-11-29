@@ -167,7 +167,6 @@ class HomeViewModel @Inject constructor(
     fun onSaveAlarmClick(alarm: AlarmUIModel, context: Context) {
         val nextAlarmTime = alarmRepository.getNextAlarmDateTime(alarm)
         val newAlarm = alarm.copy(ringTime = nextAlarmTime, isOn = true)
-        println("vladlog: newAlarm sunrise: ${newAlarm.isAutoSunriseEnabled}")
         viewModelScope.launch(Dispatchers.IO) {
             alarmRepository.insert(newAlarm.asDatabaseModel())
         }
