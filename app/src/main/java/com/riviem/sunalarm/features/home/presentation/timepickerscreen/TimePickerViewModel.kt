@@ -32,7 +32,10 @@ class TimePickerViewModel @Inject constructor(
             return
         }
         viewModelScope.launch {
-            getSunriseTime(activity)
+            val sunriseTime = getSunriseTime(activity)
+            if (sunriseTime != null) {
+                alarmRepository.setSunriseTime(sunriseTime = sunriseTime)
+            }
         }
     }
 
@@ -46,7 +49,7 @@ class TimePickerViewModel @Inject constructor(
                         -coordinates.longitude
                     ).await()
                 val sunriseTime = extractHourAndMinute(response.results.sunrise)
-                _state.update {// bug not updating in time
+                _state.update {
                     it.copy(
                         sunriseTime = sunriseTime
                     )

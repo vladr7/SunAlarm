@@ -13,6 +13,7 @@ import com.riviem.sunalarm.core.data.local.LocalStorageKeys
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.models.HourMinute
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import kotlinx.coroutines.flow.Flow
 import java.time.ZoneId
@@ -213,6 +214,18 @@ class DefaultAlarmRepository @Inject constructor(
 
     override suspend fun getCurrentSoundAlarmIdForNotification(): Int {
         return localStorage.getInt(LocalStorageKeys.CURRENT_SOUND_ALARM_ID_FOR_NOTIFICATION_KEY, -1)
+    }
+
+    override suspend fun setSunriseTime(sunriseTime: HourMinute) {
+        localStorage.putString(
+            LocalStorageKeys.SUNRISE_TIME_KEY,
+            "${sunriseTime.hour}:${sunriseTime.minute}"
+        )
+    }
+
+    override suspend fun getSunriseTime(): HourMinute {
+        val sunriseTime = localStorage.getString(LocalStorageKeys.SUNRISE_TIME_KEY, Constants.DEFAULT_SUNRISE_TIME)
+        return HourMinute(hour = sunriseTime.split(":")[0].toInt(), minute = sunriseTime.split(":")[1].toInt())
     }
 
 }

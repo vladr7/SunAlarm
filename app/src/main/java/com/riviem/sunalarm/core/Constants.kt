@@ -14,4 +14,5 @@ object Constants {
     const val SNOOZE_MAX_LENGTH_MINUTES = 61
     const val KEEP_LIGHT_SCREEN_ON_FOR_MINUTES  = 120 * 60 * 1000L
     const val INCREASE_BRIGHTNESS_OVER_TIME_INTERVAL = 61
+    const val DEFAULT_SUNRISE_TIME = "7:0"
 }

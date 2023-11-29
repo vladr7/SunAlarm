@@ -4,6 +4,7 @@ import android.content.Context
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
+import com.riviem.sunalarm.features.home.presentation.timepickerscreen.models.HourMinute
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
@@ -50,5 +51,9 @@ interface AlarmRepository {
     suspend fun setCurrentSoundAlarmIdForNotification(soundAlarmId: Int)
 
     suspend fun getCurrentSoundAlarmIdForNotification(): Int
+
+    suspend fun setSunriseTime(sunriseTime: HourMinute)
+
+    suspend fun getSunriseTime(): HourMinute
 
 }

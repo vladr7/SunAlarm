@@ -2,6 +2,7 @@ package com.riviem.sunalarm.core.data.local
 
 object LocalStorageKeys {
 
+    const val SUNRISE_TIME_KEY: String = "SUNRISE_TIME_KEY"
     const val CURRENT_SOUND_ALARM_ID_FOR_NOTIFICATION_KEY: String = "CURRENT_SOUND_ALARM_ID_FOR_NOTIFICATION_KEY"
     const val MINUTES_UNTIL_SOUND_ALARM_KEY = "MINUTES_UNTIL_SOUND_ALARM_KEY"
     const val FIRST_DAY_OF_WEEK_KEY = "FIRST_DAY_OF_WEEK_KEY"
