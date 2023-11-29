@@ -79,11 +79,20 @@ class SettingsViewModel @Inject constructor(
             acquireFirstDayOfWeek()
         }
     }
+
+    fun setSoundNotificationEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(soundNotificationEnabled = enabled)
+            }
+        }
+    }
 }
 
 
 data class SettingsViewState(
     val snoozeLength: Int = 0,
     val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI(),
-    val firstDayOfWeek: FirstDayOfWeek = FirstDayOfWeek.MONDAY
+    val firstDayOfWeek: FirstDayOfWeek = FirstDayOfWeek.MONDAY,
+    val soundNotificationEnabled: Boolean = false
 )

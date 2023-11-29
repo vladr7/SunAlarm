@@ -25,6 +25,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -33,6 +35,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -99,6 +102,10 @@ fun SettingsRoute(
         onSnoozeSavedClicked = {
             viewModel.setSnoozeLength(it)
         },
+        onSoundNotificationSwitchClicked = { enabled ->
+            viewModel.setSoundNotificationEnabled(enabled)
+        },
+        soundNotificationEnabled = state.soundNotificationEnabled
     )
 }
 
@@ -111,6 +118,8 @@ fun SettingsScreen(
     brightnessSettingUI: BrightnessSettingUI,
     onSelectFirstDayOfWeek: (FirstDayOfWeek) -> Unit,
     firstDayOfWeek: FirstDayOfWeek,
+    soundNotificationEnabled: Boolean,
+    onSoundNotificationSwitchClicked: (Boolean) -> Unit
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
@@ -173,15 +182,16 @@ fun SettingsScreen(
                     )
                 }
             )
-//            SettingButton(
-//                startIcon = Icons.Filled.Today,
-//                startIconColor = textColor,
-//                title = stringResource(R.string.first_day_of_the_week),
-//                subtitle = firstDayOfWeek.fullName,
-//                onClick = {
-//                    showFirstDayOfWeekDropdown = true
-//                }
-//            )
+            SettingButtonToggle(
+                startIcon = if(soundNotificationEnabled) Icons.Filled.NotificationsActive else Icons.Filled.NotificationsOff,
+                startIconColor = textColor,
+                title = stringResource(R.string.sound_alarm_notification),
+                subtitle = stringResource(R.string.tap_to_dismiss_the_next_alarm),
+                checked = soundNotificationEnabled,
+                onClick = {
+                    onSoundNotificationSwitchClicked(it)
+                }
+            )
         }
     }
     AnimatedVisibility(visible = showSnoozeSettingDialog) {
@@ -321,6 +331,65 @@ fun SettingButton(
                 color = textColor
             )
         }
+    }
+}
+
+@Composable
+fun SettingButtonToggle(
+    modifier: Modifier = Modifier,
+    startIcon: ImageVector,
+    startIconColor: Color,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onClick: (Boolean) -> Unit
+) {
+    Row(
+        modifier = modifier
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .fillMaxWidth()
+            .heightIn(min = 90.dp, max = 160.dp)
+            .border(
+                1.dp,
+                Color.Gray.copy(alpha = 0.7f),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            imageVector = startIcon,
+            contentDescription = null,
+            modifier = modifier
+                .padding(start = 20.dp)
+                .size(30.dp),
+            colorFilter = ColorFilter.tint(startIconColor)
+        )
+        Column(
+            modifier = modifier
+                .padding(start = 16.dp, end = 16.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = title,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                color = textColor
+            )
+            Text(
+                text = subtitle,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 3,
+                color = textColor
+            )
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onClick,
+            modifier = Modifier.padding(end = 16.dp)
+        )
     }
 }
 
