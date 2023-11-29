@@ -36,26 +36,29 @@ class TimePickerViewModel @Inject constructor(
         }
     }
 
-    suspend fun getSunriseTime(activity: Activity) {
+    suspend fun getSunriseTime(activity: Activity): HourMinute? {
         val coordinates = getCoordinates(activity)
-        if (coordinates != null) {
+        return if (coordinates != null) {
             try {
                 val response =
                     RetrofitInstance.sunriseApiService.getSunriseTime(
                         coordinates.latitude,
                         -coordinates.longitude
                     ).await()
+                val sunriseTime = extractHourAndMinute(response.results.sunrise)
                 _state.update {// bug not updating in time
                     it.copy(
-                        sunriseTime = extractHourAndMinute(response.results.sunrise)
+                        sunriseTime = sunriseTime
                     )
                 }
+                sunriseTime
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
                         showInternetOffError = true
                     )
                 }
+                null
             }
         } else {
             _state.update {
@@ -63,6 +66,7 @@ class TimePickerViewModel @Inject constructor(
                     showGeneralError = true
                 )
             }
+            null
         }
     }
 

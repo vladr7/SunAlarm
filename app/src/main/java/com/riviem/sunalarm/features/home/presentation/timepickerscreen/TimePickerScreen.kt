@@ -229,8 +229,8 @@ fun TimePickerScreen(
                         )
                     } else {
                         coroutineScope.launch {
-                            viewModel.getSunriseTime(activity)
-                            state.sunriseTime?.let {
+                            val sunriseTime = viewModel.getSunriseTime(activity)
+                            sunriseTime?.let {
                                 newAlarm = newAlarm.copy(
                                     ringTime = newAlarm.ringTime
                                         .withHour(it.hour)
