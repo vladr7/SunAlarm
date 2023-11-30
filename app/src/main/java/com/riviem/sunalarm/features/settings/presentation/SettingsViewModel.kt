@@ -95,6 +95,14 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
+
+    fun setShowBrightnessPermissionDialog(show: Boolean) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(showBrightnessPermissionDialog = show)
+            }
+        }
+    }
 }
 
 
@@ -104,4 +112,5 @@ data class SettingsViewState(
     val firstDayOfWeek: FirstDayOfWeek = FirstDayOfWeek.MONDAY,
     val soundNotificationEnabled: Boolean = false,
     val showSoundNotificationPermissionDialog: Boolean = false,
+    val showBrightnessPermissionDialog: Boolean = false,
 )

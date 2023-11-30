@@ -71,6 +71,8 @@ import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.presentation.PermissionDialog
 import com.riviem.sunalarm.core.presentation.RadioButtonCustom
 import com.riviem.sunalarm.core.presentation.SliderCustom
+import com.riviem.sunalarm.core.presentation.askBrightnessPermission
+import com.riviem.sunalarm.core.presentation.hasBrightnessPermission
 import com.riviem.sunalarm.core.presentation.hasNotificationPermission
 import com.riviem.sunalarm.core.presentation.navigateToSettings
 import com.riviem.sunalarm.features.home.presentation.homescreen.GradientBackgroundScreen
@@ -109,7 +111,7 @@ fun SettingsRoute(
     )
     SettingsScreen(
         snoozeLength = state.snoozeLength,
-        onBrightnessSaveClicked = {
+        onBrightnessIncreaseSaveClicked = {
             viewModel.setBrightnessSettings(it)
         },
         brightnessSettingUI = state.brightnessSettingUI,
@@ -131,7 +133,10 @@ fun SettingsRoute(
                 viewModel.setSoundNotificationEnabled(false)
             }
         },
-        soundNotificationEnabled = state.soundNotificationEnabled
+        soundNotificationEnabled = state.soundNotificationEnabled,
+        onShowBrigthnessPermission = {
+            viewModel.setShowBrightnessPermissionDialog(true)
+        }
     )
 
     if (state.showSoundNotificationPermissionDialog) {
@@ -156,6 +161,20 @@ fun SettingsRoute(
             }
         )
     }
+
+    if (state.showBrightnessPermissionDialog) {
+        PermissionDialog(
+            title = stringResource(R.string.write_settings_permission),
+            description = stringResource(R.string.this_permission_is_required_to_change_the_brightness_of_your_screen),
+            onDismissRequest = {
+                viewModel.setShowBrightnessPermissionDialog(false)
+            },
+            onConfirmClicked = {
+                askBrightnessPermission(activity)
+                viewModel.setShowBrightnessPermissionDialog(false)
+            }
+        )
+    }
 }
 
 @Composable
@@ -163,12 +182,13 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     onSnoozeSavedClicked: (Int) -> Unit,
     snoozeLength: Int,
-    onBrightnessSaveClicked: (BrightnessSettingUI) -> Unit,
+    onBrightnessIncreaseSaveClicked: (BrightnessSettingUI) -> Unit,
     brightnessSettingUI: BrightnessSettingUI,
     onSelectFirstDayOfWeek: (FirstDayOfWeek) -> Unit,
     firstDayOfWeek: FirstDayOfWeek,
     soundNotificationEnabled: Boolean,
-    onSoundNotificationSwitchClicked: (Boolean) -> Unit
+    onSoundNotificationSwitchClicked: (Boolean) -> Unit,
+    onShowBrigthnessPermission: () -> Unit,
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
@@ -202,7 +222,11 @@ fun SettingsScreen(
                 title = stringResource(R.string.morning_light_intensity),
                 value = brightnessValue,
                 onValueChange = {
-                    brightnessValue = it
+                    if(hasBrightnessPermission(context = activity)) {
+                        brightnessValue = it
+                    } else {
+                        onShowBrigthnessPermission()
+                    }
                 },
                 startInterval = 0,
                 endInterval = 100,
@@ -217,7 +241,11 @@ fun SettingsScreen(
                     brightnessSettingUI.brightnessGraduallyMinutes
                 ),
                 onClick = {
-                    showBrightnessOverTimeDialog = true
+                    if (hasBrightnessPermission(context = activity)) {
+                        showBrightnessOverTimeDialog = true
+                    } else {
+                        onShowBrigthnessPermission()
+                    }
                 }
             )
             SettingTwoOptions(
@@ -276,7 +304,7 @@ fun SettingsScreen(
             ),
             length = Constants.INCREASE_BRIGHTNESS_OVER_TIME_INTERVAL,
             onSaveClicked = {
-                onBrightnessSaveClicked(
+                onBrightnessIncreaseSaveClicked(
                     brightnessSettingUI.copy(
                         brightnessGraduallyMinutes = it
                     )
