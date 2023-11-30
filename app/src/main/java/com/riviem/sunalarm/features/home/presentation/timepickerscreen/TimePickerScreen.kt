@@ -89,7 +89,6 @@ import com.riviem.sunalarm.core.presentation.checkLocationIsEnabled
 import com.riviem.sunalarm.core.presentation.hasCameraPermission
 import com.riviem.sunalarm.core.presentation.hasLocationPermission
 import com.riviem.sunalarm.core.presentation.navigateToSettings
-import com.riviem.sunalarm.core.presentation.requestCameraPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
@@ -143,6 +142,20 @@ fun TimePickerScreen(
             } else {
                 newAlarm = newAlarm.copy(
                     isAutoSunriseEnabled = false
+                )
+            }
+        }
+    )
+    val flashlightPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            newAlarm = if (isGranted) {
+                newAlarm.copy(
+                    flashlight = true
+                )
+            } else {
+                newAlarm.copy(
+                    flashlight = false
                 )
             }
         }
@@ -217,7 +230,7 @@ fun TimePickerScreen(
                             flashlight = !newAlarm.flashlight
                         )
                     } else {
-                        requestCameraPermission(activity = activity)
+                        viewModel.setShowFlashlightPermissionDialog(true)
                     }
                 },
                 onSoundAlarmToggleClicked = {
@@ -360,6 +373,29 @@ fun TimePickerScreen(
                 } else {
                     locationPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
                     viewModel.setShowLocationPermissionDialog(false)
+                }
+            }
+        )
+    }
+
+    if(state.showFlashlightPermissionDialog) {
+        PermissionDialog(
+            title = stringResource(R.string.camera_permission),
+            description = stringResource(R.string.app_needs_camera_permission_to_turn_on_flashlight),
+            onDismissRequest = {
+                viewModel.setShowFlashlightPermissionDialog(false)
+            },
+            onConfirmClicked = {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        activity,
+                        Manifest.permission.CAMERA
+                    )
+                ) {
+                    navigateToSettings(context = context, activity = activity)
+                    viewModel.setShowFlashlightPermissionDialog(false)
+                } else {
+                    flashlightPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    viewModel.setShowFlashlightPermissionDialog(false)
                 }
             }
         )

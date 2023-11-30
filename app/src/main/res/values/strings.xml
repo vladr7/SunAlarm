@@ -79,5 +79,7 @@
     <string name="this_permission_is_required_to_dismiss_the_next_sound_alarm">This permission is required to dismiss the next sound alarm</string>
     <string name="location_permission">Location permission</string>
     <string name="app_needs_location_permission_to_get_sunrise_time">App needs location permission to get sunrise time</string>
+    <string name="camera_permission">Camera permission</string>
+    <string name="app_needs_camera_permission_to_turn_on_flashlight">App needs camera permission to turn on flashlight</string>
 
 </resources>

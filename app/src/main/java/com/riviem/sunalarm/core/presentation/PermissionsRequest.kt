@@ -11,7 +11,6 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.riviem.sunalarm.MainActivity
-import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.Constants.CAMERA_REQUEST_CODE
 
 fun hasCameraPermission(context: Context): Boolean {
@@ -63,21 +62,6 @@ fun hasLocationPermission(context: Context): Boolean {
         context,
         Manifest.permission.ACCESS_COARSE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
-}
-
-fun checkAndRequestLocationPermission(activity: Activity) {
-    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
-        != PackageManager.PERMISSION_GRANTED
-    ) {
-        // Permission is not granted, request it
-        ActivityCompat.requestPermissions(
-            activity,
-            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-            Constants.LOCATION_PERMISSION_REQUEST_CODE
-        )
-    } else {
-        // Permission has already been granted
-    }
 }
 
 fun checkLocationIsEnabled(context: Context): Boolean {
