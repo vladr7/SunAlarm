@@ -148,7 +148,7 @@ fun SettingsRoute(
 
     if (state.showSoundNotificationPermissionDialog) {
         PermissionDialog(
-            title = stringResource(R.string.sound_notification_permission),
+            title = stringResource(R.string.notification_permission),
             description = stringResource(R.string.this_permission_is_required_to_dismiss_the_next_sound_alarm),
             onDismissRequest = {
                 viewModel.setShowSoundNotificationPermissionDialog(false)
@@ -162,7 +162,7 @@ fun SettingsRoute(
 
     if(state.showSoundNotificationPermissionDialogRationale) {
         PermissionDialog(
-            title = stringResource(R.string.sound_notification_permission),
+            title = stringResource(R.string.notification_permission),
             description = stringResource(R.string.this_permission_is_required_to_dismiss_the_next_sound_alarm),
             onDismissRequest = {
                 viewModel.setShowSoundNotificationPermissionDialogRationale(false)

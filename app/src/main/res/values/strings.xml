@@ -75,7 +75,7 @@
     <string name="sunrise_auto_set_disabled">Auto-Set Sunrise time: Disabled</string>
     <string name="sound_alarm_notification">Sound Alarm Notification</string>
     <string name="tap_to_dismiss_the_next_alarm">Tap to dismiss the next alarm</string>
-    <string name="sound_notification_permission">Sound notification permission</string>
+    <string name="notification_permission">Notification permission</string>
     <string name="this_permission_is_required_to_dismiss_the_next_sound_alarm">This permission is required to dismiss the next sound alarm</string>
 
 </resources>
