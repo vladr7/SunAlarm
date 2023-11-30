@@ -3,10 +3,8 @@ package com.riviem.sunalarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.PowerManager
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -15,11 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.riviem.sunalarm.core.Constants
-import com.riviem.sunalarm.core.Constants.CAMERA_REQUEST_CODE
-import com.riviem.sunalarm.core.Constants.LOCATION_PERMISSION_REQUEST_CODE
 import com.riviem.sunalarm.core.presentation.ACTION_DISMISS_ALARM
-import com.riviem.sunalarm.core.presentation.askBrightnessPermission
-import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.features.light.LightScreen
 import com.riviem.sunalarm.navigation.MainNavigation
@@ -80,8 +74,6 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        askPermissionDisplayOverOtherApps(this)
-                        askBrightnessPermission(this)
                         if (startedFromAlarm) {
                             LightScreen(
                                 createdTimestamp = createdTimestamp,
@@ -109,32 +101,6 @@ class MainActivity : ComponentActivity() {
         wakeLock =
             powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SunAlarm::MyWakeLockTag")
         wakeLock?.acquire(Constants.KEEP_LIGHT_SCREEN_ON_FOR_MINUTES)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            CAMERA_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission was granted. Do camera operations.
-                } else {
-                    // Permission was denied. Inform the user or take alternative actions.
-                    Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show()
-                }
-            }
-            LOCATION_PERMISSION_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission was granted.
-                } else {
-                    // Permission was denied. Inform the user or take alternative actions.
-                    Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
     }
 
     override fun onDestroy() {

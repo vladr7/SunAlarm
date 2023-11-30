@@ -8,25 +8,14 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.riviem.sunalarm.MainActivity
-import com.riviem.sunalarm.core.Constants.CAMERA_REQUEST_CODE
 
 fun hasCameraPermission(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(
         context,
         Manifest.permission.CAMERA
     ) == PackageManager.PERMISSION_GRANTED
-}
-
-
-fun requestCameraPermission(activity: MainActivity) {
-    ActivityCompat.requestPermissions(
-        activity,
-        arrayOf(Manifest.permission.CAMERA),
-        CAMERA_REQUEST_CODE
-    )
 }
 
 fun askBrightnessPermission(mainActivity: MainActivity) {
