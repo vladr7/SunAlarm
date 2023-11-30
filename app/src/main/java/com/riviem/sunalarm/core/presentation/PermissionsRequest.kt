@@ -103,3 +103,10 @@ fun hasNotificationPermission(context: Context): Boolean {
     }
 }
 
+fun navigateToSettings(context: Context, activity: Activity) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri = Uri.fromParts("package", activity.packageName, null)
+        data = uri
+    }
+    context.startActivity(intent)
+}

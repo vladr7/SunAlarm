@@ -1,10 +1,7 @@
 package com.riviem.sunalarm.features.settings.presentation
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -75,6 +72,7 @@ import com.riviem.sunalarm.core.presentation.PermissionDialog
 import com.riviem.sunalarm.core.presentation.RadioButtonCustom
 import com.riviem.sunalarm.core.presentation.SliderCustom
 import com.riviem.sunalarm.core.presentation.hasNotificationPermission
+import com.riviem.sunalarm.core.presentation.navigateToSettings
 import com.riviem.sunalarm.features.home.presentation.homescreen.GradientBackgroundScreen
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
@@ -127,17 +125,7 @@ fun SettingsRoute(
                 if (hasNotificationPermission(context)) {
                     viewModel.setSoundNotificationEnabled(true)
                 } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        if (shouldShowRequestPermissionRationale(
-                                activity,
-                                android.Manifest.permission.POST_NOTIFICATIONS
-                            )
-                        ) {
-                            viewModel.setShowSoundNotificationPermissionDialogRationale(true)
-                        } else {
-                            viewModel.setShowSoundNotificationPermissionDialog(true)
-                        }
-                    }
+                    viewModel.setShowSoundNotificationPermissionDialog(true)
                 }
             } else {
                 viewModel.setSoundNotificationEnabled(false)
@@ -154,26 +142,17 @@ fun SettingsRoute(
                 viewModel.setShowSoundNotificationPermissionDialog(false)
             },
             onConfirmClicked = {
-                soundNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                viewModel.setShowSoundNotificationPermissionDialog(false)
-            }
-        )
-    }
-
-    if(state.showSoundNotificationPermissionDialogRationale) {
-        PermissionDialog(
-            title = stringResource(R.string.notification_permission),
-            description = stringResource(R.string.this_permission_is_required_to_dismiss_the_next_sound_alarm),
-            onDismissRequest = {
-                viewModel.setShowSoundNotificationPermissionDialogRationale(false)
-            },
-            onConfirmClicked = {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    val uri = Uri.fromParts("package", activity.packageName, null)
-                    data = uri
+                if (shouldShowRequestPermissionRationale(
+                        activity,
+                        android.Manifest.permission.POST_NOTIFICATIONS
+                    )
+                ) {
+                    navigateToSettings(context = context, activity = activity)
+                    viewModel.setShowSoundNotificationPermissionDialog(false)
+                } else {
+                    soundNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    viewModel.setShowSoundNotificationPermissionDialog(false)
                 }
-                context.startActivity(intent)
-                viewModel.setShowSoundNotificationPermissionDialogRationale(false)
             }
         )
     }

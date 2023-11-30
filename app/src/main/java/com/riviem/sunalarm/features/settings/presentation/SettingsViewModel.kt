@@ -95,14 +95,6 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
-
-    fun setShowSoundNotificationPermissionDialogRationale(show: Boolean) {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(showSoundNotificationPermissionDialogRationale = show)
-            }
-        }
-    }
 }
 
 
@@ -112,5 +104,4 @@ data class SettingsViewState(
     val firstDayOfWeek: FirstDayOfWeek = FirstDayOfWeek.MONDAY,
     val soundNotificationEnabled: Boolean = false,
     val showSoundNotificationPermissionDialog: Boolean = false,
-    val showSoundNotificationPermissionDialogRationale: Boolean = false,
 )
