@@ -389,22 +389,23 @@ private fun LightScreenButtons(
 }
 
 fun setBrightness(context: Context, brightnessValue: Int) {
-    val brightness = brightnessValue.coerceIn(0, 255)
+    val scaledBrightness = (brightnessValue / 100.0 * 255).toInt().coerceIn(0, 255)
 
     val layoutParams = (context as Activity).window.attributes
-    layoutParams.screenBrightness = brightness.toFloat() / 255
+    layoutParams.screenBrightness = scaledBrightness.toFloat() / 255
     context.window.attributes = layoutParams
 
     try {
         Settings.System.putInt(
             context.contentResolver,
             Settings.System.SCREEN_BRIGHTNESS,
-            brightness
+            scaledBrightness
         )
     } catch (e: Exception) {
         e.printStackTrace()
     }
 }
+
 
 private fun handleFlashlight(context: Context, on: Boolean) {
     val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager

@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.riviem.sunalarm.core.data.api.sunrise.RetrofitInstance
 import com.riviem.sunalarm.core.data.database.DatabaseAlarm
 import com.riviem.sunalarm.core.data.database.asUIModel
-import com.riviem.sunalarm.core.presentation.hasNotificationPermission
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.core.presentation.extractHourAndMinute
 import com.riviem.sunalarm.core.presentation.getCoordinates
+import com.riviem.sunalarm.core.presentation.hasNotificationPermission
 import com.riviem.sunalarm.features.home.data.AlarmRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.models.HourMinute
@@ -81,15 +81,15 @@ class LightViewModel @Inject constructor(
     private fun increaseBrightnessOvertime(brightnessSettingUI: BrightnessSettingUI) {
         viewModelScope.launch {
             var currentBrightness = brightnessSettingUI.brightness
-            val brightnessIncrement = 1
-            val totalIterations = (255 - currentBrightness) / brightnessIncrement
+            val totalIterations = 100 - currentBrightness
             val totalDurationMillis = brightnessSettingUI.brightnessGraduallyMinutes * 60L * 1000L
-            val delayPerIteration = totalDurationMillis / totalIterations
+            val delayPerIteration = 2 * totalDurationMillis / totalIterations
+
             for (i in 1..totalIterations) {
                 delay(delayPerIteration)
-                currentBrightness += brightnessIncrement
-                if (currentBrightness > 255) {
-                    currentBrightness = 255
+                currentBrightness++
+                if (currentBrightness > 100) {
+                    currentBrightness = 100
                 }
                 _state.update {
                     it.copy(
@@ -101,6 +101,7 @@ class LightViewModel @Inject constructor(
             }
         }
     }
+
 
     fun getAlarmById(createdTimestampId: Int, alarmType: AlarmType, context: Context) {
         if (createdTimestampId == -1) {
