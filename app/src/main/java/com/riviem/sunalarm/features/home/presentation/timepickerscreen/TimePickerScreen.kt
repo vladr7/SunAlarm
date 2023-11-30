@@ -1,8 +1,11 @@
 package com.riviem.sunalarm.features.home.presentation.timepickerscreen
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -70,6 +73,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
@@ -79,11 +83,12 @@ import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.presentation.ButtonCustom
+import com.riviem.sunalarm.core.presentation.PermissionDialog
 import com.riviem.sunalarm.core.presentation.SwitchCustom
-import com.riviem.sunalarm.core.presentation.checkAndRequestLocationPermission
 import com.riviem.sunalarm.core.presentation.checkLocationIsEnabled
 import com.riviem.sunalarm.core.presentation.hasCameraPermission
 import com.riviem.sunalarm.core.presentation.hasLocationPermission
+import com.riviem.sunalarm.core.presentation.navigateToSettings
 import com.riviem.sunalarm.core.presentation.requestCameraPermission
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
@@ -119,6 +124,29 @@ fun TimePickerScreen(
     )
     val coroutineScope = rememberCoroutineScope()
     var selectedMinutesUntilSoundAlarmBeforeSaving by remember { mutableIntStateOf(alarm.minutesUntilSoundAlarm) }
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                coroutineScope.launch {
+                    val sunriseTime = viewModel.getSunriseTime(activity)
+                    sunriseTime?.let {
+                        newAlarm = newAlarm.copy(
+                            ringTime = newAlarm.ringTime
+                                .withHour(it.hour)
+                                .withMinute(it.minute),
+                            isAutoSunriseEnabled = true
+                        )
+                        viewModel.showSunriseFeatureEnabledToast()
+                    }
+                }
+            } else {
+                newAlarm = newAlarm.copy(
+                    isAutoSunriseEnabled = false
+                )
+            }
+        }
+    )
 
     LaunchedEffect(key1 = Unit) {
         viewModel.initSunriseTime(alarm, activity)
@@ -223,7 +251,7 @@ fun TimePickerScreen(
                         return@LightAlarmConfiguration
                     }
                     if (!hasLocationPermission(context = context)) {
-                        checkAndRequestLocationPermission(activity = activity)
+                        viewModel.setShowLocationPermissionDialog(true)
                         newAlarm = newAlarm.copy(
                             isAutoSunriseEnabled = false
                         )
@@ -313,6 +341,29 @@ fun TimePickerScreen(
     }
 
     DisplayToasts(state, context, viewModel)
+
+    if(state.showLocationPermissionDialog) {
+        PermissionDialog(
+            title = stringResource(R.string.location_permission),
+            description = stringResource(R.string.app_needs_location_permission_to_get_sunrise_time),
+            onDismissRequest = {
+                viewModel.setShowLocationPermissionDialog(false)
+            },
+            onConfirmClicked = {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        activity,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                ) {
+                    navigateToSettings(context = context, activity = activity)
+                    viewModel.setShowLocationPermissionDialog(false)
+                } else {
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    viewModel.setShowLocationPermissionDialog(false)
+                }
+            }
+        )
+    }
 }
 
 @Composable

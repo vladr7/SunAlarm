@@ -99,6 +99,14 @@ class TimePickerViewModel @Inject constructor(
             )
         }
     }
+
+    fun setShowLocationPermissionDialog(show: Boolean) {
+        _state.update {
+            it.copy(
+                showLocationPermissionDialog = show
+            )
+        }
+    }
 }
 
 data class TimePickerState(
@@ -107,4 +115,5 @@ data class TimePickerState(
     val showGeneralError: Boolean? = null,
     val showSunriseFeatureEnabledToast: Boolean = false,
     val showSunriseFeatureDisabledToast: Boolean = false,
+    val showLocationPermissionDialog: Boolean = false,
 )

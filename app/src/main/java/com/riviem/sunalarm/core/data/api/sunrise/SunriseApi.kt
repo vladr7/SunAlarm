@@ -18,9 +18,11 @@ interface SunriseApiService {
 }
 
 object RetrofitInstance {
+    private val json = Json { ignoreUnknownKeys = true }
+
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl("https://api.sunrisesunset.io/")
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
     val sunriseApiService: SunriseApiService by lazy {
         retrofit.create(SunriseApiService::class.java)
