@@ -98,6 +98,7 @@ class MainActivity : ComponentActivity() {
         this.setTurnScreenOn(true)
         this.setShowWhenLocked(true)
         val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         wakeLock =
             powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SunAlarm::MyWakeLockTag")
         wakeLock?.acquire(Constants.KEEP_LIGHT_SCREEN_ON_FOR_MINUTES)
