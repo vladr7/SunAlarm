@@ -1,6 +1,10 @@
 package com.riviem.sunalarm.features.settings.presentation
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -82,6 +86,7 @@ import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.textColor
 import kotlinx.coroutines.delay
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SettingsRoute(
     viewModel: SettingsViewModel = hiltViewModel()
@@ -89,7 +94,16 @@ fun SettingsRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as MainActivity
-
+    val soundNotificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                viewModel.setSoundNotificationEnabled(true)
+            } else {
+                viewModel.setSoundNotificationEnabled(false)
+            }
+        }
+    )
     SettingsScreen(
         snoozeLength = state.snoozeLength,
         onBrightnessSaveClicked = {
@@ -108,7 +122,9 @@ fun SettingsRoute(
                 if(hasNotificationPermission(context)) {
                     viewModel.setSoundNotificationEnabled(true)
                 } else {
-                    activity.askNotificationPermission(context)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        soundNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    }
                 }
             } else {
                 viewModel.setSoundNotificationEnabled(false)
