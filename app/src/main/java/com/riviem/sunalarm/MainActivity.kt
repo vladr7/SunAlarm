@@ -51,7 +51,6 @@ class NotificationReceiver : BroadcastReceiver() {
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
-    private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +77,6 @@ class MainActivity : ComponentActivity() {
                             LightScreen(
                                 createdTimestamp = createdTimestamp,
                                 alarmType = alarmType,
-                                wakeLock = wakeLock
                             )
                         } else {
 //                        LightScreen(
@@ -97,21 +95,8 @@ class MainActivity : ComponentActivity() {
     private fun turnOnScreen() {
         this.setTurnScreenOn(true)
         this.setShowWhenLocked(true)
-        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        wakeLock =
-            powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SunAlarm::MyWakeLockTag")
-        wakeLock?.acquire(Constants.KEEP_LIGHT_SCREEN_ON_FOR_MINUTES)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        releaseWakeLock(wakeLock)
     }
 }
 
-fun releaseWakeLock(wakeLock: PowerManager.WakeLock?) {
-    if (wakeLock?.isHeld == true) {
-        wakeLock.release()
-    }
-}
+

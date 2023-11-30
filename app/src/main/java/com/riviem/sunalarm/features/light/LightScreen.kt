@@ -51,7 +51,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.createDismissSoundNotification
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
-import com.riviem.sunalarm.releaseWakeLock
 import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.textColor
 import kotlinx.coroutines.launch
@@ -62,7 +61,6 @@ fun LightScreen(
     viewModel: LightViewModel = hiltViewModel(),
     createdTimestamp: Int,
     alarmType: AlarmType,
-    wakeLock: PowerManager.WakeLock?,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -178,7 +176,6 @@ fun LightScreen(
                 },
                 onDismissLightClick = {
                     stopSound(mediaPlayer)
-                    releaseWakeLock(wakeLock)
                     state.selectedAlarm?.let {
                         coroutineScope.launch {
                             viewModel.setNextLightAlarm(
@@ -195,7 +192,6 @@ fun LightScreen(
                 snoozeLength = state.snoozeLength,
                 onDismissSoundClick = {
                     stopSound(mediaPlayer)
-                    releaseWakeLock(wakeLock)
                     state.selectedAlarm?.let {
                         viewModel.stopSoundAlarm(
                             it,
