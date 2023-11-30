@@ -86,18 +86,6 @@ fun HomeRoute(
         viewModel.getFirstDayOfWeek()
     }
 
-    var showPermissionDialog by remember {
-        mutableStateOf(false)
-    }
-    if (showPermissionDialog) {
-        PermissionDialog(
-            title = "Flashlight requires camera permission",
-            description = "Please allow camera permission to use flashlight",
-            onDismissRequest = { showPermissionDialog = false },
-            onConfirmClicked = { showPermissionDialog = false },
-        )
-    }
-
     AnimatedVisibility(
         visible = !state.showTimePickerScreen && state.alarms != null,
         enter = fadeIn(),
@@ -125,7 +113,6 @@ fun HomeRoute(
             firstDayOfWeek = state.firstDayOfWeek,
             onAlarmLongPress = {
                 viewModel.onAlarmLongPress(it)
-                showPermissionDialog = !showPermissionDialog
             },
             onDeleteAlarmClick = {
                 viewModel.onDeleteAlarmClick(it, context)
