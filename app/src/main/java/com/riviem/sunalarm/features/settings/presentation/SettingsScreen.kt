@@ -1,7 +1,10 @@
 package com.riviem.sunalarm.features.settings.presentation
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -62,11 +65,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.presentation.PermissionDialog
 import com.riviem.sunalarm.core.presentation.RadioButtonCustom
 import com.riviem.sunalarm.core.presentation.SliderCustom
 import com.riviem.sunalarm.core.presentation.hasNotificationPermission
@@ -118,12 +123,20 @@ fun SettingsRoute(
             viewModel.setSnoozeLength(it)
         },
         onSoundNotificationSwitchClicked = { enabled ->
-            if(enabled) {
-                if(hasNotificationPermission(context)) {
+            if (enabled) {
+                if (hasNotificationPermission(context)) {
                     viewModel.setSoundNotificationEnabled(true)
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        soundNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                        if (shouldShowRequestPermissionRationale(
+                                activity,
+                                android.Manifest.permission.POST_NOTIFICATIONS
+                            )
+                        ) {
+                            viewModel.setShowSoundNotificationPermissionDialogRationale(true)
+                        } else {
+                            viewModel.setShowSoundNotificationPermissionDialog(true)
+                        }
                     }
                 }
             } else {
@@ -132,6 +145,38 @@ fun SettingsRoute(
         },
         soundNotificationEnabled = state.soundNotificationEnabled
     )
+
+    if (state.showSoundNotificationPermissionDialog) {
+        PermissionDialog(
+            title = stringResource(R.string.sound_notification_permission),
+            description = stringResource(R.string.this_permission_is_required_to_dismiss_the_next_sound_alarm),
+            onDismissRequest = {
+                viewModel.setShowSoundNotificationPermissionDialog(false)
+            },
+            onConfirmClicked = {
+                soundNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                viewModel.setShowSoundNotificationPermissionDialog(false)
+            }
+        )
+    }
+
+    if(state.showSoundNotificationPermissionDialogRationale) {
+        PermissionDialog(
+            title = stringResource(R.string.sound_notification_permission),
+            description = stringResource(R.string.this_permission_is_required_to_dismiss_the_next_sound_alarm),
+            onDismissRequest = {
+                viewModel.setShowSoundNotificationPermissionDialogRationale(false)
+            },
+            onConfirmClicked = {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    val uri = Uri.fromParts("package", activity.packageName, null)
+                    data = uri
+                }
+                context.startActivity(intent)
+                viewModel.setShowSoundNotificationPermissionDialogRationale(false)
+            }
+        )
+    }
 }
 
 @Composable
@@ -208,7 +253,7 @@ fun SettingsScreen(
                 }
             )
             SettingButtonToggle(
-                startIcon = if(soundNotificationEnabled) Icons.Filled.NotificationsActive else Icons.Filled.NotificationsOff,
+                startIcon = if (soundNotificationEnabled) Icons.Filled.NotificationsActive else Icons.Filled.NotificationsOff,
                 startIconColor = textColor,
                 title = stringResource(R.string.sound_alarm_notification),
                 subtitle = stringResource(R.string.tap_to_dismiss_the_next_alarm),

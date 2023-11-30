@@ -87,6 +87,22 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
+
+    fun setShowSoundNotificationPermissionDialog(show: Boolean) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(showSoundNotificationPermissionDialog = show)
+            }
+        }
+    }
+
+    fun setShowSoundNotificationPermissionDialogRationale(show: Boolean) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(showSoundNotificationPermissionDialogRationale = show)
+            }
+        }
+    }
 }
 
 
@@ -94,5 +110,7 @@ data class SettingsViewState(
     val snoozeLength: Int = 0,
     val brightnessSettingUI: BrightnessSettingUI = BrightnessSettingUI(),
     val firstDayOfWeek: FirstDayOfWeek = FirstDayOfWeek.MONDAY,
-    val soundNotificationEnabled: Boolean = false
+    val soundNotificationEnabled: Boolean = false,
+    val showSoundNotificationPermissionDialog: Boolean = false,
+    val showSoundNotificationPermissionDialogRationale: Boolean = false,
 )
