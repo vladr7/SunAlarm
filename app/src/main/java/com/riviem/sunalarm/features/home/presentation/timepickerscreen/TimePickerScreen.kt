@@ -82,6 +82,8 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.Constants
+import com.riviem.sunalarm.core.Constants.hours
+import com.riviem.sunalarm.core.Constants.minutes
 import com.riviem.sunalarm.core.presentation.ButtonCustom
 import com.riviem.sunalarm.core.presentation.PermissionDialog
 import com.riviem.sunalarm.core.presentation.SwitchCustom
@@ -806,9 +808,6 @@ fun ScrollableTimePicker(
 ) {
     val hoursState = rememberLazyListState()
     val minutesState = rememberLazyListState()
-
-    val hours = infiniteHours.take(480).map { if (it < 10) "0$it" else it.toString() }.toList()
-    val minutes = infiniteMinutes.take(1200).map { if (it < 10) "0$it" else it.toString() }.toList()
 
     LaunchedEffect(key1 = selectedHour, selectedMinute) {
         hoursState.scrollToItem(index = 240 + selectedHour)

@@ -5,6 +5,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
@@ -90,8 +91,12 @@ fun HomeRoute(
 
     AnimatedVisibility(
         visible = !state.showTimePickerScreen && state.alarms != null,
-        enter = fadeIn(),
-        exit = fadeOut()
+        enter = fadeIn(
+            animationSpec = tween(durationMillis = 1000)
+        ),
+        exit = fadeOut(
+            animationSpec = tween(durationMillis = 500)
+        )
     ) {
         HomeScreen(
             context = context,
@@ -127,8 +132,12 @@ fun HomeRoute(
     }
     AnimatedVisibility(
         visible = state.showTimePickerScreen,
-        enter = fadeIn(),
-        exit = fadeOut()
+        enter = fadeIn(
+            animationSpec = tween(durationMillis = 1000)
+        ),
+        exit = fadeOut(
+            animationSpec = tween(durationMillis = 500)
+        )
     ) {
         TimePickerScreen(
             alarm = state.selectedAlarm,
