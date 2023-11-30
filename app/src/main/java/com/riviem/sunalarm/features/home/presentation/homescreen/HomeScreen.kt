@@ -58,6 +58,8 @@ import com.google.firebase.annotations.concurrent.Background
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.PermissionDialog
 import com.riviem.sunalarm.core.presentation.SwitchCustom
+import com.riviem.sunalarm.core.presentation.askPermissionDisplayOverOtherApps
+import com.riviem.sunalarm.core.presentation.hasPermissionDisplayOverOtherApps
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.Day
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
@@ -103,7 +105,11 @@ fun HomeRoute(
             },
             alarms = state.alarms ?: emptyList(),
             onAddNewAlarmClick = {
-                viewModel.onAddNewAlarmClick()
+                if (hasPermissionDisplayOverOtherApps(context)) {
+                    viewModel.onAddNewAlarmClick()
+                } else {
+                    viewModel.setShowDisplayOverOtherAppsPermissionDialog(true)
+                }
             },
             onAlarmCheckChanged = { checked, alarm ->
                 viewModel.onAlarmCheckChanged(checked, alarm, context)
@@ -142,6 +148,20 @@ fun HomeRoute(
             Toast.makeText(context, state.title, Toast.LENGTH_SHORT).show()
             viewModel.onShowNextAlarmTimeToastDone()
         }
+    }
+
+    if (state.showDisplayOverOtherAppsPermissionDialog) {
+        PermissionDialog(
+            title = stringResource(R.string.display_over_other_apps),
+            description = stringResource(R.string.sun_alarm_needs_this_permission_to_show_the_light_alarm_screen_when_the_phone_is_locked),
+            onDismissRequest = {
+                viewModel.setShowDisplayOverOtherAppsPermissionDialog(false)
+            },
+            onConfirmClicked = {
+                askPermissionDisplayOverOtherApps(context)
+                viewModel.setShowDisplayOverOtherAppsPermissionDialog(false)
+            }
+        )
     }
 }
 
@@ -411,48 +431,47 @@ fun AlarmItem(
     onDeleteAlarmClick: () -> Unit
 ) {
 
-        Row(
-            modifier = modifier
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onLongPress = {
-                            onAlarmLongPress()
-                        },
-                        onTap = { onAlarmClick() }
-                    )
-                }
-                .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
-                .background(
-                    color = alarmColor,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .height(120.dp)
-                .fillMaxWidth()
-                ,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AlarmNameAndTime(alarm.name, alarm.ringTime)
-            Spacer(modifier = Modifier.weight(1f))
-            if (!alarm.isExpandedForEdit) {
-                AlarmSelectedDays(
-                    modifier = modifier,
-                    days = alarm.days,
-                    firstDayOfWeek = firstDayOfWeek
-                )
-                AlarmSwitch(
-                    modifier = modifier
-                        .padding(end = 10.dp),
-                    checked = alarm.isOn,
-                    onCheckedChange = onCheckedChange
+    Row(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        onAlarmLongPress()
+                    },
+                    onTap = { onAlarmClick() }
                 )
             }
-            AnimatedVisibility(visible = alarm.isExpandedForEdit) {
-                DeleteAlarmButton(
-                    modifier = modifier
-                        .padding(end = 30.dp),
-                    onClick = onDeleteAlarmClick
-                )
-            }
+            .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
+            .background(
+                color = alarmColor,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .height(120.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AlarmNameAndTime(alarm.name, alarm.ringTime)
+        Spacer(modifier = Modifier.weight(1f))
+        if (!alarm.isExpandedForEdit) {
+            AlarmSelectedDays(
+                modifier = modifier,
+                days = alarm.days,
+                firstDayOfWeek = firstDayOfWeek
+            )
+            AlarmSwitch(
+                modifier = modifier
+                    .padding(end = 10.dp),
+                checked = alarm.isOn,
+                onCheckedChange = onCheckedChange
+            )
+        }
+        AnimatedVisibility(visible = alarm.isExpandedForEdit) {
+            DeleteAlarmButton(
+                modifier = modifier
+                    .padding(end = 30.dp),
+                onClick = onDeleteAlarmClick
+            )
+        }
     }
 
 }

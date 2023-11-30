@@ -81,5 +81,7 @@
     <string name="app_needs_location_permission_to_get_sunrise_time">App needs location permission to get sunrise time</string>
     <string name="camera_permission">Camera permission</string>
     <string name="app_needs_camera_permission_to_turn_on_flashlight">App needs camera permission to turn on flashlight</string>
+    <string name="display_over_other_apps">Display over other apps</string>
+    <string name="sun_alarm_needs_this_permission_to_show_the_light_alarm_screen_when_the_phone_is_locked">Sun Alarm needs this permission to show the light alarm screen when the phone is locked</string>
 
 </resources>

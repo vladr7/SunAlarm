@@ -33,17 +33,16 @@ fun hasBrightnessPermission(context: Context): Boolean {
 fun askPermissionDisplayOverOtherApps(
     context: Context
 ) {
-    if (Settings.canDrawOverlays(context)) {
-        // You have the permission
-    } else {
-        // You do not have the permission. Open the settings to let user grant it.
-        val intent = Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:${context.packageName}")
-        )
-        context.startActivity(intent)
-    }
+    val intent = Intent(
+        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+        Uri.parse("package:${context.packageName}")
+    )
+    context.startActivity(intent)
+}
 
+
+fun hasPermissionDisplayOverOtherApps(context: Context): Boolean {
+    return Settings.canDrawOverlays(context)
 }
 
 fun hasLocationPermission(context: Context): Boolean {
@@ -67,6 +66,7 @@ fun hasNotificationPermission(context: Context): Boolean {
             ) -> {
                 true
             }
+
             else -> {
                 false
             }

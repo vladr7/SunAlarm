@@ -258,6 +258,14 @@ class HomeViewModel @Inject constructor(
             alarmRepository.deleteAlarm(alarm.createdTimestamp, context)
         }
     }
+
+    fun setShowDisplayOverOtherAppsPermissionDialog(show: Boolean) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(showDisplayOverOtherAppsPermissionDialog = show)
+            }
+        }
+    }
 }
 
 data class HomeState(
@@ -269,5 +277,6 @@ data class HomeState(
     val firstDayOfWeek: FirstDayOfWeek,
     val showNextAlarmTimeToast: Boolean = false,
     val recentlyAddedOrCheckedAlarm: Boolean = false,
+    val showDisplayOverOtherAppsPermissionDialog: Boolean = false,
 )
 
