@@ -74,7 +74,7 @@
     <string name="sun_rises_at">Auto-Set Sunrise time: Enabled\nSun rises at %1$d:%2$d</string>
     <string name="sunrise_auto_set_disabled">Auto-Set Sunrise time: Disabled</string>
     <string name="sound_alarm_notification">Sound Alarm Notification</string>
-    <string name="tap_to_dismiss_the_next_alarm">Tap to dismiss the next alarm</string>
+    <string name="tap_to_dismiss_the_next_alarm">Tap to dismiss\nthe next alarm</string>
     <string name="notification_permission">Notification permission</string>
     <string name="this_permission_is_required_to_dismiss_the_next_sound_alarm">This permission is required to dismiss the next sound alarm</string>
     <string name="location_permission">Location permission</string>

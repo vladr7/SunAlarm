@@ -77,7 +77,7 @@
     <string name="sun_rises_at">Setare automată ora răsăritului: Activată\nSoarele răsare la %1$d:%2$d</string>
     <string name="sunrise_auto_set_disabled">Setare automată ora răsăritului: Dezactivată</string>
     <string name="sound_alarm_notification">Notificare alarma sonoră</string>
-    <string name="tap_to_dismiss_the_next_alarm">Apasă pentru a dezactiva următoarea alarmă</string>
+    <string name="tap_to_dismiss_the_next_alarm">Apasă pentru a dezactiva\nurmătoarea alarmă</string>
     <string name="notification_permission">Permisiunea de notificare</string>
     <string name="this_permission_is_required_to_dismiss_the_next_sound_alarm">Această permisiune este necesară pentru a dezactiva următoarea alarmă sonoră</string>
     <string name="location_permission">Permisiunea de locație</string>
