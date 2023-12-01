@@ -17,4 +17,5 @@ object Constants {
     const val DEFAULT_SUNRISE_TIME = "7:0"
     val hours = infiniteHours.take(480).map { if (it < 10) "0$it" else it.toString() }.toList()
     val minutes = infiniteMinutes.take(1200).map { if (it < 10) "0$it" else it.toString() }.toList()
+    const val DEFAULT_BRIGHTNESS_GRADUAL_VALUE = 20
 }

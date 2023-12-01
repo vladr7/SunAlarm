@@ -591,11 +591,11 @@ fun DayWithOrWithoutDot(
                 imageVector = Icons.Filled.Circle, contentDescription = null,
                 modifier = modifier
                     .size(6.dp),
-                tint = Color.White
+                tint = textColor
             )
         }
         Text(
-            text = day, fontSize = 14.sp, color = Color.White,
+            text = day, fontSize = 14.sp, color = textColor,
             modifier = modifier
                 .padding(top = 2.dp)
                 .alpha(if (isSelected) 1f else 0.5f)
