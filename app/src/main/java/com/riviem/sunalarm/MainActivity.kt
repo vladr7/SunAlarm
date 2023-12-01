@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PowerManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -65,7 +64,6 @@ class MainActivity : ComponentActivity() {
             )
             finish()
         } else {
-            turnOnScreen()
             setContent {
                 SunAlarmTheme {
                     // A surface container using the 'background' color from the theme
@@ -74,6 +72,7 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         if (startedFromAlarm) {
+                            turnOnScreen()
                             LightScreen(
                                 createdTimestamp = createdTimestamp,
                                 alarmType = alarmType,
