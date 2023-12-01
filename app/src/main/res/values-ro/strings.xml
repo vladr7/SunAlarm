@@ -1,0 +1,91 @@
+<resources>
+    <string name="app_name">SunSync Alarmă Luminoasă</string>
+    <string name="screen_color">Culoarea alarmei luminoase</string>
+    <string name="save_color">Salvează culoarea</string>
+    <string name="cancel">Anulează</string>
+    <string name="snooze">Amână</string>
+    <string name="every_day">În fiecare zi</string>
+    <plurals name="days_plural">
+        <item quantity="one">zi</item>
+        <item quantity="few">zile</item>
+        <item quantity="other">zile</item>
+    </plurals>
+
+    <plurals name="hours_plural">
+        <item quantity="one">oră</item>
+        <item quantity="few">ore</item>
+        <item quantity="other">ore</item>
+    </plurals>
+
+    <plurals name="minutes_plural">
+        <item quantity="one">minut</item>
+        <item quantity="few">minute</item>
+        <item quantity="other">minute</item>
+    </plurals>
+
+    <string name="next_alarm_format">Următoarea alarmă în %1$d %2$s %3$d %4$s %5$d %6$s</string>
+    <string name="next_alarm_in">"Următoarea alarmă în "</string>
+    <string name="no_alarms">Nicio alarmă</string>
+    <string name="all_alarms_are_off">Toate alarmele sunt dezactivate</string>
+    <string name="dismiss_light_alarm">Dezactivează</string>
+    <string name="dismiss_sound_alarm">Dezactivează următoarea\nalarmă sonoră</string>
+    <string name="snooze_length_after_minutes">Amână după\n%1$d minute</string>
+    <string name="snooze_length">Durata amânării</string>
+    <string name="save">Salvează</string>
+    <string name="brightness">Luminozitate</string>
+    <string name="dynamic">Dinamic</string>
+    <string name="static_text">Static</string>
+    <string name="increase_brightness_gradually_over_time">Creste luminozitatea treptat pe parcursul a %1$d minute</string>
+    <string name="alarm_rings_with_flashlight">Alarma sună cu lanterna</string>
+    <string name="flashlight">Lanterna</string>
+    <string name="first_day_of_the_week">Prima zi a săptămânii</string>
+    <string name="sound_alarm">Sunet</string>
+    <string name="sound_alarm_after_set_minutes">Alarma sonoră după %1$s minute</string>
+    <string name="sound_alarm_minutes">Minute alarma sonoră</string>
+    <string name="sound_alarm_after">Alarma sonoră după\n%1$d minute</string>
+    <string name="the_sound_alarm_has_been_set">Alarma sonoră a fost setată.</string>
+    <string name="snooze_minutes">%1$s minute</string>
+    <string name="dismiss_next_sound_alarm">Dezactivează următoarea alarmă sonoră</string>
+    <string name="dismiss_sound_alarm_notification_name">Dezactivează alarma sonoră</string>
+    <string name="next_sound_alarm_in_minutes">Următoarea alarmă sonoră în %1$d minute</string>
+    <string name="dismiss">Dezactivează</string>
+    <string name="sunrise">Răsărit</string>
+    <string name="auto_set_alarm_to_sunrise_time">Setează automat alarma la ora răsăritului</string>
+    <string name="error_getting_sunrise_time_maybe_internet_is_off">Eroare la obținerea orei răsăritului\nPoate internetul este oprit</string>
+    <string name="location_is_disabled">Locația este dezactivată</string>
+    <string name="color_of_the_light_alarm_screen">Culoarea ecranului alarmei luminoase</string>
+    <string name="monday_short">Lun</string>
+    <string name="tuesday_short">Mar</string>
+    <string name="wednesday_short">Mie</string>
+    <string name="thursday_short">Joi</string>
+    <string name="friday_short">Vin</string>
+    <string name="saturday_short">Sâm</string>
+    <string name="sunday_short">Dum</string>
+    <string name="every">În fiecare %1$s</string>
+    <string name="ok">OK</string>
+    <string name="settings">Setări</string>
+    <string name="minutes">%1$s minute</string>
+    <string name="wake_up_screen_brightness">Luminozitatea ecranului la trezire</string>
+    <string name="choose_how_quickly_the_screen_reaches_maximum_brightness">Luminozitatea maximă atinsă\nîn %1$d minute</string>
+    <string name="choose_how_quickly_the_screen_reaches_maximum_brightness_no_newline">Luminozitatea maximă atinsă în %1$d minute</string>
+    <string name="morning_light_graduation">Gradarea luminii de dimineață</string>
+    <string name="morning_light_graduation_new_line">Gradarea luminii\nde dimineață</string>
+    <string name="monday">Luni</string>
+    <string name="sunday">Duminică</string>
+    <string name="morning_light_intensity">Intensitatea luminii de dimineață</string>
+    <string name="error_getting_sunrise_time">Eroare la obținerea orei răsăritului</string>
+    <string name="sun_rises_at">Setare automată ora răsăritului: Activată\nSoarele răsare la %1$d:%2$d</string>
+    <string name="sunrise_auto_set_disabled">Setare automată ora răsăritului: Dezactivată</string>
+    <string name="sound_alarm_notification">Notificare alarma sonoră</string>
+    <string name="tap_to_dismiss_the_next_alarm">Apasă pentru a dezactiva următoarea alarmă</string>
+    <string name="notification_permission">Permisiunea de notificare</string>
+    <string name="this_permission_is_required_to_dismiss_the_next_sound_alarm">Această permisiune este necesară pentru a dezactiva următoarea alarmă sonoră</string>
+    <string name="location_permission">Permisiunea de locație</string>
+    <string name="app_needs_location_permission_to_get_sunrise_time">Aplicația necesită permisiunea de locație pentru a obține ora răsăritului</string>
+    <string name="camera_permission">Permisiunea camerei</string>
+    <string name="app_needs_camera_permission_to_turn_on_flashlight">Aplicația necesită permisiunea camerei pentru a activa lanterna</string>
+    <string name="display_over_other_apps">Afișare peste alte aplicații</string>
+    <string name="sun_alarm_needs_this_permission_to_show_the_light_alarm_screen_when_the_phone_is_locked">Aplicația necesită această permisiune pentru a arăta ecranul alarmei luminoase când telefonul este blocat</string>
+    <string name="write_settings_permission">Permisiunea de a scrie setări</string>
+    <string name="this_permission_is_required_to_change_the_brightness_of_your_screen">Această permisiune este necesară pentru a schimba luminozitatea ecranului tău</string>
+</resources>
