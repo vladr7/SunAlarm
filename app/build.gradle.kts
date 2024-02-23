@@ -17,8 +17,8 @@ android {
         applicationId = "com.riviem.sunalarm"
         minSdk = 27
         targetSdk = 34
-        versionCode = 4
-        versionName = "0.9.1"
+        versionCode = 5
+        versionName = "0.9.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
