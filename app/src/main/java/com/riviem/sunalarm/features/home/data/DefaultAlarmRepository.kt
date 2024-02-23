@@ -87,7 +87,7 @@ class DefaultAlarmRepository @Inject constructor(
         intent.putExtra(Constants.ALARM_TYPE_ID, AlarmType.LIGHT.name)
 
         val pendingIntent = PendingIntent.getBroadcast(
-            context, alarm.createdTimestamp, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
         println("vladlog: setLightAlarm for: $alarmDateTime with id: ${alarm.createdTimestamp}")
@@ -113,7 +113,7 @@ class DefaultAlarmRepository @Inject constructor(
         intent.putExtra(Constants.ALARM_TYPE_ID, AlarmType.SOUND.name)
 
         val pendingIntent = PendingIntent.getBroadcast(
-            context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            context, id, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
         println("vladlog: setSoundAlarm for: $updatedAlarmDateTime with id: $id")
@@ -138,7 +138,7 @@ class DefaultAlarmRepository @Inject constructor(
         intent.putExtra(Constants.ALARM_TYPE_ID, alarmType.name)
 
         val pendingIntent = PendingIntent.getBroadcast(
-            context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            context, id, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
         val snoozeLength = localStorage.getInt(LocalStorageKeys.SNOOZE_LENGTH_KEY, 5)
@@ -169,7 +169,7 @@ class DefaultAlarmRepository @Inject constructor(
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context, alarmId, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
 
         alarmManager.cancel(pendingIntent)

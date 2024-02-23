@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.PowerManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -19,8 +20,17 @@ import com.riviem.sunalarm.navigation.MainNavigation
 import com.riviem.sunalarm.ui.theme.SunAlarmTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+private var wakeLock: PowerManager.WakeLock? = null
+
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
+        val powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager?
+        wakeLock = powerManager?.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "MyApp::MyWakelockTagSunSyncAlarm"
+        )
+        wakeLock?.acquire(1*60*1000L /*1 minute*/)
+
         val createdTimestamp = intent?.getIntExtra(Constants.CREATED_TIMESTAMP_ID, -1)
         val alarmType = intent?.getStringExtra(Constants.ALARM_TYPE_ID)
 
@@ -32,6 +42,7 @@ class AlarmReceiver : BroadcastReceiver() {
         context?.startActivity(mainActivityIntent)
     }
 }
+
 
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
