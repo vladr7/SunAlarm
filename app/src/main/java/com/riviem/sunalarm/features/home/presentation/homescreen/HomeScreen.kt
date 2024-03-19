@@ -1,6 +1,5 @@
 package com.riviem.sunalarm.features.home.presentation.homescreen
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -56,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.annotations.concurrent.Background
+import com.riviem.sunalarm.MainActivity
 import com.riviem.sunalarm.R
 import com.riviem.sunalarm.core.presentation.PermissionDialog
 import com.riviem.sunalarm.core.presentation.SwitchCustom
@@ -84,6 +84,7 @@ fun HomeRoute(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val activity = LocalContext.current as MainActivity
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getFirstDayOfWeek()
@@ -174,7 +175,6 @@ fun HomeRoute(
     }
 }
 
-@SuppressLint("ScheduleExactAlarm")
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,

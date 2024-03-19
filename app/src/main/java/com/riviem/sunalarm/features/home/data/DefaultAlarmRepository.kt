@@ -82,17 +82,16 @@ class DefaultAlarmRepository @Inject constructor(
 
         val alarmDateTime = getNextAlarmDateTime(alarm)
 
-        val intent = Intent(context, AlarmReceiver::class.java)
-        intent.putExtra(Constants.CREATED_TIMESTAMP_ID, alarm.createdTimestamp)
-        intent.putExtra(Constants.ALARM_TYPE_ID, AlarmType.LIGHT.name)
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra(Constants.CREATED_TIMESTAMP_ID, alarm.createdTimestamp)
+            putExtra(Constants.ALARM_TYPE_ID, AlarmType.LIGHT.name)
+        }
 
         val pendingIntent = PendingIntent.getBroadcast(
             context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: setLightAlarm for: $alarmDateTime with id: ${alarm.createdTimestamp}")
-
-        alarmManager.setExactAndAllowWhileIdle(
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
             alarmDateTime.toInstant().toEpochMilli(),
             pendingIntent
@@ -103,22 +102,23 @@ class DefaultAlarmRepository @Inject constructor(
         }
     }
 
+
     private fun setSoundAlarm(alarm: AlarmUIModel, alarmDateTime: ZonedDateTime, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val id = alarm.createdTimestamp + 1
         val updatedAlarmDateTime = alarmDateTime.plusMinutes(alarm.minutesUntilSoundAlarm.toLong())
 
-        val intent = Intent(context, AlarmReceiver::class.java)
-        intent.putExtra(Constants.CREATED_TIMESTAMP_ID, id)
-        intent.putExtra(Constants.ALARM_TYPE_ID, AlarmType.SOUND.name)
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra(Constants.CREATED_TIMESTAMP_ID, id)
+            putExtra(Constants.ALARM_TYPE_ID, AlarmType.SOUND.name)
+        }
 
         val pendingIntent = PendingIntent.getBroadcast(
             context, id, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
-        println("vladlog: setSoundAlarm for: $updatedAlarmDateTime with id: $id")
-
-        alarmManager.setExactAndAllowWhileIdle(
+        // Use set() for inexact alarm
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
             updatedAlarmDateTime.toInstant().toEpochMilli(),
             pendingIntent
@@ -147,7 +147,7 @@ class DefaultAlarmRepository @Inject constructor(
 
         println("vladlog: snoozeAlarm: $snoozeDateTime with id: ${id} type: $alarmType")
 
-        alarmManager.setExactAndAllowWhileIdle(
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
             snoozeDateTime.toInstant().toEpochMilli(),
             pendingIntent

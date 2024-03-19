@@ -83,3 +83,4 @@ fun navigateToSettings(context: Context, activity: Activity) {
     }
     context.startActivity(intent)
 }
+
