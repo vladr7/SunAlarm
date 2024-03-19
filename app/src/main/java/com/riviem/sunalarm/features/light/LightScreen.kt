@@ -5,7 +5,6 @@ import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import android.media.MediaPlayer
-import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -305,7 +304,7 @@ private fun LightScreenButtons(
                 )
                 Text(
                     text = stringResource(id = R.string.snooze),
-                    fontSize = 55.sp,
+                    fontSize = 40.sp,
                 )
                 Text(text = stringResource(R.string.snooze_minutes, snoozeLength), fontSize = 35.sp)
             }
@@ -339,7 +338,7 @@ private fun LightScreenButtons(
                 )
                 Text(
                     text = stringResource(id = R.string.dismiss),
-                    fontSize = 55.sp,
+                    fontSize = 40.sp,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
