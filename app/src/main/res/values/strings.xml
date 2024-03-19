@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SunSync Light Alarm</string>
+    <string name="app_name">Light Alarm</string>
     <string name="screen_color">Light Alarm color</string>
     <string name="save_color">Save color</string>
     <string name="cancel">Cancel</string>
