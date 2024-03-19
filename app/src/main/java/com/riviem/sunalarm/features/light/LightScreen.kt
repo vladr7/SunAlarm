@@ -52,6 +52,7 @@ import com.riviem.sunalarm.core.presentation.createDismissSoundNotification
 import com.riviem.sunalarm.core.presentation.enums.AlarmType
 import com.riviem.sunalarm.ui.theme.alarmColor
 import com.riviem.sunalarm.ui.theme.textColor
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -144,6 +145,18 @@ fun LightScreen(
         }
     }
 
+    LaunchedEffect(key1 = Unit) {
+        coroutineScope.launch {
+            delay(1000L)
+            viewModel.setNextLightAlarm(
+                alarm = state.selectedAlarm ?: return@launch,
+                context = context,
+                alarmType = alarmType,
+                activity = activity
+            )
+        }
+    }
+
     Column(
         modifier = lightModifier
             .fillMaxSize(),
@@ -177,12 +190,6 @@ fun LightScreen(
                     stopSound(mediaPlayer)
                     state.selectedAlarm?.let {
                         coroutineScope.launch {
-                            viewModel.setNextLightAlarm(
-                                it,
-                                context = context,
-                                alarmType = alarmType,
-                                activity = activity
-                            )
                             activity.finishAffinity()
                         }
 
