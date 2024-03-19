@@ -503,11 +503,14 @@ fun DeleteAlarmButton(
 
 @Composable
 private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
-    val hour = if (time.hour < 10) "0${time.hour}" else time.hour
-    val minute = if (time.minute < 10) "0${time.minute}" else time.minute
+    val formattedName = formatNameWithLineBreaks(name, 20)
+
+    val hour = if (time.hour < 10) "0${time.hour}" else "${time.hour}"
+    val minute = if (time.minute < 10) "0${time.minute}" else "${time.minute}"
+
     Column {
         Text(
-            text = name,
+            text = formattedName,
             fontSize = 17.sp,
             color = textColor,
             modifier = Modifier
@@ -522,6 +525,26 @@ private fun AlarmNameAndTime(name: String, time: ZonedDateTime) {
         )
     }
 }
+
+private fun formatNameWithLineBreaks(name: String, maxLength: Int): String {
+    val words = name.split(" ")
+    var currentLineLength = 0
+    var result = ""
+
+    for (word in words) {
+        if (currentLineLength + word.length > maxLength) {
+            result += "\n$word"
+            currentLineLength = word.length
+        } else {
+            result += if (result.isEmpty()) word else " $word"
+            currentLineLength += word.length + 1 // +1 for the space
+        }
+    }
+
+    return result
+}
+
+
 
 @Composable
 fun AlarmSelectedDays(
