@@ -87,5 +87,6 @@
     <string name="this_permission_is_required_to_change_the_brightness_of_your_screen">This permission is required to change the brightness of your screen</string>
     <string name="battery_optimization">Battery Permission</string>
     <string name="battery_optimization_description">Unrestricted battery permission</string>
+    <string name="white_noise_volume">White Noise Volume</string>
 
 </resources>

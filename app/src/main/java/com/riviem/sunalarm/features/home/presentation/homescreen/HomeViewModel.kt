@@ -11,6 +11,7 @@ import com.riviem.sunalarm.core.Constants
 import com.riviem.sunalarm.core.data.database.asDatabaseModel
 import com.riviem.sunalarm.core.data.database.asUIModel
 import com.riviem.sunalarm.features.home.data.AlarmRepository
+import com.riviem.sunalarm.features.home.data.WhiteNoiseRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.weekDays
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     application: Application,
     private val alarmRepository: AlarmRepository,
+    private val whiteNoiseRepository: WhiteNoiseRepository
 ) : AndroidViewModel(application) {
 
     private val context = application.applicationContext
@@ -264,6 +266,13 @@ class HomeViewModel @Inject constructor(
             _state.update {
                 it.copy(showDisplayOverOtherAppsPermissionDialog = show)
             }
+        }
+    }
+
+    fun playStopWhiteNoise() {
+        viewModelScope.launch {
+            val volume = alarmRepository.getWhiteNoiseVolume()
+            whiteNoiseRepository.playOrStopWhiteNoise(volume)
         }
     }
 }

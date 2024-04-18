@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AlarmOff
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -128,6 +129,9 @@ fun HomeRoute(
             },
             onDeleteAlarmClick = {
                 viewModel.onDeleteAlarmClick(it, context)
+            },
+            onWhiteNoiseClick = {
+                viewModel.playStopWhiteNoise()
             }
         )
     }
@@ -187,13 +191,22 @@ fun HomeScreen(
     subtitle: String,
     firstDayOfWeek: FirstDayOfWeek,
     onAlarmLongPress: (AlarmUIModel) -> Unit,
-    onDeleteAlarmClick: (AlarmUIModel) -> Unit
+    onDeleteAlarmClick: (AlarmUIModel) -> Unit,
+    onWhiteNoiseClick: () -> Unit
 ) {
     GradientBackgroundScreen {
         Box(
             modifier = modifier
                 .fillMaxSize()
         ) {
+            WhiteNoiseButton(
+                onClick = {
+                    onWhiteNoiseClick()
+                },
+                modifier = modifier
+                    .padding(top = 10.dp)
+                    .align(Alignment.TopEnd)
+            )
             Column(
                 modifier = modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
@@ -228,6 +241,7 @@ fun HomeScreen(
                                 onAddNewAlarmClick()
                             }
                         )
+
                         AlarmsList(
                             onAlarmClick = onAlarmClick,
                             onCheckedChange = { checked, alarm ->
@@ -364,6 +378,28 @@ fun HomeScreenTitle(
     }
 }
 
+@Composable
+fun WhiteNoiseButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+    ) {
+        Spacer(modifier = Modifier.weight(0.8f))
+        Icon(
+            imageVector = Icons.Filled.MusicNote, contentDescription = "White noise",
+            modifier = modifier
+                .clickable {
+                    onClick()
+                }
+                .padding(start = 10.dp, end = 24.dp)
+                .size(35.dp),
+            tint = textColor
+        )
+    }
+}
 
 @Composable
 fun AddNewAlarmButton(
@@ -543,7 +579,6 @@ private fun formatNameWithLineBreaks(name: String, maxLength: Int): String {
 
     return result
 }
-
 
 
 @Composable

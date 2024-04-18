@@ -56,4 +56,8 @@ interface AlarmRepository {
 
     suspend fun getSunriseTime(): HourMinute
 
+    suspend fun setWhiteNoiseVolume(volume: Int)
+
+    suspend fun getWhiteNoiseVolume(): Int
+
 }

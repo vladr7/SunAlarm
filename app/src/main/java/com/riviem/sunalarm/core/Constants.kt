@@ -18,4 +18,5 @@ object Constants {
     val hours = infiniteHours.take(480).map { if (it < 10) "0$it" else it.toString() }.toList()
     val minutes = infiniteMinutes.take(1200).map { if (it < 10) "0$it" else it.toString() }.toList()
     const val DEFAULT_BRIGHTNESS_GRADUAL_VALUE = 20
+    const val DEFAULT_WHITE_NOISE_GRADUAL_VALUE = 20
 }

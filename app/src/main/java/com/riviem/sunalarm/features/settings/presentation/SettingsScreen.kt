@@ -143,7 +143,11 @@ fun SettingsRoute(
         onShowBrigthnessPermission = {
             viewModel.setShowBrightnessPermissionDialog(true)
         },
-        batteryPermission = isBatteryOptimizationDisabled
+        batteryPermission = isBatteryOptimizationDisabled,
+        whiteNoiseVolume = state.whiteNoiseVolume,
+        onWhiteNoiseVolumeChanged = {
+            viewModel.setWhiteNoiseVolume(it)
+        }
     )
 
     if (state.showSoundNotificationPermissionDialog) {
@@ -196,7 +200,9 @@ fun SettingsScreen(
     soundNotificationEnabled: Boolean,
     onSoundNotificationSwitchClicked: (Boolean) -> Unit,
     onShowBrigthnessPermission: () -> Unit,
-    batteryPermission: Boolean
+    batteryPermission: Boolean,
+    whiteNoiseVolume: Int,
+    onWhiteNoiseVolumeChanged: (Int) -> Unit
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
@@ -205,6 +211,7 @@ fun SettingsScreen(
     var selectedBrightnessOverTimeBeforeSaving by remember { mutableIntStateOf(brightnessSettingUI.brightnessGraduallyMinutes) }
     var brightnessValue by remember { mutableIntStateOf(brightnessSettingUI.brightness) }
     var showBrightnessOverTimeDialog by remember { mutableStateOf(false) }
+    var whiteNoiseValue by remember { mutableIntStateOf(whiteNoiseVolume) }
 
     GradientBackgroundScreen {
         Column(
@@ -278,6 +285,17 @@ fun SettingsScreen(
                 onClick = {
                     onSoundNotificationSwitchClicked(it)
                 }
+            )
+            SettingSlider(
+                title = stringResource(R.string.white_noise_volume),
+                value = whiteNoiseValue,
+                onValueChange = {
+                    onWhiteNoiseVolumeChanged(it)
+                    whiteNoiseValue = it
+                } ,
+                startInterval = 0,
+                endInterval = 100,
+                steps = 0
             )
             SettingButtonToggle(
                 startIcon = if (batteryPermission) Icons.Filled.BatteryAlert else Icons.Filled.BatteryAlert,

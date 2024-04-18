@@ -227,4 +227,13 @@ class DefaultAlarmRepository @Inject constructor(
         return HourMinute(hour = sunriseTime.split(":")[0].toInt(), minute = sunriseTime.split(":")[1].toInt())
     }
 
+    override suspend fun setWhiteNoiseVolume(volume: Int) {
+        localStorage.putInt(LocalStorageKeys.WHITE_NOISE_VALUE_KEY, volume)
+    }
+
+    override suspend fun getWhiteNoiseVolume(): Int {
+        return localStorage.getInt(LocalStorageKeys.WHITE_NOISE_VALUE_KEY, 5)
+    }
+
+
 }

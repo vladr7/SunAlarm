@@ -24,6 +24,7 @@ class SettingsViewModel @Inject constructor(
         getSnoozeLength()
         viewModelScope.launch {
             getBrightnessSettings()
+            getWhiteNoiseSettings()
         }
         acquireFirstDayOfWeek()
     }
@@ -44,6 +45,15 @@ class SettingsViewModel @Inject constructor(
         _state.update {
             it.copy(
                 brightnessSettingUI = brightnessSettings
+            )
+        }
+    }
+
+    private suspend fun getWhiteNoiseSettings() {
+        val whiteNoiseVolume = alarmRepository.getWhiteNoiseVolume()
+        _state.update {
+            it.copy(
+                whiteNoiseVolume = whiteNoiseVolume
             )
         }
     }
@@ -103,6 +113,15 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
+
+    fun setWhiteNoiseVolume(volume: Int) {
+        viewModelScope.launch {
+            alarmRepository.setWhiteNoiseVolume(volume)
+        }
+        _state.update {
+            it.copy(whiteNoiseVolume = volume)
+        }
+    }
 }
 
 
@@ -113,4 +132,5 @@ data class SettingsViewState(
     val soundNotificationEnabled: Boolean = false,
     val showSoundNotificationPermissionDialog: Boolean = false,
     val showBrightnessPermissionDialog: Boolean = false,
+    val whiteNoiseVolume: Int = 0,
 )
