@@ -26,8 +26,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.NotificationsOff
@@ -74,7 +77,9 @@ import com.riviem.sunalarm.core.presentation.SliderCustom
 import com.riviem.sunalarm.core.presentation.askBrightnessPermission
 import com.riviem.sunalarm.core.presentation.hasBrightnessPermission
 import com.riviem.sunalarm.core.presentation.hasNotificationPermission
+import com.riviem.sunalarm.core.presentation.isBatteryOptimizationDisabled
 import com.riviem.sunalarm.core.presentation.navigateToSettings
+import com.riviem.sunalarm.core.presentation.openAppInfoSettings
 import com.riviem.sunalarm.features.home.presentation.homescreen.GradientBackgroundScreen
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.FirstDayOfWeek
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.CancelButton
@@ -99,6 +104,7 @@ fun SettingsRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as MainActivity
+    val isBatteryOptimizationDisabled = isBatteryOptimizationDisabled(context)
     val soundNotificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
@@ -136,7 +142,8 @@ fun SettingsRoute(
         soundNotificationEnabled = state.soundNotificationEnabled,
         onShowBrigthnessPermission = {
             viewModel.setShowBrightnessPermissionDialog(true)
-        }
+        },
+        batteryPermission = isBatteryOptimizationDisabled
     )
 
     if (state.showSoundNotificationPermissionDialog) {
@@ -189,6 +196,7 @@ fun SettingsScreen(
     soundNotificationEnabled: Boolean,
     onSoundNotificationSwitchClicked: (Boolean) -> Unit,
     onShowBrigthnessPermission: () -> Unit,
+    batteryPermission: Boolean
 ) {
     val activity = LocalContext.current as MainActivity
     var showSnoozeSettingDialog by remember { mutableStateOf(false) }
@@ -200,7 +208,9 @@ fun SettingsScreen(
 
     GradientBackgroundScreen {
         Column(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -269,6 +279,18 @@ fun SettingsScreen(
                     onSoundNotificationSwitchClicked(it)
                 }
             )
+            SettingButtonToggle(
+                startIcon = if (batteryPermission) Icons.Filled.BatteryAlert else Icons.Filled.BatteryAlert,
+                startIconColor = textColor,
+                title = stringResource(R.string.battery_optimization),
+                subtitle = stringResource(R.string.battery_optimization_description),
+                checked = batteryPermission,
+                onClick = {
+                    openAppInfoSettings(context = activity)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
     AnimatedVisibility(visible = showSnoozeSettingDialog) {

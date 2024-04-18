@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.riviem.sunalarm.MainActivity
@@ -79,6 +80,19 @@ fun hasNotificationPermission(context: Context): Boolean {
 fun navigateToSettings(context: Context, activity: Activity) {
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
         val uri = Uri.fromParts("package", activity.packageName, null)
+        data = uri
+    }
+    context.startActivity(intent)
+}
+
+fun isBatteryOptimizationDisabled(context: Context): Boolean {
+    val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+    return pm.isIgnoringBatteryOptimizations(context.packageName)
+}
+
+fun openAppInfoSettings(context: Context) {
+    val uri = Uri.fromParts("package", context.packageName, null)
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
         data = uri
     }
     context.startActivity(intent)

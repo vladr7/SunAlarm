@@ -88,4 +88,7 @@
     <string name="sun_alarm_needs_this_permission_to_show_the_light_alarm_screen_when_the_phone_is_locked">Aplicația necesită această permisiune pentru a arăta ecranul alarmei luminoase când telefonul este blocat</string>
     <string name="write_settings_permission">Permisiunea de a scrie setări</string>
     <string name="this_permission_is_required_to_change_the_brightness_of_your_screen">Această permisiune este necesară pentru a schimba luminozitatea ecranului tău</string>
+    <string name="battery_optimization">Permisiune baterie</string>
+    <string name="battery_optimization_description">Optimizare baterie fără restricții</string>
+
 </resources>
