@@ -91,7 +91,7 @@ class DefaultAlarmRepository @Inject constructor(
             context, alarm.createdTimestamp, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
-        alarmManager.set(
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             alarmDateTime.toInstant().toEpochMilli(),
             pendingIntent
@@ -101,7 +101,6 @@ class DefaultAlarmRepository @Inject constructor(
             setSoundAlarm(alarm, alarmDateTime, context)
         }
     }
-
 
     private fun setSoundAlarm(alarm: AlarmUIModel, alarmDateTime: ZonedDateTime, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -118,7 +117,7 @@ class DefaultAlarmRepository @Inject constructor(
         )
 
         // Use set() for inexact alarm
-        alarmManager.set(
+        alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
             updatedAlarmDateTime.toInstant().toEpochMilli(),
             pendingIntent
@@ -147,7 +146,7 @@ class DefaultAlarmRepository @Inject constructor(
 
         println("vladlog: snoozeAlarm: $snoozeDateTime with id: ${id} type: $alarmType")
 
-        alarmManager.set(
+        alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
             snoozeDateTime.toInstant().toEpochMilli(),
             pendingIntent
