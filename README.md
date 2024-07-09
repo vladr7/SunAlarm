@@ -94,8 +94,8 @@ Also I've learned a lot about handling background tasks required for Alarm Clock
 * [Flows](https://developer.android.com/kotlin/flow)
 * [DataStore](https://developer.android.com/topic/libraries/architecture/datastore)
 * [HILT](https://dagger.dev/hilt/)
-* [SunRise API]([https://dagger.dev/hilt/](https://sunrisesunset.io/api/))
-* [AlarmManager]([https://dagger.dev/hilt/](https://developer.android.com/reference/android/app/AlarmManager))
+* [SunRise API](https://sunrisesunset.io/api/)
+* [AlarmManager](https://developer.android.com/reference/android/app/AlarmManager)
 
 
 
