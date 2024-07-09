@@ -130,7 +130,7 @@ Here i will post some screenshots to ilustrate how the app works.
 
 1. Add new Alarm
 
- <img src="https://github.com/vladr7/SunAlarm/blob/main/images/1.png" width="320">
+ <img src="https://github.com/vladr7/SunAlarm/blob/main/images/11.png" width="320">
 
 2. Set when to light up
  
