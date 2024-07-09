@@ -79,6 +79,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+Transform your mornings with a natural light alarm that syncs with sunrise. Wake up peacefully, feeling refreshed and aligned with nature's rhythm.
+
 I wanted to replicate an existing Light Alarm app that had bad UI and I wanted to have the same but with better UI, so that's why I built it, on top of the intention to learn more about Android specifics but even more about Compose. 
 Also I've learned a lot about handling background tasks required for Alarm Clock.
 
