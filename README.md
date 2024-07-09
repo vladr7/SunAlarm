@@ -194,7 +194,7 @@ Project Link: [Link](https://github.com/vladr7/SunAlarm)
 
 ## Published
 
-App is published on play store: [Playstore](https://play.google.com/store/apps/details?id=com.riviem.SunAlarm&hl=en)
+App is published on play store: [Playstore](https://play.google.com/store/apps/details?id=com.riviem.sunalarm&hl=en)
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
