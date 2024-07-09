@@ -128,23 +128,31 @@ And then import it to Android Studio
 
 Here i will post some screenshots to ilustrate how the app works.
 
-1. Tap on the button for the app to start listening
+1. Add new Alarm
 
- <img src="https://github.com/vladr7/SunAlarm/blob/main/images/ss1.png" width="320">
+ <img src="https://github.com/vladr7/SunAlarm/blob/main/images/1.png" width="320">
 
-2. Adjust volume & sensitivity
+2. Set when to light up
  
- <img src="https://github.com/vladr7/SunAlarm/blob/main/images/ss2.png" width="320">
+ <img src="https://github.com/vladr7/SunAlarm/blob/main/images/2.png" width="320">
 
-3. Configure more settings
+ <img src="https://github.com/vladr7/SunAlarm/blob/main/images/4.png" width="320">
 
- <img src="https://github.com/vladr7/SunAlarm/blob/main/images/ss3.png" width="320">
+ <img src="https://github.com/vladr7/SunAlarm/blob/main/images/6.png" width="320">
 
- <img src="https://github.com/vladr7/SunAlarm/blob/main/images/ss4.png" width="320">
+3. Configure light color if you like
 
- Video demo
+ <img src="https://github.com/vladr7/SunAlarm/blob/main/images/3.png" width="320">
 
- [Demo](https://github.com/vladr7/SunAlarm/assets/93397265/e8642a80-97da-4d4c-9a6e-c9aacec084c4)
+4. Settings
+
+  <img src="https://github.com/vladr7/SunAlarm/blob/main/images/5.png" width="320">
+
+5. Light up screen
+
+ <img src="https://github.com/vladr7/SunAlarm/blob/main/images/7.png" width="320">
+
+
 
 <!-- CONTRIBUTING -->
 ## Contributing
