@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.AlarmOff
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.MusicOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -131,6 +132,7 @@ fun HomeRoute(
                 viewModel.onDeleteAlarmClick(it, context)
             },
             onWhiteNoiseClick = {
+                println("vladlog: play white noise")
                 viewModel.playStopWhiteNoise()
             }
         )
@@ -324,6 +326,8 @@ fun HomeScreenTitle(
 ) {
     val context = LocalContext.current
     var showContent by remember {
+
+
         mutableStateOf(false)
     }
     var newTitle by remember {
@@ -383,16 +387,22 @@ fun WhiteNoiseButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
+    var isMusicOn by remember {
+        mutableStateOf(false)
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth(),
     ) {
         Spacer(modifier = Modifier.weight(0.8f))
         Icon(
-            imageVector = Icons.Filled.MusicNote, contentDescription = "White noise",
+            imageVector = if (isMusicOn) Icons.Filled.MusicNote else Icons.Filled.MusicOff,
+            contentDescription = "White noise",
             modifier = modifier
                 .clickable {
                     onClick()
+                    isMusicOn = !isMusicOn
                 }
                 .padding(start = 10.dp, end = 24.dp)
                 .size(35.dp),
