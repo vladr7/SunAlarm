@@ -89,10 +89,10 @@ val md_theme_dark_scrim = Color(0xFF000000)
 val seed = Color(0xFFEEDFCD)
 
 
-val textColor = Color(0xFF212A3E)
-val alarmColor = Color(0xFFE5D7C8)
-val backgroundColor = Color(0xFFEEDFCD)
-val containerColor = Color(0xFF4C625F)
-val timePickerBackgroundColor = Color(244, 240, 234)
+val textColor = Color(0xFFFFFFFF)
+val alarmColor = Color(0xFF212A3E)
+val backgroundColor = Color(0xFF212A3E)
+val containerColor = Color(0xFF212A3E)
+val timePickerBackgroundColor = Color(88, 93, 100)
 
 

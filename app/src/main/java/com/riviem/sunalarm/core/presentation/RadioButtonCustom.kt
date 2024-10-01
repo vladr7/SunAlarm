@@ -14,7 +14,7 @@ fun RadioButtonCustom(
         selected = selected,
         onClick = { onSelected() },
         colors = RadioButtonDefaults.colors(
-            selectedColor = Color(0xFF4C625F),
+            selectedColor = Color(0xFEEEEFFF),
             unselectedColor = Color.Gray,
             disabledSelectedColor = Color.LightGray,
         )
