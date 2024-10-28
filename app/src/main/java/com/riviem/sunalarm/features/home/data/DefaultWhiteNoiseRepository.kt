@@ -22,7 +22,7 @@ class DefaultWhiteNoiseRepository(
     private fun playWhiteNoise(volume: Int) {
         val volumeLevel = volume.toFloat() / 100f
         if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer.create(context, R.raw.jet_4h30min)
+            mediaPlayer = MediaPlayer.create(context, R.raw.jet_4h30mincut)
             mediaPlayer?.setVolume(volumeLevel, volumeLevel)
             mediaPlayer?.isLooping = true
         }
