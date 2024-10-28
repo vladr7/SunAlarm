@@ -12,6 +12,7 @@ import com.riviem.sunalarm.core.presentation.extractHourAndMinute
 import com.riviem.sunalarm.core.presentation.getCoordinates
 import com.riviem.sunalarm.core.presentation.hasNotificationPermission
 import com.riviem.sunalarm.features.home.data.AlarmRepository
+import com.riviem.sunalarm.features.home.data.WhiteNoiseRepository
 import com.riviem.sunalarm.features.home.presentation.homescreen.models.AlarmUIModel
 import com.riviem.sunalarm.features.home.presentation.timepickerscreen.models.HourMinute
 import com.riviem.sunalarm.features.settings.presentation.models.BrightnessSettingUI
@@ -29,7 +30,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LightViewModel @Inject constructor(
-    private val alarmRepository: AlarmRepository
+    private val alarmRepository: AlarmRepository,
+    private val whiteNoiseRepository: WhiteNoiseRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<LightState>(LightState())
@@ -226,6 +228,13 @@ class LightViewModel @Inject constructor(
             it.copy(
                 selectedAlarm = alarm.copy(flashlight = false),
             )
+        }
+    }
+
+    fun playStopWhiteNoise() {
+        viewModelScope.launch {
+            val volume = alarmRepository.getWhiteNoiseVolume()
+            whiteNoiseRepository.playOrStopWhiteNoise(volume)
         }
     }
 }

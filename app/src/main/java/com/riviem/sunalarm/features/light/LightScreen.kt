@@ -187,6 +187,7 @@ fun LightScreen(
                     activity.finishAffinity()
                 },
                 onDismissLightClick = {
+                    viewModel.playStopWhiteNoise()
                     stopSound(mediaPlayer)
                     state.selectedAlarm?.let {
                         coroutineScope.launch {
